@@ -21,7 +21,7 @@ type Mentor {
     projects: [Project!]!
 }
 
-type Org_Admin {
+type OrgAdmin {
     id: ID!
     email: EmailAddress! @unique
     name: String!
@@ -49,7 +49,7 @@ type Project {
     startDate: Date! # to be defined yet
     endDate: Date! # to be defined yet
     organization: Organization!
-    mentors: [Mentor!]
+    mentors: [Mentor!]!
 }
 
 type Organization {
@@ -58,6 +58,6 @@ type Organization {
     absoluteYear: Year! # to be defined yet
     projects: [Project!]!
     mentors: [Mentor!]!
-    OrgAdmins: [Org_Admin!]!
+    OrgAdmins: [OrgAdmin!]!
     superAdmins: [SuperAdmin!]!
 }
