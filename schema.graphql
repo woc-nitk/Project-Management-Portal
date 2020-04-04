@@ -1,0 +1,63 @@
+
+type Applicant {
+    id: ID!
+    email: EmailAddress! @unique
+    firstName: String!
+    middleName: String!
+    lastName: String!
+    applicantYear: Year! # to be defined yet
+    applicantPassword: String!
+    absoluteYear: Year! # to be defined yet
+    applications: [Application!]
+}
+
+type Mentor {
+    id: ID!
+    email: EmailAddress! @unique
+    name: String!
+    mentorPassword: String!
+    absoluteYear: Year! # to be defined yet   
+    organization: [Organization!]!
+    projects: [Project!]!
+}
+
+type Org_Admin {
+    id: ID!
+    email: EmailAddress! @unique
+    name: String!
+    orgAdminPassword: String!
+    absoluteYear: Year! # to be defined yet    
+    organization: [Organization!]
+}
+
+type SuperAdmin {
+    id: ID!
+    email: EmailAddress! @unique
+    name: String!
+    superadminPassword: String!
+    absoluteYear: Year! # to be defined yet   
+    organizations: [Organizations!]! 
+}
+
+type Project {
+    id: ID!
+    name: String!
+    work: String!
+    deliverables: String!
+    prerequisites: [String!]!
+    absoluteYear: Year! # to be defined yet
+    startDate: Date! # to be defined yet
+    endDate: Date! # to be defined yet
+    organization: Organization!
+    mentors: [Mentor!]
+}
+
+type Organization {
+    id: ID!
+    name: String!
+    absoluteYear: Year! # to be defined yet
+    projects: [Project!]!
+    mentors: [Mentor!]!
+    OrgAdmins: [Org_Admin!]!
+    superAdmins: [SuperAdmin!]!
+}
