@@ -140,11 +140,11 @@ type Mutation {
 		email: EmailAddress!,
 		password: Password!,
 		name: CleanString!,
-		org_id: ID!,
+		org_id: [ID!]!,
 	): Mentor
 	deleteMentor(mentorId: ID!): Boolean!
-	addOrganization(orgName: CleanString!): Organization
-	deleteOrganization(orgId: ID!): Boolean!
+	addOrganization(org_name: CleanString!): Organization
+	deleteOrganization(org_id: ID!): Boolean!
 	addOrgAdmin(
 		email: EmailAddress!,
 		password: Password!,

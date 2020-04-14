@@ -34,10 +34,10 @@ const resolvers = {
 		addApplicant: (parent, args) => applicants.addApplicant(args.email, args.password, args.first_name, args.middle_name, args.last_name, args.applicant_year),
 		deleteApplicant: (parent, args) => applicants.deleteApplicant(args.applicant_id),
 		editApplicant: (parent, args) => applicants.editApplicant(args.applicant_id, args.email, args.password),
-		addMentor: (parent, args) => { mentors.addMentor(); },
+		addMentor: (parent, args) => mentors.addMentor(args.email, args.password, args.name, args.org_id),
 		deleteMentor: (parent, args) => { mentors.deleteMentor(); },
-		addOrganization: (parent, args) => { organizations.addOrganization(); },
-		deleteOrganization: (parent, args) => { organizations.deleteOrganization(); },
+		addOrganization: (parent, args) => organizations.addOrganization(args.org_name),
+		deleteOrganization: (parent, args) => organizations.deleteOrganization(args.org_id),
 		addOrgAdmin: (parent, args) => { orgAdmins.addOrgAdmin(); },
 		deleteOrgAdmin: (parent, args) => { orgAdmins.deleteOrgAdmin(); }
 	},

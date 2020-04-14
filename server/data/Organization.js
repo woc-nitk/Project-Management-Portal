@@ -1,4 +1,4 @@
-const dbQuery = require("../config/db");
+const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
 
 
@@ -7,11 +7,12 @@ const getOrganizations = function(year) {
 };
 
 const addOrganization = function(name) {
-
+	const year = new Date().getFullYear();
+	return dbQuery("CALL add_organization(?,?)", [name, year]).then((data) => data[0], (error) => new GraphQLError(error));
 };
 
 const deleteOrganization = function(orgID) {
-
+	return dbQuery("CALL delete_organization(?)", [orgID]).then(() => true, () => false);
 };
 
 const OrganizationResolvers = {
