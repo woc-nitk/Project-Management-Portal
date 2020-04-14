@@ -180,7 +180,7 @@ CREATE TABLE `Mentors` (
   PRIMARY KEY (`mentor_id`,`absolute_year`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -208,7 +208,7 @@ CREATE TABLE `Org_Admins` (
   PRIMARY KEY (`org_admin_id`,`absolute_year`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -262,7 +262,7 @@ CREATE TABLE `Organizations` (
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`org_id`,`absolute_year`),
   UNIQUE KEY `name_UNIQUE` (`org_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -383,7 +383,6 @@ CREATE TABLE `Super_Admins` (
 
 LOCK TABLES `Super_Admins` WRITE;
 /*!40000 ALTER TABLE `Super_Admins` DISABLE KEYS */;
-INSERT INTO `Super_Admins` VALUES (1,'dfwf@afa.cds','fedljbc ','wfEFW2@',2000),(2,'dfwfa@afa.cds','fedljbc ','wfEFW2@',2000);
 /*!40000 ALTER TABLE `Super_Admins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -503,7 +502,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `add_mentor`(
 IN _email VARCHAR(255), IN _name VARCHAR(20), IN _mentor_password VARCHAR(128), IN _absolute_year YEAR
 )
 BEGIN
-INSERT INTO Applicants(email, mentor_name, mentor_password, absolute_year ) VALUES(_email, _name, _mentor_password, _absolute_year);
+INSERT INTO Mentors(email, mentor_name, mentor_password, absolute_year ) VALUES(_email, _name, _mentor_password, _absolute_year);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -587,7 +586,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `add_org_admin`(
 IN _email VARCHAR(255), IN _name VARCHAR(20), IN _org_admin_password VARCHAR(128), IN _absolute_year YEAR
 )
 BEGIN
-INSERT INTO Applicants(email, org_admin_name, org_admin_password, absolute_year ) VALUES(_email, _name, _org_admin_password, _absolute_year);
+INSERT INTO Org_Admins(email, org_admin_name, org_admin_password, absolute_year ) VALUES(_email, _name, _org_admin_password, _absolute_year);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1137,7 +1136,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_project`(
 IN _project_id INT
 )
 BEGIN
-SELECT * FROM Application WHERE Application.project_id = _project_id;
+SELECT applicant_id, project_id FROM Application WHERE Application.project_id = _project_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1197,17 +1196,17 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_mentors_by_org`(
-IN _org_id INT, IN _absolute_year YEAR(4)
+IN _org_id INT
 )
 BEGIN
-SELECT Mentors.mentor_id, Mentor_belongs_to.absolute_year FROM Mentors INNER JOIN Mentor_belongs_to ON Mentors.mentor_id = Mentor_belongs_to.mentor_id AND Mentor_belongs_to.org_id = _org_id AND Mentor_belongs_to.absolute_year = _absolute_year;
+SELECT Mentors.mentor_id FROM Mentors INNER JOIN Mentor_belongs_to ON Mentors.mentor_id = Mentor_belongs_to.mentor_id AND Mentor_belongs_to.org_id = _org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_mentor_details` */;
+/*!50003 DROP PROCEDURE IF EXISTS `get_mentors_by_project` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -1217,11 +1216,32 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_mentor_details`(
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_mentors_by_project`(
+IN _project_id INT
+)
+BEGIN
+SELECT mentor_id FROM Mentored_By WHERE Mentored_By.project_id = _project_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_mentors_orgs` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_mentors_orgs`(
 IN _mentor_id INT
 )
 BEGIN
-SELECT * FROM Mentors INNER JOIN Mentored_By ON Mentors.mentor_id = Mentored_By.mentor_id WHERE Mentors.mentor_id = _mentor_id;
+SELECT org_id FROM Mentor_belongs_to WHERE Mentor_belongs_to.mentor_id = _mentor_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1263,7 +1283,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_orgs_by_year`(
 IN _year YEAR
 )
 BEGIN
-SELECT * FROM Organizations WHERE Organizations.absolute_year = _year;
+SELECT org_id FROM Organizations WHERE Organizations.absolute_year = _year;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1284,7 +1304,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_org_admins_by_org_id`(
 IN _org_id INT
 )
 BEGIN
-SELECT * FROM Org_Admins INNER JOIN Org_admin_belongs_to ON Org_Admins.org_admin_id = Org_admin_belongs_to.org_admin_id WHERE Org_admin_belongs_to.org_id = _org_id;
+SELECT Org_Admins.org_admin_id FROM Org_Admins INNER JOIN Org_admin_belongs_to ON Org_Admins.org_admin_id = Org_admin_belongs_to.org_admin_id WHERE Org_admin_belongs_to.org_id = _org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1305,14 +1325,14 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_org_admins_by_org_id_and_year`(
 IN _org_id INT, IN _year YEAR
 )
 BEGIN
-SELECT * FROM Org_Admins INNER JOIN Org_admin_belongs_to ON Org_Admins.org_admin_id = Org_admin_belongs_to.org_admin_id WHERE Org_admin_belongs_to.org_id = _org_id AND Org_admin_belongs_to.absolute_year = _year;
+SELECT Org_Admins.org_admin_id FROM Org_Admins INNER JOIN Org_admin_belongs_to ON Org_Admins.org_admin_id = Org_admin_belongs_to.org_admin_id WHERE Org_admin_belongs_to.org_id = _org_id AND Org_admin_belongs_to.absolute_year = _year;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_org_admin_details` */;
+/*!50003 DROP PROCEDURE IF EXISTS `get_org_admins_orgs` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -1322,11 +1342,11 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_org_admin_details`(
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_org_admins_orgs`(
 IN _org_admin_id INT
 )
 BEGIN
-SELECT * FROM Org_Admins WHERE Org_Admins.org_admin_id = _org_admin_id;
+SELECT org_id FROM Org_admin_belongs_to WHERE Org_admin_belongs_to.org_admin_id = _org_admin_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1354,7 +1374,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_project` */;
+/*!50003 DROP PROCEDURE IF EXISTS `get_prerequisites` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -1364,11 +1384,11 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_project`(
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_prerequisites`(
 IN _project_id INT
 )
 BEGIN
-SELECT * FROM Project INNER JOIN Prerequisites ON Project.project_id = Prerequisites.project_id WHERE Project.project_id = _project_id;
+SELECT prerequisites FROM Prerequisites WHERE Prerequisites.project_id = _project_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1417,7 +1437,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_projects_by_mentor_and_year` */;
+/*!50003 DROP PROCEDURE IF EXISTS `get_projects_by_mentor` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -1427,11 +1447,11 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_projects_by_mentor_and_year`(
-IN _absolute_year YEAR, IN _mentor_id INT
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_projects_by_mentor`(
+IN _mentor_id INT
 )
 BEGIN
-SELECT * FROM Project INNER JOIN Mentored_By ON Project.project_id = Mentored_By.project_id WHERE Mentored_By.mentor_id = _mentor_id AND Mentored_By.absolute_year = _absolute_year;
+SELECT project_id FROM Mentored_By WHERE Mentored_By.mentor_id = _mentor_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1449,10 +1469,10 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_projects_by_org`(
-IN _org_id INT, IN _absolute_year YEAR
+IN _org_id INT
 )
 BEGIN
-SELECT * FROM Project INNER JOIN Maintained_By ON Project.project_id = Maintained_By.project_id WHERE Maintained_By.org_id = _org_id AND Maintained_By.absolute_year = _absolute_year;
+SELECT Project.project_id FROM Project INNER JOIN Maintained_By ON Project.project_id = Maintained_By.project_id WHERE Maintained_By.org_id = _org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1603,4 +1623,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-14 19:30:24
+-- Dump completed on 2020-04-15  2:19:10
