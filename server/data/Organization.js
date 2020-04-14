@@ -3,7 +3,7 @@ const { GraphQLError } = require("graphql");
 
 
 const getOrganizations = function(year) {
-
+	return dbQuery("CALL get_orgs_by_year(?)", [year]).then((data) => data);
 };
 
 const addOrganization = function(name) {
@@ -15,11 +15,11 @@ const deleteOrganization = function(orgID) {
 };
 
 const OrganizationResolvers = {
-	id: () => {  }.
-	name: () => "SOME TEXT",
-	projects: () => "SOME TEXT",
-	mentors: () => "SOME TEXT",
-	OrgAdmins: () => "SOME TEXT",
+	id: (parent) => dbQuery("SELECT org_id FROM Organizations WHERE org_id = (?)", [parent.org_id]).then((data) => data ? data.org_id : new GraphQLError("No such entry")),
+	name: (parent) => dbQuery("SELECT org_name FROM Organizations WHERE org_id = (?)", [parent.org_id]).then((data) => data ? data.org_name : new GraphQLError("No such entry")),
+	projects: (parent) => dbQuery("CALL get_projects_by_org(?)", [parent.org_id]).then((data) => data ? data : new GraphQLError("No such entry")),
+	mentors: (parent) => dbQuery("CALL get_mentors_by_org(?)", [parent.org_id]).then((data) => data ? data : new GraphQLError("No such entry")),
+	OrgAdmins: (parent) => dbQuery("CALL get_org_admins_by_org_id(?)", [parent.org_id]).then((data) => data ? data : new GraphQLError("No such entry")),
 };
 
 

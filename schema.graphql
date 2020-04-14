@@ -55,6 +55,7 @@ type Application {
 	result: Boolean!
 	project: Project!
 	applicant: Applicant!
+    year: Year!
 }
 
 type Organization {
@@ -91,7 +92,8 @@ type Query {
 	mentor(mentorId: ID!): Mentor!
 	applicants(year: Year): [Applicant!]!
 	applicant(applicant_id: ID!): Applicant!
-	orgAdmins(orgId: ID, year: Year): [OrgAdmin!]!	
+    orgAdmin(org_admin_id: ID!): OrgAdmin!
+	orgAdmins(org_id: ID): [OrgAdmin!]!	
 	superAdmins(year: Year): [SuperAdmin!]!
 	superAdmin(superAdminId: ID!): SuperAdmin!
 }

@@ -1,5 +1,5 @@
 const {GraphQLServer} = require("graphql-yoga");
-const GQLresolvers = require('./graphql/resolvers');
+const GQLresolvers = require("./graphql/resolvers");
 
 const server = new GraphQLServer({
 	typeDefs: "../schema.graphql",

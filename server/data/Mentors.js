@@ -4,7 +4,7 @@ const { GraphQLError } = require("graphql");
 
 const getMentors = function(year, orgID) {
 	if(year == null) year = new Date().getFullYear();
-	return dbQuery("CALL get_mentors_by_org(?,?)", [orgID, year]).then((data) => data);
+	return dbQuery("CALL get_mentors_by_org(?)", [orgID]).then((data) => data);
 };
 
 const addMentor = function(email, name, password, org_id) {
@@ -16,12 +16,12 @@ const deleteMentor = function(mentorID) {
 };
 
 const MentorResolvers = {
-	id: (parent) => parent.mentor_id, 
-	email: (parent) => dbQuery("SELECT email FROM Mentors WHERE Mentors.mentor_id = (?)", [parent.mentor_id]).then((data) => data.email), 
-	name: (parent) => dbQuery("SELECT mentor_name FROM Mentors WHERE Mentors.mentor_id = (?)", [parent.mentor_id]).then((data) => data.mentor_name),
-	absolute_year: (parent) => dbQuery("SELECT absolute_year FROM Mentors WHERE Mentors.mentor_id = (?)", [parent.mentor_id]).then((data) => data.absolute_year),
-	organization: (parent) => dbQuery("SELECT org_id FROM Mentor_belongs_to WHERE Mentors.mentor_id = (?) AND Mentors.absolute_year = (?)", [parent.mentor_id, parent.absolute_year]).then((data) => data),
-	projects: (parent) => dbQuery("SELECT project_id FROM Mentored_by WHERE Mentors.mentor_id = (?) AND Mentors.absolute_year = (?)", [parent.mentor_id, parent.absolute_year]).then((data) => data),
+	id: (parent) => dbQuery("SELECT mentor_id FROM Mentors WHERE Mentors.mentor_id = (?)", [parent.mentor_id]).then((data) => data ? data.mentor_id : new GraphQLError("No such entry")),  
+	email: (parent) => dbQuery("SELECT email FROM Mentors WHERE Mentors.mentor_id = (?)", [parent.mentor_id]).then((data) => data ? data.email : new GraphQLError("No such entry")), 
+	name: (parent) => dbQuery("SELECT mentor_name FROM Mentors WHERE Mentors.mentor_id = (?)", [parent.mentor_id]).then((data) => data ? data.mentor_name  : new GraphQLError("No such entry")),
+	absolute_year: (parent) => dbQuery("SELECT absolute_year FROM Mentors WHERE Mentors.mentor_id = (?)", [parent.mentor_id]).then((data) => data ? data.absolute_year : new GraphQLError("No such entry")),
+	organization: (parent) => dbQuery("CALL get_mentors_orgs(?)", [parent.mentor_id]).then((data) => data ? data : new GraphQLError("No such entry")),
+	projects: (parent) => dbQuery("CALL get_projects_by_mentor(?)", [parent.mentor_id]).then((data) => data? data : new GraphQLError("No such entry")),
 };
 
 module.exports = {getMentors, addMentor, deleteMentor, MentorResolvers};

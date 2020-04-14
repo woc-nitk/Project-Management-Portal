@@ -3,8 +3,8 @@ const { GraphQLError } = require("graphql");
 
 
 const getApplicants = (year) => {
-    if(year == null) year = new Date().getFullYear();
-    return dbQuery("CALL get_applicants_by_year(?)", [year]).then((data) => data);
+	if(year == null) year = new Date().getFullYear();
+	return dbQuery("CALL get_applicants_by_year(?)", [year]).then((data) => data);
 };
 
 const deleteApplicant = function(applicantID) {
@@ -23,7 +23,7 @@ const editApplicant = function(applicantID, email, password) {
 
 var ApplicantResolvers = {
 	id: (parent) =>  dbQuery("SELECT applicant_id FROM Applicants WHERE applicant_id = (?)", [parent.applicant_id]).then((data) => data ? data.applicant_id : new GraphQLError("No such entry")),
-	email: (parent) => { console.log("Parent"); console.log(parent); return dbQuery("SELECT email FROM Applicants WHERE applicant_id = (?)", [parent.applicant_id]).then((data) => data ? data.email : new GraphQLError("No such entry") )}, 
+	email: (parent) => { return dbQuery("SELECT email FROM Applicants WHERE applicant_id = (?)", [parent.applicant_id]).then((data) => data ? data.email : new GraphQLError("No such entry") );}, 
 	first_name: (parent) => dbQuery("SELECT first_name FROM Applicants WHERE applicant_id = (?)", [parent.applicant_id]).then((data) => data ? data.first_name : new GraphQLError("No such entry")),
 	middle_name: (parent) => dbQuery("SELECT middle_name FROM Applicants WHERE applicant_id = (?)", [parent.applicant_id]).then((data) => data ? data.middle_name : new GraphQLError("No such entry")),
 	last_name: (parent) => dbQuery("SELECT last_name FROM Applicants WHERE applicant_id = (?)", [parent.applicant_id]).then((data) => data ? data.last_name : new GraphQLError("No such entry")),

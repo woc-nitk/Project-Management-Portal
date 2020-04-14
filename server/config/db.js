@@ -25,9 +25,16 @@ const queryFunction = (query, params) => { return new Promise((resolve, reject) 
 							console.log(error.sqlMessage);
 							reject(error.sqlMessage);
 						}
+						// else if(rows.OkPacket != undefined) {
+						// 	console.log(query + " ----- |" + params + "| ----- ");
+						// 	console.log(rows[0]);
+						// 	resolve(rows[0]);
+						// }
 						else {
 							console.log(query + " ----- |" + params + "| ----- ");
-							console.log(rows[0]);
+							// console.log("No OkPacket found");
+							console.log((rows[0]));
+							// console.log("No OkPacket found");
 							resolve(rows[0]);
 						}
 						
