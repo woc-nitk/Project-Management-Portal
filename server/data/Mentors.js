@@ -13,7 +13,7 @@ const addMentor = function(email, name, password, org_id) {
 	const setAutoCommit = () =>  { return dbQuery("SET AUTOCOMMIT=0").then(() => startTransaction(), (err) => new GraphQLError(err)); };
 	const startTransaction = () => { return dbQuery("BEGIN").then(() => addMentorToMentors(email, name, password, year), (err) => new GraphQLError(err)); };
 	const addMentorToMentors = (email, name, password, year) => { return dbQuery("CALL add_mentor(?,?,?,?)", [email, name, password, year]).then((data) => addMentorOrgs(data[0].mentor_id, org_id.length), (error) => rollbackTransaction(error)); };
-	const addMentorOrgs = (mentor_id, org_id_length) => { if(org_id_length > 0) return dbQuery("CALL add_mentor_belongs_to(?,?,?)", [mentor_id, parseInt(org_id[org_id_length - 1]), year]).then((response) => { console.log("THIS org sid is" + org_id[org_id_length - 1]); return addMentorOrgs(mentor_id, (org_id.length)-1);}, (error) => rollbackTransaction(error)); else if(org_id_length == 0) return commitTransaction(mentor_id); };
+	const addMentorOrgs = (mentor_id, org_id_length) => { if(org_id_length > 0) return dbQuery("CALL add_mentor_belongs_to(?,?)", [mentor_id, parseInt(org_id[org_id_length - 1])]).then(() => addMentorOrgs(mentor_id, (org_id_length)-1), (error) => rollbackTransaction(error)); else if(org_id_length == 0) return commitTransaction(mentor_id); };
 	const commitTransaction = (mentor_id) => { return dbQuery("COMMIT").then(() => { return { "mentor_id": mentor_id }; }, (error) => new GraphQLError(error)); };
 	const rollbackTransaction = (error) => { return dbQuery("ROLLBACK").then(() => new GraphQLError(error), (error) => new GraphQLError(error)); };
 	return setAutoCommit();
