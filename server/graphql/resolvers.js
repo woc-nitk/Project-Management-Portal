@@ -24,10 +24,10 @@ const resolvers = {
 	    superAdmin: (parent, args) => { return { "superAdmin_id": args.superAdmin_id }; }
 	},
 	Mutation: {
-		addApplication: (parent, args) => { applications.addApplication(); },
+		addApplication: (parent, args) => applications.addApplication(args.project_id, args.application_id),
 	    deleteApplication: (parent, args) => { applications.deleteApplication(); },
-	    acceptApplication: (parent, args) => { applications.acceptApplication(); },
-	    passApplication: (parent, args) => { applications.passApplication(); },
+	    acceptOrRejectApplication: (parent, args) => applications.acceptApplication(args.project_id, args.application_id, args.accept),
+	    passOrFailApplication: (parent, args) => applications.passApplication(args.project_id, args.application_id, args.result),
 		addProject: (parent, args) => { projects.addProject(); },
 		deleteProject: (parent, args) => { projects.deleteProject(); },
 		updateProject: (parent, args) => { projects.updateProject(); },

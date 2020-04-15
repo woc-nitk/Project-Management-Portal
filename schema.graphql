@@ -101,8 +101,8 @@ type Query {
 type Mutation {
 	addApplication(project_id: ID!, applicant_id: ID!): Application
 	deleteApplication(project_id: ID!, applicant_id: ID!, year: Year): Boolean!
-	acceptApplication(project_id: ID!, applicant_id: ID!): Application
-	passApplication(project_id: ID!, applicant_id: ID!): Application
+	acceptOrRejectApplication(project_id: ID!, applicant_id: ID!, accept: Boolean!): Application
+	passOrFailApplication(project_id: ID!, applicant_id: ID!, result: Boolean!): Application
 	addProject(
 		name: CleanString!,
 		work: CleanString!,
