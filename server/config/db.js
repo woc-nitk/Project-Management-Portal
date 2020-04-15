@@ -16,19 +16,24 @@ const queryFunction = (query, params) => { return new Promise((resolve, reject) 
 	connectionPool.getConnection( 
 		function(error, connection) {
 			if (error) {
+				connection.release();
 				reject(error);
 			}
 			const dbQueryFunction = (query, params) => {
 				return new Promise((resolve, reject) => {
 					connection.query(query, params, function(error, rows) {
 						if (error) {
-							console.log(error.sqlMessage);
+							connection.release();
+							console.log("ERRRRRR");
+							console.log(error);
+							console.log("ERRRRRR");
 							reject(error.sqlMessage);
 						}
 						else {
+							connection.release();
 							console.log(query + " ----- |" + params + "| ----- ");
 							// console.log("No OkPacket found");
-							console.log((rows[0]));
+							console.log((rows));
 							// console.log("No OkPacket found");
 							resolve(rows[0]);
 						}
@@ -40,17 +45,4 @@ const queryFunction = (query, params) => { return new Promise((resolve, reject) 
 		});
 }); };
 
-
-const dbTransaction = () => { return new Promise((resolve, reject) => {
-	connectionPool.getConnection( 
-		function(error, connection) {
-			if (error) {
-				reject(error);
-			}
-			resolve(connection.beginTransaction());    
-		});
-}); };
-
-
 module.exports.dbQuery = queryFunction;
-module.exports.dbTransaction = dbTransaction;

@@ -9,13 +9,14 @@ const getMentors = function(year, orgID) {
 
 const addMentor = function(email, name, password, org_id) {
 	const year = new Date().getFullYear();
-	const setAutoCommit = dbQuery("SET AUTOCOMMIT=0;").then(() => startTransaction());
-	const startTransaction = () => dbQuery("START TRANSACTION;").then(() => mentor(), () => new GraphQLError("Failed to start transaction"));
-	const mentor = () => dbQuery("CALL add_mentor(?,?,?,?);", [email, name, password, year]).then((data) => mentorOrgDetails(data[0]), (error) => rollbackTransaction(error));
-	const mentorOrgDetails = (data) => dbQuery("CALL add_mentor_belongs_to(?,?,?);", [data.mentor_id, org_id, year]).then(() => commitTransaction(data), () => rollbackTransaction());
-	const commitTransaction = (data) => dbQuery("COMMIT;").then((data) => data, (error) => new GraphQLError(error));
-	const rollbackTransaction = (error) => dbQuery("ROLLBACK;").then((error) => new GraphQLError(error));
-	return setAutoCommit;
+	org_id = [1,2];
+	const setAutoCommit = () =>  { return dbQuery("SET AUTOCOMMIT=0").then(() => startTransaction(), (err) => new GraphQLError(err)); };
+	const startTransaction = () => { return dbQuery("BEGIN").then(() => addMentorToMentors(email, name, password, year), (err) => new GraphQLError(err)); };
+	const addMentorToMentors = (email, name, password, year) => { return dbQuery("CALL add_mentor(?,?,?,?)", [email, name, password, year]).then((data) => addMentorOrgs(data[0].mentor_id, org_id.length), (error) => rollbackTransaction(error)); };
+	const addMentorOrgs = (mentor_id, org_id_length) => { if(org_id_length > 0) return dbQuery("CALL add_mentor_belongs_to(?,?,?)", [mentor_id, parseInt(org_id[org_id_length - 1]), year]).then((response) => { console.log("THIS org sid is" + org_id[org_id_length - 1]); return addMentorOrgs(mentor_id, (org_id.length)-1);}, (error) => rollbackTransaction(error)); else if(org_id_length == 0) return commitTransaction(mentor_id); };
+	const commitTransaction = (mentor_id) => { return dbQuery("COMMIT").then(() => { return { "mentor_id": mentor_id }; }, (error) => new GraphQLError(error)); };
+	const rollbackTransaction = (error) => { return dbQuery("ROLLBACK").then(() => new GraphQLError(error), (error) => new GraphQLError(error)); };
+	return setAutoCommit();
 };
 
 const deleteMentor = function(mentorID) {
