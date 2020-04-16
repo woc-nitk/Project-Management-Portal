@@ -77,7 +77,7 @@ type Project {
 	project_end_date: Date!
 	organization: Organization!
 	mentors: [Mentor!]!
-    applications: [Application!]!
+	applications: [Application!]!
 	contributors: [Applicant!]!
 }
 
