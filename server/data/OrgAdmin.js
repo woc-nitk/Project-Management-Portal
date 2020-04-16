@@ -18,7 +18,7 @@ const addOrgAdmins = function(email, password, name, org_id) {
 };
 
 const deleteOrgAdmin = function(orgAdminID) {
-
+	return dbQuery("CALL delete_org_admin(?)", [orgAdminID]).then(() => true, (error) => new GraphQLError(error));
 };
 
 

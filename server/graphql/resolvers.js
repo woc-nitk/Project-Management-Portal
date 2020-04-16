@@ -13,7 +13,7 @@ const resolvers = {
 	    project: (parent, args) => { return { "project_id": args.project_id }; },
 		organizations: (parent, args) => organizations.getOrganizations(args.year),
 		organization: (parent, args) => { return { "org_id": args.org_id }; },
-	    applications: (parent, args) => { applications.getApplications(); },
+	    applications: (parent, args) => applications.getApplications(args.year, args.project_id, args.org_id, args.applicant_id),
 	    mentors: (parent, args) => mentors.getMentors(args.year, args.org_id),
 	    mentor: (parent, args) => { return { "mentor_id": args.mentor_id }; },
 	    applicants: (parent, args) => applicants.getApplicants(args.year),
@@ -21,7 +21,7 @@ const resolvers = {
 		orgAdmin: (parent, args) => { return { "org_admin_id": args.org_admin_id }; } ,
 	    orgAdmins: (parent, args) => orgAdmins.getOrgAdmins(args.org_id),
 	    superAdmins: (parent, args) => superAdmins.getSuperAdmins(args.year),
-	    superAdmin: (parent, args) => { return { "superAdmin_id": args.superAdmin_id }; }
+	    superAdmin: (parent, args) => { return { "super_admin_id": args.super_admin_id }; }
 	},
 	Mutation: {
 		addApplication: (parent, args) => applications.addApplication(args.project_id, args.application_id),
@@ -39,7 +39,11 @@ const resolvers = {
 		addOrganization: (parent, args) => organizations.addOrganization(args.org_name),
 		deleteOrganization: (parent, args) => organizations.deleteOrganization(args.org_id),
 		addOrgAdmin: (parent, args) => orgAdmins.addOrgAdmin(args.email, args.password, args.name, args.org_id),
-		deleteOrgAdmin: (parent, args) => { orgAdmins.deleteOrgAdmin(); }
+		deleteOrgAdmin: (parent, args) => orgAdmins.deleteOrgAdmin(args.org_admin_id),
+		addMentorToOrg: (parent, args) => { mentors.deleteMentor(); },
+		removeMentorFromOrg: (parent, args) => { mentors.deleteMentor(); },
+		addMentorToProject: (parent, args) => { mentors.deleteMentor(); },
+		removeMentorFromProject: (parent, args) => { mentors.deleteMentor(); },
 	},
 	Applicant: applicants.ApplicantResolvers,
 	Application: applications.ApplicationResolvers,

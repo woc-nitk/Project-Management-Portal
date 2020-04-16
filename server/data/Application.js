@@ -3,7 +3,19 @@ const { GraphQLError } = require("graphql");
 
 
 const getApplications = function(year, projectID, orgID, applicantID) {
-	
+	if(orgID == null && applicantID == null && year == null && projectID != null) {
+		return dbQuery("CALL get_applications_by_project(?)", [projectID]).then((data) => data, (error) => new GraphQLError(error));
+	}
+	else if(projectID == null && applicantID == null && year == null && orgID != null) {
+		return dbQuery("CALL get_applications_by_org(?)", [orgID]).then((data) => data, (error) => new GraphQLError(error));
+	}
+	else if(orgID == null && projectID == null && year == null && applicantID != null) {
+		return dbQuery("CALL get_applications_by_applicant(?)",[applicantID]).then((data) => data, (error) => new GraphQLError(error));
+	}
+	else if(orgID == null && projectID == null && applicantID == null && year != null) { 
+		return dbQuery("CALL get_applications_by_year(?)",[year]).then((data) => data, (error));
+	}
+	else return new GraphQLError("Invalid arguments passed to Query applications");
 };
 
 const addApplication = function(projectID, applicantID) {

@@ -95,7 +95,7 @@ type Query {
     orgAdmin(org_admin_id: ID!): OrgAdmin!
 	orgAdmins(org_id: ID): [OrgAdmin!]!	
 	superAdmins(year: Year): [SuperAdmin!]!
-	superAdmin(superAdminId: ID!): SuperAdmin!
+	superAdmin(super_admin_id: ID!): SuperAdmin!
 }
 
 type Mutation {
@@ -153,4 +153,8 @@ type Mutation {
 		organization_id: ID!,
 	): OrgAdmin
 	deleteOrgAdmin(orgAdminId: ID!): Boolean!
+	addMentorToOrg(mentor_id: ID!, org_id: [ID!]!): Mentor!
+	removeMentorFromOrg(mentor_id: ID, org_id: [ID!]!): Mentor!
+	addMentorToProject(mentor_id: ID!, project_id: [ID!]!): Mentor!
+	removeMentorFromProject(mentor_id: ID, project_id: [ID!]!): Mentor!
 }
