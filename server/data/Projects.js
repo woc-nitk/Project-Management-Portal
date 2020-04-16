@@ -11,7 +11,7 @@ const addProject = function(name, work, deliverables, prerequisites, absoluteYea
 };
 
 const deleteProject = function(projectID) {
-
+	return dbQuery("CALL delete_project(?)", [projectID]).then(() => true, (error) => new GraphQLError(error));
 };
 
 const updateProject = function(projectID, name, work, deliverables, prerequisites, startDate, endDate, organization, mentors) {
