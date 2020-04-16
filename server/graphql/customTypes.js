@@ -3,6 +3,19 @@ const testCleanString = (string) => (/^([a-zA-Z]+\s*)+$/).test(string);
 const testYear = (year) => (/^20\d{2}$/).test(year);
 const testEmailAddress = (emailAddress) => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).test(emailAddress);
 const testPassword = (password) => (/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{5,}$/).test(password);
+const testDateRegex = (date) => (/^(20\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/).test(date);
+const isLeapYear = (year) => ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+const testDate = (date) => {
+	if(testDateRegex(date) && typeof date === "string") {
+		const year = parseInt(date.split("-")[0]);
+		const month = parseInt(date.split("-")[1]);
+		const day = parseInt(date.split("-")[2]);
+		if( (!oddMonths.includes(month) && day >= 31) || (month == 1 && day > 29) ) return new GraphQLError("Invalid Date");
+		else if( !isLeapYear(year) && month == 1 && day == 29 ) return new GraphQLError("Invalid Date");
+		else return date;
+	}
+}
+const oddMonths = [0, 2, 4, 6, 7, 9, 11];
 
 const serializeYear = (year) => {
 	if(typeof year === "number" && testYear(year)) {
@@ -121,4 +134,26 @@ const Password = new GraphQLScalarType({
 	serialize: serializePassword
 });
 
-module.exports = { Year, EmailAddress, CleanString, Password };
+
+const serializeDate = (date) => {
+	return testDate(date);
+};
+
+const parseDateValue = (date) => {
+	return testDate(date);
+}
+
+const parseDateLiteral = (ast) => {
+	if(ast.kind == Kind.STRING) 	return testDate(ast.value);
+	else return new GraphQLError("Invalid Date literal");
+};
+
+const Date = new GraphQLScalarType({
+	name: "Date",
+	description: "A scalar representing date in the format YYYY-MM-DD",
+	parseLiteral: parseDateLiteral,
+	parseValue: parseDateValue,
+	serialize: serializeDate
+});
+
+module.exports = { Year, EmailAddress, CleanString, Password, Date };

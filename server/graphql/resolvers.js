@@ -38,7 +38,7 @@ const resolvers = {
 		deleteMentor: (parent, args) => { mentors.deleteMentor(); },
 		addOrganization: (parent, args) => organizations.addOrganization(args.org_name),
 		deleteOrganization: (parent, args) => organizations.deleteOrganization(args.org_id),
-		addOrgAdmin: (parent, args) => { orgAdmins.addOrgAdmin(); },
+		addOrgAdmin: (parent, args) => orgAdmins.addOrgAdmin(args.email, args.password, args.name, args.org_id),
 		deleteOrgAdmin: (parent, args) => { orgAdmins.deleteOrgAdmin(); }
 	},
 	Applicant: applicants.ApplicantResolvers,
@@ -52,6 +52,7 @@ const resolvers = {
 	CleanString: customTypes.CleanString,
 	EmailAddress: customTypes.EmailAddress,
 	Password: customTypes.Password,
+	Date: customTypes.Date,
 };
 
 module.exports = { resolvers };
