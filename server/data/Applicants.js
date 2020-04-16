@@ -8,11 +8,11 @@ const getApplicants = (year) => {
 };
 
 const deleteApplicant = function(applicantID) {
-	return dbQuery("CALL delete_applicant(?, ?)", [applicantID, year]).then(() => true, (error) => new GraphQLError(error));
+	return dbQuery("CALL delete_applicant(?, ?)", [applicantID]).then(() => true, (error) => new GraphQLError(error));
 };
 
 const addApplicant = function(email, password, firstName, middleName, lastName, applicantYear) {
-	year = new Date().getFullYear();
+	const year = new Date().getFullYear();
 	return dbQuery("CALL add_applicant(?,?,?,?,?,?,?)", [email, firstName, middleName, lastName, applicantYear, password, year]).then((data) => data[0], (error) => new GraphQLError(error));
 };
 

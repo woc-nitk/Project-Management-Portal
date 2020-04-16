@@ -24,22 +24,22 @@ const deleteMentor = function(mentorID) {
 
 
 const addMentorToOrg = function (mentor_id, org_id) {
-	const startFunction = (org_id_length) => { if(org_id_length > 0) return dbQuery("CALL add_mentor_belongs_to(?,?)",[mentor_id, org_id[org_id_length-1]]).then(() => startFunction(org_id_length-1), (error) => new GraphQLError(error)); else if(org_id_length == 0) return mentor_id; };
+	const startFunction = (org_id_length) => { if(org_id_length > 0) return dbQuery("CALL add_mentor_belongs_to(?,?)",[mentor_id, parseInt(org_id[org_id_length-1])]).then(() => startFunction(org_id_length-1), (error) => new GraphQLError(error)); else if(org_id_length == 0) return mentor_id; };
 	return startFunction(org_id.length);
 };
 
 const removeMentorFromOrg = function (mentor_id, org_id) {
-	const startFunction = (org_id_length) => { if(org_id_length > 0) return dbQuery("CALL delete_mentor_belongs_to(?,?)",[mentor_id, org_id[org_id_length-1]]).then(() => startFunction(org_id_length-1), (error) => new GraphQLError(error)); else if(org_id_length == 0) return mentor_id; };
+	const startFunction = (org_id_length) => { if(org_id_length > 0) return dbQuery("CALL delete_mentor_belongs_to(?,?)",[mentor_id, parseInt(org_id[org_id_length-1])]).then(() => startFunction(org_id_length-1), (error) => new GraphQLError(error)); else if(org_id_length == 0) return mentor_id; };
 	return startFunction(org_id.length);
 };
 
 const addMentorToProject = function (mentor_id, project_id) {
-	const startFunction = (project_id_length) => { if(project_id_length > 0) return dbQuery("CALL add_mentored_by(?,?)",[mentor_id, project_id[project_id_length-1]]).then(() => startFunction(project_id_length-1), (error) => new GraphQLError(error)); else if(project_id_length == 0) return mentor_id; };
+	const startFunction = (project_id_length) => { if(project_id_length > 0) return dbQuery("CALL add_mentored_by(?,?)",[mentor_id, parseInt(project_id[project_id_length-1])]).then(() => startFunction(project_id_length-1), (error) => new GraphQLError(error)); else if(project_id_length == 0) return mentor_id; };
 	return startFunction(project_id.length);
 };
 
 const removeMentorFromProject = function (mentor_id, project_id) {
-	const startFunction = (project_id_length) => { if(project_id_length > 0) return dbQuery("CALL delete_mentored_by(?,?)",[mentor_id, project_id[project_id_length-1]]).then(() => startFunction(project_id_length-1), (error) => new GraphQLError(error)); else if(project_id_length == 0) return mentor_id; };
+	const startFunction = (project_id_length) => { if(project_id_length > 0) return dbQuery("CALL delete_mentored_by(?,?)",[mentor_id, parseInt(project_id[project_id_length-1])]).then(() => startFunction(project_id_length-1), (error) => new GraphQLError(error)); else if(project_id_length == 0) return mentor_id; };
 	return startFunction(project_id.length);
 };
 

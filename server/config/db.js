@@ -4,7 +4,7 @@ const env = require("dotenv");
 env.config();
 
 const connectionPool = mysql.createPool({
-	connectionLimit: 20, // can be increased as per requirements
+	connectionLimit: 20,
 	host: process.env.HOST,
 	database: process.env.DATABASE_NAME,
 	user: process.env.DATABASE_USERNAME,
@@ -32,9 +32,7 @@ const queryFunction = (query, params) => { return new Promise((resolve, reject) 
 						else {
 							connection.release();
 							console.log(query + " ----- |" + params + "| ----- ");
-							// console.log("No OkPacket found");
 							console.log((rows));
-							// console.log("No OkPacket found");
 							resolve(rows[0]);
 						}
 						

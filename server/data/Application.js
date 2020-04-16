@@ -13,7 +13,7 @@ const getApplications = function(year, projectID, orgID, applicantID) {
 		return dbQuery("CALL get_applications_by_applicant(?)",[applicantID]).then((data) => data, (error) => new GraphQLError(error));
 	}
 	else if(orgID == null && projectID == null && applicantID == null && year != null) { 
-		return dbQuery("CALL get_applications_by_year(?)",[year]).then((data) => data, (error));
+		return dbQuery("CALL get_applications_by_year(?)",[year]).then((data) => data, (error) => new GraphQLError(error));
 	}
 	else return new GraphQLError("Invalid arguments passed to Query applications");
 };
@@ -34,7 +34,7 @@ const acceptorRejectApplication = function(projectID, applicantID, accept) {
 
 const passApplication = function(projectID, applicantID, result) {
 	const year = new Date().getFullYear();
-	return dbQuery("CALL success_or_failure_application(?,?,?,?)", [projectID, applicantID, year, result]).then((data) => data, (error) => new GraphQLError(error))
+	return dbQuery("CALL success_or_failure_application(?,?,?,?)", [projectID, applicantID, year, result]).then((data) => data, (error) => new GraphQLError(error));
 };
 
 const ApplicationResolvers = {
@@ -42,7 +42,7 @@ const ApplicationResolvers = {
 	project: (parent) => dbQuery("SELECT project_id FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)", [parent.applicant_id, parent.project_id]).then((data) => data ? data.project_id : new GraphQLError("No such entry")),
 	accepted: (parent) => dbQuery("SELECT accepted FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)", [parent.applicant_id, parent.project_id]).then((data) => data ? data.accepted : new GraphQLError("No such entry")),
 	result: (parent) => dbQuery("SELECT result FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)", [parent.applicant_id, parent.project_id]).then((data) => data ? data.result : new GraphQLError("No such entry")),
-	year: (parent) => dbQuery("SELECT absolute_year FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)", [parent.applicant_id, parent.project_id]).then((data) => data ? data.absolute_year : new GraphQLError("No such entry")),
+	absolute_year: (parent) => dbQuery("SELECT absolute_year FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)", [parent.applicant_id, parent.project_id]).then((data) => data ? data.absolute_year : new GraphQLError("No such entry")),
 };
 
 module.exports = {getApplications, addApplication, deleteApplication, acceptorRejectApplication, passApplication, ApplicationResolvers};

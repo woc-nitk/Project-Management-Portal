@@ -55,7 +55,7 @@ type Application {
 	result: Boolean!
 	project: Project!
 	applicant: Applicant!
-    year: Year!
+    absolute_year: Year!
 }
 
 type Organization {
@@ -111,7 +111,7 @@ type Mutation {
 		absolute_year: Year!,
 		project_start_date: Date!,
 		project_end_date: Date!,
-		organization_id: ID!,
+		org_id: ID!,
 		mentor_ids: [ID!]!,
 	): Project!
 	deleteProject(project_id: ID!): Boolean!
@@ -157,4 +157,6 @@ type Mutation {
 	removeMentorFromOrg(mentor_id: ID!, org_id: [ID!]!): Mentor!
 	addMentorToProject(mentor_id: ID!, project_id: [ID!]!): Mentor!
 	removeMentorFromProject(mentor_id: ID!, project_id: [ID!]!): Mentor!
+	addPrerequisites(project_id: ID!, prerequisites: [CleanString!]!): Project!
+	removePrerequisites(project_id: ID!, prerequisites: [CleanString!]!): Project!
 }

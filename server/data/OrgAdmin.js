@@ -6,7 +6,7 @@ const getOrgAdmins = function(orgID) {
 	return dbQuery("CALL get_org_admins_by_org_id(?)", [orgID]).then((data) => data);
 };
 
-const addOrgAdmins = function(email, password, name, org_id) {
+const addOrgAdmins = function(email, password, name, org_id, year) {
 	if(year == null) year = new Date().getFullYear();
 	const setAutoCommit = () =>  { return dbQuery("SET AUTOCOMMIT=0").then(() => startTransaction(), (err) => new GraphQLError(err)); };
 	const startTransaction = () => { return dbQuery("BEGIN").then(() => addOrgAdmin(email, name, password, year), (err) => new GraphQLError(err)); };
