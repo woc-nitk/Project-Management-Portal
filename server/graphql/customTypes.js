@@ -10,12 +10,13 @@ const testDate = (date) => {
 		const year = parseInt(date.split("-")[0]);
 		const month = parseInt(date.split("-")[1]);
 		const day = parseInt(date.split("-")[2]);
-		if( (!oddMonths.includes(month) && day >= 31) || (month == 1 && day > 29) ) return new GraphQLError("Invalid Date");
-		else if( !isLeapYear(year) && month == 1 && day == 29 ) return new GraphQLError("Invalid Date");
+		if( (!oddMonths.includes(month) && day >= 31) || (month == 2 && day > 29) ) return new GraphQLError("Invalid Date");
+		else if( !isLeapYear(year) && month == 2 && day == 29 ) return new GraphQLError("Invalid Date");
 		else return date;
 	}
-}
-const oddMonths = [0, 2, 4, 6, 7, 9, 11];
+	return new GraphQLError("Invalid Date");
+};
+const oddMonths = [1, 3, 5, 7, 8, 10, 12];
 
 const serializeYear = (year) => {
 	if(typeof year === "number" && testYear(year)) {
