@@ -154,7 +154,7 @@ type Mutation {
 	): OrgAdmin!
 	deleteOrgAdmin(orgAdminId: ID!): Boolean!
 	addMentorToOrg(mentor_id: ID!, org_id: [ID!]!): Mentor!
-	removeMentorFromOrg(mentor_id: ID, org_id: [ID!]!): Mentor!
+	removeMentorFromOrg(mentor_id: ID!, org_id: [ID!]!): Mentor!
 	addMentorToProject(mentor_id: ID!, project_id: [ID!]!): Mentor!
-	removeMentorFromProject(mentor_id: ID, project_id: [ID!]!): Mentor!
+	removeMentorFromProject(mentor_id: ID!, project_id: [ID!]!): Mentor!
 }
