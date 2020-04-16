@@ -19,7 +19,7 @@ const addMentor = function(email, name, password, org_id) {
 };
 
 const deleteMentor = function(mentorID) {
-	
+	return dbQuery("CALL delete_mentor(?)", [mentorID]).then(() => true, (error) => new GraphQLError(error));
 };
 
 const MentorResolvers = {

@@ -34,7 +34,7 @@ CREATE TABLE `Applicants` (
   PRIMARY KEY (`applicant_id`,`absolute_year`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -116,13 +116,11 @@ DROP TABLE IF EXISTS `Mentor_belongs_to`;
 CREATE TABLE `Mentor_belongs_to` (
   `mentor_id` int(11) NOT NULL,
   `org_id` int(11) NOT NULL,
-  `absolute_year` year(4) NOT NULL,
-  PRIMARY KEY (`mentor_id`,`org_id`,`absolute_year`),
-  KEY `org_id_in_mentor_belongs_to` (`org_id`),
-  KEY `mentor_id_and_abs_year_id_in_mentor_belongs_to` (`mentor_id`,`absolute_year`),
-  KEY `absolue_year_id_in_mentor_belongs_to_idx` (`absolute_year`),
-  CONSTRAINT `mentor_id_and_abs_year_id_in_mentor_belongs_to` FOREIGN KEY (`mentor_id`, `absolute_year`) REFERENCES `Mentors` (`mentor_id`, `absolute_year`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `org_id_in_mentor_belongs_to` FOREIGN KEY (`org_id`) REFERENCES `Organizations` (`org_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  PRIMARY KEY (`mentor_id`,`org_id`),
+  KEY `mentor_id_in_mentor_belongs_to` (`mentor_id`),
+  KEY `org_id` (`org_id`),
+  CONSTRAINT `mentor_id_in_mentor_belongs_to` FOREIGN KEY (`mentor_id`) REFERENCES `Mentors` (`mentor_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `org_id_and_abs_year_in_mentor_belongs_to` FOREIGN KEY (`org_id`) REFERENCES `Organizations` (`org_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -180,7 +178,7 @@ CREATE TABLE `Mentors` (
   PRIMARY KEY (`mentor_id`,`absolute_year`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -230,13 +228,11 @@ DROP TABLE IF EXISTS `Org_admin_belongs_to`;
 CREATE TABLE `Org_admin_belongs_to` (
   `org_id` int(11) NOT NULL,
   `org_admin_id` int(11) NOT NULL,
-  `absolute_year` year(4) NOT NULL,
-  PRIMARY KEY (`org_id`,`org_admin_id`,`absolute_year`),
-  KEY `org_id_and_abs_year_in_org_admin_belongs_to` (`org_id`,`absolute_year`),
+  PRIMARY KEY (`org_id`,`org_admin_id`),
   KEY `org_admin_id_idx` (`org_admin_id`),
-  KEY `absolute_year_in_org_admin_belongs_to_idx` (`absolute_year`),
+  KEY `org_id_and_abs_year_in_org_admin_belongs_to` (`org_id`),
   CONSTRAINT `org_admin_id_in_org_admin_belongs_to` FOREIGN KEY (`org_admin_id`) REFERENCES `Org_Admins` (`org_admin_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `org_id_and_abs_year_in_org_admin_belongs_to` FOREIGN KEY (`org_id`, `absolute_year`) REFERENCES `Organizations` (`org_id`, `absolute_year`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `org_id_and_abs_year_in_org_admin_belongs_to` FOREIGN KEY (`org_id`) REFERENCES `Organizations` (`org_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -262,7 +258,7 @@ CREATE TABLE `Organizations` (
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`org_id`,`absolute_year`),
   UNIQUE KEY `name_UNIQUE` (`org_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -482,6 +478,7 @@ IN _project_id INT, IN _applicant_id INT, IN _absolute_year YEAR
 )
 BEGIN
 INSERT INTO Application(project_id, applicant_id, accepted, result, absolute_year) Values(_project_id, _applicant_id, 0, 0, _absolute_year);
+SELECT project_id, applicant_id FROM Application WHERE Application.applicant_id = _applicant_id AND Appliction.project_id = _project_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -503,6 +500,7 @@ IN _email VARCHAR(255), IN _name VARCHAR(20), IN _mentor_password VARCHAR(128), 
 )
 BEGIN
 INSERT INTO Mentors(email, mentor_name, mentor_password, absolute_year ) VALUES(_email, _name, _mentor_password, _absolute_year);
+SELECT mentor_id FROM Mentors WHERE Mentors.email = _email AND Mentors.absolute_year = _absolute_year;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -541,10 +539,10 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `add_mentor_belongs_to`(
-IN _mentor_id INT, IN _org_id INT, IN _absolute_year YEAR
+IN _mentor_id INT, IN _org_id INT
 )
 BEGIN
-INSERT INTO Mentor_belongs_to Values(_mentor_id, _org_id, _absolute_year);
+INSERT INTO Mentor_belongs_to Values(_mentor_id, _org_id);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -566,6 +564,7 @@ IN _org_name VARCHAR(100), IN _absolute_year YEAR
 )
 BEGIN
 INSERT INTO Organizations(org_name, absolute_year) Values(_org_name, _absolute_year); 
+SELECT org_id FROM Organizations WHERE Organizations.org_name = _org_name AND Organizations.absolute_year = _absolute_year;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -587,6 +586,7 @@ IN _email VARCHAR(255), IN _name VARCHAR(20), IN _org_admin_password VARCHAR(128
 )
 BEGIN
 INSERT INTO Org_Admins(email, org_admin_name, org_admin_password, absolute_year ) VALUES(_email, _name, _org_admin_password, _absolute_year);
+SELECT org_admin_id FROM Org_Admins WHERE Org_Admins.email = _email AND Org_Admins.org_admin_name = _name AND Org_Admins.absolute_year = _absolute_year; 
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -604,10 +604,10 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `add_org_admin_belongs_to`(
-IN _org_id INT, IN _org_admin_id INT, IN _absolute_year YEAR
+IN _org_id INT, IN _org_admin_id INT
 )
 BEGIN
-INSERT INTO Org_admin_belongs_to Values(_org_id, _org_admin_id, _absolute_year);
+INSERT INTO Org_admin_belongs_to Values(_org_id, _org_admin_id);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -794,10 +794,10 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_mentor`(
-IN _mentor_id INT, IN _absolute_year YEAR
+IN _mentor_id INT
 )
 BEGIN
-DELETE FROM Mentors WHERE Mentors.mentor_id = _mentor_id AND Mentors.absolute_year = _absolute_year;
+DELETE FROM Mentors WHERE Mentors.mentor_id = _mentor_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -815,11 +815,11 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_mentored_by`(
-IN _project_id INT, IN _mentor_id INT, IN _absolute_year YEAR
+IN _project_id INT, IN _mentor_id INT
 )
 BEGIN
 DELETE FROM Mentored_By 
-WHERE Mentored_By.project_id = _project_id AND Mentored_By.mentor_id = _mentor_id AND Mentored_By.absolute_year = _absolute_year;
+WHERE Mentored_By.project_id = _project_id AND Mentored_By.mentor_id = _mentor_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -837,11 +837,11 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_mentor_belongs_to`(
-IN _mentor_id INT, IN _org_id INT, IN _absolute_year YEAR
+IN _mentor_id INT, IN _org_id INT
 )
 BEGIN
 DELETE FROM Mentor_belongs_to 
-WHERE Mentor_belongs_to.mentor_id = _mentor_id AND Mentor_belongs_to.org_id = _org_id AND Mentor_belongs_to.absolute_year = _absolute_year;
+WHERE Mentor_belongs_to.mentor_id = _mentor_id AND Mentor_belongs_to.org_id = _org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -859,10 +859,10 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_organization`(
-IN _org_id INT, IN _absolute_year YEAR
+IN _org_id INT
 )
 BEGIN
-DELETE FROM Organizations WHERE Organizations.org_id = _org_id AND Organizations.absolute_year = _absolute_year;
+DELETE FROM Organizations WHERE Organizations.org_id = _org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -880,10 +880,10 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_org_admin`(
-IN _org_admin_id INT, IN _absolute_year YEAR
+IN _org_admin_id INT
 )
 BEGIN
-DELETE FROM Org_Admins WHERE Org_Admins.org_admin_id = _org_admin_id AND Org_Admins.absolute_year = _absolute_year;
+DELETE FROM Org_Admins WHERE Org_Admins.org_admin_id = _org_admin_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1115,7 +1115,28 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_applicant`(
 IN _applicant_id INT
 )
 BEGIN
-SELECT project_id, applicant_id, absolute_year FROM Application WHERE Application.applicant_id = _applicant_id;
+SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.applicant_id = _applicant_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_applications_by_org` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_org`(
+IN _org_id INT
+)
+BEGIN
+SELECT Application.applicant_id, Application.project_id FROM Application INNER JOIN Maintained_By ON Application.project_id = Maintained_By.project_id AND  Maintained_By.org_id = _org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1136,7 +1157,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_project`(
 IN _project_id INT
 )
 BEGIN
-SELECT applicant_id, project_id FROM Application WHERE Application.project_id = _project_id;
+SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.project_id = _project_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1157,28 +1178,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_year`(
 IN _year YEAR
 )
 BEGIN
-SELECT * FROM Application WHERE Application.absolute_year = _year;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_application_by_org` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_application_by_org`(
-IN _org_id INT
-)
-BEGIN
-SELECT * FROM Application INNER JOIN Maintained_By ON Application.project_id = Maintained_By.project_id AND  Maintained_By.org_id = _org_id;
+SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.absolute_year = _year;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1623,4 +1623,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-15  2:19:10
+-- Dump completed on 2020-04-16 22:13:20

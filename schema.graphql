@@ -99,10 +99,10 @@ type Query {
 }
 
 type Mutation {
-	addApplication(project_id: ID!, applicant_id: ID!): Application
+	addApplication(project_id: ID!, applicant_id: ID!): Application!
 	deleteApplication(project_id: ID!, applicant_id: ID!): Boolean!
-	acceptOrRejectApplication(project_id: ID!, applicant_id: ID!, accept: Boolean!): Application
-	passOrFailApplication(project_id: ID!, applicant_id: ID!, result: Boolean!): Application
+	acceptOrRejectApplication(project_id: ID!, applicant_id: ID!, accept: Boolean!): Application!
+	passOrFailApplication(project_id: ID!, applicant_id: ID!, result: Boolean!): Application!
 	addProject(
 		name: CleanString!,
 		work: CleanString!,
@@ -113,19 +113,19 @@ type Mutation {
 		project_end_date: Date!,
 		organization_id: ID!,
 		mentor_ids: [ID!]!,
-	): Project
+	): Project!
 	deleteProject(project_id: ID!): Boolean!
 	updateProject(
 		project_id: ID!,
-		name: CleanString!,
-		work: CleanString!,
-		deliverables: CleanString!,
-		prerequisites: CleanString!, 
-		startDate: CleanString!,
-		endDate: CleanString!,
-		organization: CleanString!,
-		mentors: CleanString!,
-	): Project
+		name: CleanString,
+		work: CleanString,
+		deliverables: CleanString,
+		prerequisites: [CleanString!], 
+		startDate: Date,
+		endDate: Date,
+		organization: CleanString,
+		mentors: CleanString,
+	): Project!
 	addApplicant(
 		email: EmailAddress!,
 		password: Password!,
@@ -135,15 +135,15 @@ type Mutation {
 		applicant_year: Int!,
 	): Applicant!
 	deleteApplicant(applicant_id: ID!): Boolean!
-	editApplicant(applicant_id: ID!, email: EmailAddress!, password: Password!): Applicant!
+	editApplicant(applicant_id: ID!, email: EmailAddress, password: Password, applicant_year: Int): Applicant!
 	addMentor(
 		email: EmailAddress!,
 		password: Password!,
 		name: CleanString!,
 		org_id: [ID!]!,
-	): Mentor
+	): Mentor!
 	deleteMentor(mentorId: ID!): Boolean!
-	addOrganization(org_name: CleanString!): Organization
+	addOrganization(org_name: CleanString!): Organization!
 	deleteOrganization(org_id: ID!): Boolean!
 	addOrgAdmin(
 		email: EmailAddress!,
@@ -151,7 +151,7 @@ type Mutation {
 		name: CleanString!,
 		absolute_year: CleanString!,
 		organization_id: ID!,
-	): OrgAdmin
+	): OrgAdmin!
 	deleteOrgAdmin(orgAdminId: ID!): Boolean!
 	addMentorToOrg(mentor_id: ID!, org_id: [ID!]!): Mentor!
 	removeMentorFromOrg(mentor_id: ID, org_id: [ID!]!): Mentor!
