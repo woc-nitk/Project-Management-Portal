@@ -55,7 +55,7 @@ type Application {
 	result: Boolean!
 	project: Project!
 	applicant: Applicant!
-    absolute_year: Year!
+	absolute_year: Year!
 }
 
 type Organization {
