@@ -92,7 +92,7 @@ type Query {
 	mentor(mentorId: ID!): Mentor!
 	applicants(year: Year): [Applicant!]!
 	applicant(applicant_id: ID!): Applicant!
-    orgAdmin(org_admin_id: ID!): OrgAdmin!
+	orgAdmin(org_admin_id: ID!): OrgAdmin!
 	orgAdmins(org_id: ID): [OrgAdmin!]!	
 	superAdmins(year: Year): [SuperAdmin!]!
 	superAdmin(super_admin_id: ID!): SuperAdmin!
