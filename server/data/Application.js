@@ -11,8 +11,8 @@ const addApplication = function(projectID, applicantID) {
 	return dbQuery("CALL add_applicant(?,?,?)", [projectID, applicantID, year]).then((data) => data, (error) => new GraphQLError(error));
 };
 
-const deleteApplication = function(projectID, applicantID, year) {
-
+const deleteApplication = function(projectID, applicantID) {
+	return dbQuery("CALL delete_application(?,?)", [projectID, applicantID]).then(() => true, (error) => new GraphQLError(error));
 };
 
 const acceptorRejectApplication = function(projectID, applicantID, accept) {

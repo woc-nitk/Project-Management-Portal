@@ -8,7 +8,7 @@ const getApplicants = (year) => {
 };
 
 const deleteApplicant = function(applicantID) {
-	return dbQuery("CALL delete_applicant(?, ?)", [applicantID, year]).then(() => true, () => false);
+	return dbQuery("CALL delete_applicant(?, ?)", [applicantID, year]).then(() => true, (error) => new GraphQLError(error));
 };
 
 const addApplicant = function(email, password, firstName, middleName, lastName, applicantYear) {

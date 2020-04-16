@@ -25,7 +25,7 @@ const resolvers = {
 	},
 	Mutation: {
 		addApplication: (parent, args) => applications.addApplication(args.project_id, args.application_id),
-	    deleteApplication: (parent, args) => { applications.deleteApplication(); },
+	    deleteApplication: (parent, args) => applications.deleteApplication(args.project_id, args.application_id),
 	    acceptOrRejectApplication: (parent, args) => applications.acceptApplication(args.project_id, args.application_id, args.accept),
 	    passOrFailApplication: (parent, args) => applications.passApplication(args.project_id, args.application_id, args.result),
 		addProject: (parent, args) => { projects.addProject(); },

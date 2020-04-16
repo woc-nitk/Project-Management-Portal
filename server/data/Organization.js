@@ -12,7 +12,7 @@ const addOrganization = function(name) {
 };
 
 const deleteOrganization = function(orgID) {
-	return dbQuery("CALL delete_organization(?)", [orgID]).then(() => true, () => false);
+	return dbQuery("CALL delete_organization(?)", [orgID]).then(() => true, (error) => new GraphQLError(error));
 };
 
 const OrganizationResolvers = {
