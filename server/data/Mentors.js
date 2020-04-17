@@ -1,5 +1,6 @@
 const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
+const auth = require("../config/auth");
 
 
 const getMentors = function(year, orgID) {
@@ -7,8 +8,9 @@ const getMentors = function(year, orgID) {
 	return dbQuery("CALL get_mentors_by_org(?)", [orgID]).then((data) => data);
 };
 
-const addMentor = function(email, name, password, org_id) {
+const addMentor = function(email, password, name, org_id) {
 	const year = new Date().getFullYear();
+	password = auth.hash(password);
 	const setAutoCommit = () =>  { return dbQuery("SET AUTOCOMMIT=0").then(() => startTransaction(), (err) => new GraphQLError(err)); };
 	const startTransaction = () => { return dbQuery("BEGIN").then(() => addMentorToMentors(email, name, password, year), (err) => new GraphQLError(err)); };
 	const addMentorToMentors = (email, name, password, year) => { return dbQuery("CALL add_mentor(?,?,?,?)", [email, name, password, year]).then((data) => addMentorOrgs(data[0].mentor_id, org_id.length), (error) => rollbackTransaction(error)); };

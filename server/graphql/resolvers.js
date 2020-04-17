@@ -6,6 +6,7 @@ const organizations = require("../data/Organization");
 const projects = require("../data/Projects");
 const superAdmins = require("../data/SuperAdmin");
 const customTypes = require("./customTypes");
+const auth = require("../config/auth");
 
 const resolvers = {
 	Query: {
@@ -24,6 +25,8 @@ const resolvers = {
 		superAdmin: (parent, args) => { return { "super_admin_id": args.super_admin_id }; }
 	},
 	Mutation: {
+		login: (parent, args) => auth.login(args.email, args.password),
+		signUp: (parent, args) => auth.signUp(args.email, args.password, args.first_name, args.middle_name, args.last_name, args.applicant_year),
 		addApplication: (parent, args) => applications.addApplication(args.project_id, args.application_id),
 		deleteApplication: (parent, args) => applications.deleteApplication(args.project_id, args.application_id),
 		acceptOrRejectApplication: (parent, args) => applications.acceptApplication(args.project_id, args.application_id, args.accept),

@@ -1,5 +1,6 @@
 const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
+const auth = require("../config/auth");
 
 
 const getApplicants = (year) => {
@@ -13,6 +14,7 @@ const deleteApplicant = function(applicantID) {
 
 const addApplicant = function(email, password, firstName, middleName, lastName, applicantYear) {
 	const year = new Date().getFullYear();
+	password = auth.hash(password);
 	return dbQuery("CALL add_applicant(?,?,?,?,?,?,?)", [email, firstName, middleName, lastName, applicantYear, password, year]).then((data) => data[0], (error) => new GraphQLError(error));
 };
 
