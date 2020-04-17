@@ -20,7 +20,7 @@ const getApplications = function(year, projectID, orgID, applicantID) {
 
 const addApplication = function(projectID, applicantID) {
 	const year = new Date().getFullYear();
-	return dbQuery("CALL add_applicant(?,?,?)", [projectID, applicantID, year]).then((data) => data, (error) => new GraphQLError(error));
+	return dbQuery("CALL add_application(?,?,?)", [projectID, applicantID, year]).then((data) => data, (error) => new GraphQLError(error));
 };
 
 const deleteApplication = function(projectID, applicantID) {

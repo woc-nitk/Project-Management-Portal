@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "express-session": "^1.17.0",
     "graphql-shield": "^7.2.4",
     "graphql-yoga": "^1.18.3",
     "jsonwebtoken": "^8.5.1",
