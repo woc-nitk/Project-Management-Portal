@@ -142,7 +142,7 @@ type Mutation {
 		name: CleanString!,
 		org_id: [ID!]!,
 	): Mentor!
-	deleteMentor(mentorId: ID!): Boolean!
+	deleteMentor(mentor_id: ID!): Boolean!
 	addOrganization(org_name: CleanString!): Organization!
 	deleteOrganization(org_id: ID!): Boolean!
 	addOrgAdmin(
