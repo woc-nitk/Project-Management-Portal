@@ -83,18 +83,18 @@ type Project {
 
 
 type Query {
-	projects(year: Year, orgId: ID, mentor_id: ID, applicant_id: ID): [Project!]!
+	projects(absolute_year: Year, org_id: ID, mentor_id: ID, applicant_id: ID): [Project!]!
 	project(id: ID!): Project!
-	organizations(year: Year): [Organization!]!
+	organizations(absolute_year: Year): [Organization!]!
 	organization(org_id: ID!): Organization!
-	applications(year: Year, applicant_id: ID, project_id: ID, orgId: ID): [Application!]!	
-	mentors(year: Year, org_id: ID): [Mentor!]!
-	mentor(mentorId: ID!): Mentor!
-	applicants(year: Year): [Applicant!]!
+	applications(absolute_year: Year, applicant_id: ID, project_id: ID, org_id: ID): [Application!]!	
+	mentors(absolute_year: Year, org_id: ID): [Mentor!]!
+	mentor(mentor_id: ID!): Mentor!
+	applicants(absolute_year: Year): [Applicant!]!
 	applicant(applicant_id: ID!): Applicant!
 	orgAdmin(org_admin_id: ID!): OrgAdmin!
 	orgAdmins(org_id: ID): [OrgAdmin!]!	
-	superAdmins(year: Year): [SuperAdmin!]!
+	superAdmins(absolute_year: Year): [SuperAdmin!]!
 	superAdmin(super_admin_id: ID!): SuperAdmin!
 }
 
@@ -152,7 +152,7 @@ type Mutation {
 		absolute_year: CleanString!,
 		organization_id: ID!,
 	): OrgAdmin!
-	deleteOrgAdmin(orgAdminId: ID!): Boolean!
+	deleteOrgAdmin(org_admin_id: ID!): Boolean!
 	addMentorToOrg(mentor_id: ID!, org_id: [ID!]!): Mentor!
 	removeMentorFromOrg(mentor_id: ID!, org_id: [ID!]!): Mentor!
 	addMentorToProject(mentor_id: ID!, project_id: [ID!]!): Mentor!

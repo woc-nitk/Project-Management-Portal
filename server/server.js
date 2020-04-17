@@ -4,7 +4,7 @@ const GQLresolvers = require("./graphql/resolvers");
 const server = new GraphQLServer({
 	typeDefs: "../schema.graphql",
 	resolvers: GQLresolvers.resolvers,
-	context: ({request}) => { console.log("------------");console.log(request.headers.authorization || {}) },
+	context: ({request}) => { console.log("------------");console.log(request.headers || {}); },
 	resolverValidationOptions: { requireResolversForResolveType: false },
 });
 
