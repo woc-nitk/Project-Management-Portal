@@ -11,11 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "graphql-shield": "^7.2.4",
     "graphql-yoga": "^1.18.3",
+    "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-google": "^0.14.0"
+    "eslint-config-google": "^0.14.0",
+    "nodemon": "^2.0.3"
   }
 }

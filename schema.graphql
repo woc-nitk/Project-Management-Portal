@@ -149,8 +149,8 @@ type Mutation {
 		email: EmailAddress!,
 		password: Password!,
 		name: CleanString!,
-		absolute_year: CleanString!,
-		organization_id: ID!,
+		absolute_year: Year!,
+		org_id: ID!,
 	): OrgAdmin!
 	deleteOrgAdmin(org_admin_id: ID!): Boolean!
 	addMentorToOrg(mentor_id: ID!, org_id: [ID!]!): Mentor!
