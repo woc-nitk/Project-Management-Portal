@@ -5,15 +5,16 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js --config nodemon.json"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^4.0.1",
     "dotenv": "^8.2.0",
     "express-session": "^1.17.0",
+    "graphql-shield": "^7.2.5",
     "graphql-yoga": "^1.18.3",
-    "macaroons.js": "^0.3.8",
     "mysql": "^2.18.1"
   },
   "devDependencies": {

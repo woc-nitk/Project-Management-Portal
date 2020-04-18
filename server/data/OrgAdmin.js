@@ -1,5 +1,6 @@
 const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
+const auth = require("../config/auth");
 
 
 const getOrgAdmins = function(orgID) {
@@ -8,6 +9,7 @@ const getOrgAdmins = function(orgID) {
 
 const addOrgAdmin = function(email, password, name, org_id, year) {
 	if(year == null) year = new Date().getFullYear();
+	password = auth.hash(password);
 	const setAutoCommit = () =>  { return dbQuery("SET AUTOCOMMIT=0").then(() => startTransaction(), (err) => new GraphQLError(err)); };
 	const startTransaction = () => { return dbQuery("BEGIN").then(() => addOrgAdmin(email, name, password, year), (err) => new GraphQLError(err)); };
 	const addOrgAdmin = (email, name, password, year) => { return dbQuery("CALL add_org_admin(?,?,?,?)", [email, name, password, year]).then((data) => addOrgAdminOrg(data[0].org_admin_id), (error) => rollbackTransaction(error)); };
