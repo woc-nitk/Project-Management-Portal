@@ -1,0 +1,44 @@
+:root {
+  /* All the colors to be used for the project are defined below.
+  These are the nord color scheme(https://www.nordtheme.com/) colors with two additions: 
+    a very dark color --dark-0 and 
+    the pure white --silver-3
+  */
+  --dark-0: #242933; /* Darkest dark */
+  --dark-1: #2e3440;
+  --dark-2: #3b4252;
+  --dark-4: #434c5e;
+  --dark-5: #4c566a; /* Lightest dark */
+
+  --silver-0: #d8dee9; /* Darkest white shade */
+  --silver-1: #e5e9f0;
+  --silver-2: #eceff4;
+  --silver-3: #ffffff; /* Lightest white shade, basically white */
+
+  --blue-0: #5e81ac; /* Darkest blue */
+  --blue-1: #81a1c1;
+  --blue-2: #88c0d0; /* Lightest blue */
+  --blue-3: #8fbcbb; /* This is a kind of greenish blue color */
+
+  /* Misc colors */
+  --red: #bf616a;
+  --orange: #d08770;
+  --yellow: #ebcb8b;
+  --green: #a3be8c;
+  --purple: #b48ead;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
