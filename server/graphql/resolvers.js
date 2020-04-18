@@ -62,6 +62,7 @@ const resolvers = {
         args.last_name,
         args.applicant_year
       ),
+    renewAuth: (parent, args) => auth.generateNewJwt(args.refresh),
     addApplication: (parent, args) =>
       applications.addApplication(args.project_id, args.application_id),
     deleteApplication: (parent, args) =>

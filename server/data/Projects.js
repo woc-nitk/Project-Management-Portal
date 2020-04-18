@@ -23,10 +23,20 @@ const addProject = function(name, work, deliverables, prerequisites, year, start
 	if(year == null) year = new Date().getFullYear();
 	const setAutoCommit = () =>  { return dbQuery("SET AUTOCOMMIT=0").then(() => startTransaction(), (err) => new GraphQLError(err)); };
 	const startTransaction = () => { return dbQuery("BEGIN").then(() => addProject(name, work, deliverables, year, startDate, endDate), (err) => new GraphQLError(err)); };
-	const addProject = (name, work, deliverables, year, startDate, endDate) => { return dbQuery("CALL add_project(?,?,?,?,?,?)", [name, work, deliverables, year, startDate, endDate]).then((data) => addProjectToOrg(data[0].project_id, org_id), (error) => rollbackTransaction(error)); };
-	const addProjectToOrg = (project_id) => { return dbQuery("CALL add_project_maintained_by(?,?)",[project_id, org_id]).then(() => addMentorsToProject(project_id, mentor_id.length), (error) => rollbackTransaction(error)); };
-	const addMentorsToProject = (project_id, mentor_id_length) => { if(mentor_id_length > 0) return dbQuery("CALL add_mentored_by(?,?)", [project_id, parseInt(mentor_id[mentor_id_length-1])]).then(() => addMentorsToProject(project_id, mentor_id_length-1), (error) => rollbackTransaction(error)); else if(mentor_id_length == 0) return addPrerequisitesToProject(project_id, prerequisites.length); };
-	const addPrerequisitesToProject = (project_id, prerequisites_length) => { if(prerequisites_length > 0) return dbQuery("CALL add_prerequisite(?,?)", [project_id, prerequisites[prerequisites_length-1]]).then(() => addPrerequisitesToProject(project_id, prerequisites_length-1), (error) => rollbackTransaction(error)); else if(prerequisites_length == 0) return commitTransaction(project_id); };
+	const addProject = (name, work, deliverables, year, startDate, endDate) => { return dbQuery("CALL add_project(?,?,?,?,?,?)", [name, work, deliverables, year, startDate, endDate])
+		.then((data) => addProjectToOrg(data[0].project_id, org_id), 
+			(error) => rollbackTransaction(error)); };
+	const addProjectToOrg = (project_id) => { return dbQuery("CALL add_project_maintained_by(?,?)",[project_id, org_id])
+		.then(() => addMentorsToProject(project_id, mentor_id.length), 
+			(error) => rollbackTransaction(error)); };
+	const addMentorsToProject = (project_id, mentor_id_length) => { if(mentor_id_length > 0) return dbQuery("CALL add_mentored_by(?,?)", [project_id, parseInt(mentor_id[mentor_id_length-1])])
+		.then(() => addMentorsToProject(project_id, mentor_id_length-1), 
+			(error) => rollbackTransaction(error)); 
+	else if(mentor_id_length == 0) return addPrerequisitesToProject(project_id, prerequisites.length); };
+	const addPrerequisitesToProject = (project_id, prerequisites_length) => { if(prerequisites_length > 0) return dbQuery("CALL add_prerequisite(?,?)", [project_id, prerequisites[prerequisites_length-1]])
+		.then(() => addPrerequisitesToProject(project_id, prerequisites_length-1),
+			(error) => rollbackTransaction(error)); 
+	else if(prerequisites_length == 0) return commitTransaction(project_id); };
 	const commitTransaction = (project_id) => { return dbQuery("COMMIT").then(() => { return { "project_id": project_id }; }, (error) => new GraphQLError(error)); };
 	const rollbackTransaction = (error) => { return dbQuery("ROLLBACK").then(() => new GraphQLError(error), (error) => new GraphQLError(error)); };
 	return setAutoCommit();
@@ -39,38 +49,64 @@ const deleteProject = function(projectID) {
 const updateProject = function(projectID, name, work, deliverables, startDate, endDate) {
 	const setAutoCommit = () =>  { return dbQuery("SET AUTOCOMMIT=0").then(() => startTransaction(), (err) => new GraphQLError(err)); };
 	const startTransaction = () => { return dbQuery("BEGIN").then(() => updateName(name), (err) => new GraphQLError(err)); };
-	const updateName = (name) => { if(name != null) return dbQuery("UPDATE Project SET project_name = (?) WHERE project_id = ?", [name, projectID]).then(() => updateWork(work), (error) => rollbackTransaction(error)); else return updateWork(work); };
-	const updateWork = (work) => { if(work != null) return dbQuery("UPDATE Project SET work_to_be_done = (?) WHERE project_id = ?", [work, projectID]).then(() => updateWork(work), (error) => new rollbackTransaction(error)); else return updateDeliverables(deliverables); };
-	const updateDeliverables = (deliverables) => { if(deliverables != null) return dbQuery("UPDATE Project SET deliverables = (?) WHERE project_id = ?", [deliverables, projectID]).then(() => updateStartDate(startDate), (error) => new rollbackTransaction(error)); else return updateStartDate(startDate); };
-	const updateStartDate = (startDate) => { if(startDate != null) return dbQuery("UPDATE Project SET project_start_date = (?) WHERE project_id = ?", [startDate, projectID]).then(() => updateEndDate(endDate), (error) => new rollbackTransaction(error)); else return updateEndDate(endDate); };
-	const updateEndDate = (endDate) => { if(endDate != null) return dbQuery("UPDATE Project SET project_end_date = (?) WHERE project_id = (?)", [endDate, projectID]).then(() => commitTransaction(projectID), (error) => new rollbackTransaction(error)); else return commitTransaction(projectID); };
+	const updateName = (name) => { if(name != null) return dbQuery("UPDATE Project SET project_name = (?) WHERE project_id = ?", [name, projectID])
+		.then(() => updateWork(work), (error) => rollbackTransaction(error)); 
+	else return updateWork(work); };
+	const updateWork = (work) => { if(work != null) return dbQuery("UPDATE Project SET work_to_be_done = (?) WHERE project_id = ?", [work, projectID])
+		.then(() => updateWork(work), (error) => new rollbackTransaction(error)); 
+	else return updateDeliverables(deliverables); };
+	const updateDeliverables = (deliverables) => { if(deliverables != null) return dbQuery("UPDATE Project SET deliverables = (?) WHERE project_id = ?", [deliverables, projectID])
+		.then(() => updateStartDate(startDate), (error) => new rollbackTransaction(error));
+	else return updateStartDate(startDate); };
+	const updateStartDate = (startDate) => { if(startDate != null) return dbQuery("UPDATE Project SET project_start_date = (?) WHERE project_id = ?", [startDate, projectID])
+		.then(() => updateEndDate(endDate), (error) => new rollbackTransaction(error)); 
+	else return updateEndDate(endDate); };
+	const updateEndDate = (endDate) => { if(endDate != null) return dbQuery("UPDATE Project SET project_end_date = (?) WHERE project_id = (?)", [endDate, projectID])
+		.then(() => commitTransaction(projectID), (error) => new rollbackTransaction(error)); 
+	else return commitTransaction(projectID); };
 	const commitTransaction = (org_admin_id) => { return dbQuery("COMMIT").then(() => { return { "org_admin_id": org_admin_id }; }, (error) => new GraphQLError(error)); };
 	const rollbackTransaction = (error) => { return dbQuery("ROLLBACK").then(() => new GraphQLError(error), (error) => new GraphQLError(error)); };
 	return setAutoCommit();
 };
 
 const addPrerequisites = function(projectID, prerequisites) {
-	const startFunction = (prerequisites_length) => { if(prerequisites_length > 0) return dbQuery("CALL add_prerequisite(?,?)",[projectID, prerequisites[prerequisites_length-1]]).then(() => startFunction(prerequisites-1), (error) => new GraphQLError(error)); else if(prerequisites_length == 0) return projectID; };
+	const startFunction = (prerequisites_length) => { if(prerequisites_length > 0) return dbQuery("CALL add_prerequisite(?,?)",[projectID, prerequisites[prerequisites_length-1]])
+		.then(() => startFunction(prerequisites-1), 
+			(error) => new GraphQLError(error)); 
+	else if(prerequisites_length == 0) return projectID; };
 	return startFunction(prerequisites.length);
 };
 
 const removePrerequisites = function(projectID, prerequisites) {
-	const startFunction = (prerequisites_length) => { if(prerequisites_length > 0) return dbQuery("CALL delete_prerequisite(?,?)",[projectID, prerequisites[prerequisites_length-1]]).then(() => startFunction(prerequisites-1), (error) => new GraphQLError(error)); else if(prerequisites_length == 0) return projectID; };
+	const startFunction = (prerequisites_length) => { if(prerequisites_length > 0) return dbQuery("CALL delete_prerequisite(?,?)",[projectID, prerequisites[prerequisites_length-1]])
+		.then(() => startFunction(prerequisites-1), 
+			(error) => new GraphQLError(error)); 
+	else if(prerequisites_length == 0) return projectID; };
 	return startFunction(prerequisites.length);
 };
 
 const ProjectsResolvers = {
-	id: (parent) => dbQuery("SELECT project_id FROM Project WHERE Project.project_id = (?)", [parent.project_id]).then((data) => data ? data.project_id : new GraphQLError("No such entry")),
-	name: (parent) => dbQuery("SELECT project_name FROM Project WHERE Project.project_id = (?)", [parent.project_id]).then((data) => data ? data.project_name : new GraphQLError("No such entry")),
-	work: (parent) => dbQuery("SELECT project_id FROM Project WHERE Project.project_id = (?)", [parent.project_id]).then((data) => data ? data.project_id : new GraphQLError("No such entry")),
-	deliverables: (parent) => dbQuery("SELECT project_id FROM Project WHERE Project.project_id = (?)", [parent.project_id]).then((data) => data ? data.project_id : new GraphQLError("No such entry")),
-	prerequisites: (parent) => dbQuery("CALL get_prerequisites(?)", [parent.project_id]).then((data) => data ? data : new GraphQLError("No such entry")), 
-	absolute_year: (parent) => dbQuery("SELECT absolute_year FROM Project WHERE Project.project_id = (?)", [parent.project_id]).then((data) => data ? data.absolute_year : new GraphQLError("No such entry")),
-	project_start_date: (parent) => dbQuery("SELECT project_start_date FROM Project WHERE Project.project_id = (?)", [parent.project_id]).then((data) => data ? data.project_start_date : new GraphQLError("No such entry")),
-	project_end_date: (parent) => dbQuery("SELECT project_end_date FROM Project WHERE Project.project_id = (?)", [parent.project_id]).then((data) => data ? data.project_end_date : new GraphQLError("No such entry")),
-	organization: (parent) => dbQuery("SELECT org_id FROM Maintained_By WHERE Maintained_By.project_id = (?)", [parent.project_id]).then((data) => data ? data.org_id : new GraphQLError("No such entry")),
+	id: (parent) => dbQuery("SELECT project_id FROM Project WHERE Project.project_id = (?)", [parent.project_id])
+		.then((data) => data ? data.project_id : new GraphQLError("No such entry")),
+	name: (parent) => dbQuery("SELECT project_name FROM Project WHERE Project.project_id = (?)", [parent.project_id])
+		.then((data) => data ? data.project_name : new GraphQLError("No such entry")),
+	work: (parent) => dbQuery("SELECT project_id FROM Project WHERE Project.project_id = (?)", [parent.project_id])
+		.then((data) => data ? data.project_id : new GraphQLError("No such entry")),
+	deliverables: (parent) => dbQuery("SELECT project_id FROM Project WHERE Project.project_id = (?)", [parent.project_id])
+		.then((data) => data ? data.project_id : new GraphQLError("No such entry")),
+	prerequisites: (parent) => dbQuery("CALL get_prerequisites(?)", [parent.project_id])
+		.then((data) => data ? data : new GraphQLError("No such entry")), 
+	absolute_year: (parent) => dbQuery("SELECT absolute_year FROM Project WHERE Project.project_id = (?)", [parent.project_id])
+		.then((data) => data ? data.absolute_year : new GraphQLError("No such entry")),
+	project_start_date: (parent) => dbQuery("SELECT project_start_date FROM Project WHERE Project.project_id = (?)", [parent.project_id])
+		.then((data) => data ? data.project_start_date : new GraphQLError("No such entry")),
+	project_end_date: (parent) => dbQuery("SELECT project_end_date FROM Project WHERE Project.project_id = (?)", [parent.project_id])
+		.then((data) => data ? data.project_end_date : new GraphQLError("No such entry")),
+	organization: (parent) => dbQuery("SELECT org_id FROM Maintained_By WHERE Maintained_By.project_id = (?)", [parent.project_id])
+		.then((data) => data ? data.org_id : new GraphQLError("No such entry")),
 	mentors: (parent) => dbQuery("CALL get_mentors_by_project(?)", [parent.project_id]).then((data) => data ? data : new GraphQLError("No such entry")),  
-	applications: (parent) => dbQuery("CALL get_applications_by_project(?)", [parent.project_id]).then((data) => data ? data : new GraphQLError("No such entry")),
+	applications: (parent) => dbQuery("CALL get_applications_by_project(?)", [parent.project_id])
+		.then((data) => data ? data : new GraphQLError("No such entry")),
 };
 
 

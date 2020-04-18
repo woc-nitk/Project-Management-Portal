@@ -1,10 +1,51 @@
 const bcrypt = require("bcrypt");
 const { GraphQLError } = require("graphql");
 const { dbQuery } = require("./db");
+const jwt = require("jsonwebtoken");
+const env = require("dotenv");
+const uuid = require("uuid");
+const redisClient = require("redis").createClient();
+env.config();
+
+const redisSet = (auth, refresh) => {
+  redisClient.hset(refresh, "token", auth);
+  redisClient.expire(refresh, 60 * 60 * 24);
+};
 
 const hash = (password) => bcrypt.hashSync(password, 10);
 const compare = (password, passwordHash) =>
   bcrypt.compareSync(password, passwordHash);
+
+const generatejwt = (ID, type) =>
+  jwt.sign({ id: ID, type: type }, process.env.APP_SECRET, {
+    expiresIn: "1hr",
+  });
+
+const verifyjwt = (auth) => {
+  const result = jwt.verify(auth, process.env.APP_SECRET, (error, decoded) => {
+    if (error) return new GraphQLError(error);
+    return decoded;
+  });
+  return result;
+};
+
+const generateNewJwt = (refresh) => {
+  return new Promise((resolve, reject) =>
+    redisClient.hget(refresh, "token", (error, result) => {
+      if (error) reject(new GraphQLError(error));
+      const decoded = jwt.decode(result);
+      const newjwt = generatejwt(decoded.id, decoded.type, (error, result) => {
+        if (error) return new GraphQLError(error);
+        return result;
+      });
+      const newRefresh = uuid.v4();
+      redisSet(newjwt, newRefresh);
+      const data = { auth: newjwt, refresh: newRefresh };
+      console.log(data);
+      resolve(data);
+    })
+  );
+};
 
 const login = (email, password) => {
   const year = new Date().getFullYear();
@@ -14,9 +55,12 @@ const login = (email, password) => {
       [email, year]
     ).then(
       (data) => {
-        if (data && compare(password, data.mentor_password))
-          return { id: data.mentor_id, type: "mentor" };
-        else return new GraphQLError("Account not found");
+        if (data && compare(password, data.mentor_password)) {
+          const jwt = generatejwt(data.mentor_id, "mentor");
+          const refresh = uuid.v4();
+          redisSet(jwt, refresh);
+          return { auth: jwt, refresh: refresh };
+        } else return new GraphQLError("Invalid Credentials");
       },
       (error) => new GraphQLError(error)
     );
@@ -27,9 +71,12 @@ const login = (email, password) => {
       [email, year]
     ).then(
       (data) => {
-        if (data && compare(password, data.org_admin_password))
-          return { id: data.org_admin_id, type: "orgAdmin" };
-        else return checkMentor(email, password);
+        if (data && compare(password, data.org_admin_password)) {
+          const jwt = generatejwt(data.org_admin_id, "orgAdmin");
+          const refresh = uuid.v4();
+          redisSet(jwt, refresh);
+          return { auth: jwt, refresh: refresh };
+        } else return checkMentor(email, password);
       },
       (error) => new GraphQLError(error)
     );
@@ -40,9 +87,12 @@ const login = (email, password) => {
       [email, year]
     ).then(
       (data) => {
-        if (data && compare(password, data.super_admin_password))
-          return { id: data.super_admin_id, type: "superAdmin" };
-        else return checkOrgAdmin(email, password);
+        if (data && compare(password, data.super_admin_password)) {
+          const jwt = generatejwt(data.super_admin_id, "superAdmin");
+          const refresh = uuid.v4();
+          redisSet(jwt, refresh);
+          return { auth: jwt, refresh: refresh };
+        } else return checkOrgAdmin(email, password);
       },
       (error) => new GraphQLError(error)
     );
@@ -53,9 +103,12 @@ const login = (email, password) => {
       [email, year]
     ).then(
       (data) => {
-        if (data && compare(password, data.applicant_password))
-          return { id: data.applicant_id, type: "applicant" };
-        else return checkSuperAdmin(email, password);
+        if (data && compare(password, data.applicant_password)) {
+          const jwt = generatejwt(data.applicant_id, "applicant");
+          const refresh = uuid.v4();
+          redisSet(jwt, refresh);
+          return { auth: jwt, refresh: refresh };
+        } else return checkSuperAdmin(email, password);
       },
       (error) => new GraphQLError(error)
     );
@@ -88,4 +141,12 @@ const signUp = (
   return { id: val, type: "applicant" };
 };
 
-module.exports = { login, signUp, hash, compare };
+module.exports = {
+  login,
+  signUp,
+  hash,
+  compare,
+  generatejwt,
+  verifyjwt,
+  generateNewJwt,
+};

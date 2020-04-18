@@ -16,11 +16,16 @@ const deleteOrganization = function(orgID) {
 };
 
 const OrganizationResolvers = {
-	id: (parent) => dbQuery("SELECT org_id FROM Organizations WHERE org_id = (?)", [parent.org_id]).then((data) => data ? data.org_id : new GraphQLError("No such entry")),
-	name: (parent) => dbQuery("SELECT org_name FROM Organizations WHERE org_id = (?)", [parent.org_id]).then((data) => data ? data.org_name : new GraphQLError("No such entry")),
-	projects: (parent) => dbQuery("CALL get_projects_by_org(?)", [parent.org_id]).then((data) => data ? data : new GraphQLError("No such entry")),
-	mentors: (parent) => dbQuery("CALL get_mentors_by_org(?)", [parent.org_id]).then((data) => data ? data : new GraphQLError("No such entry")),
-	OrgAdmins: (parent) => dbQuery("CALL get_org_admins_by_org_id(?)", [parent.org_id]).then((data) => data ? data : new GraphQLError("No such entry")),
+	id: (parent) => dbQuery("SELECT org_id FROM Organizations WHERE org_id = (?)", [parent.org_id])
+		.then((data) => data ? data.org_id : new GraphQLError("No such entry")),
+	name: (parent) => dbQuery("SELECT org_name FROM Organizations WHERE org_id = (?)", [parent.org_id])
+		.then((data) => data ? data.org_name : new GraphQLError("No such entry")),
+	projects: (parent) => dbQuery("CALL get_projects_by_org(?)", [parent.org_id])
+		.then((data) => data ? data : new GraphQLError("No such entry")),
+	mentors: (parent) => dbQuery("CALL get_mentors_by_org(?)", [parent.org_id])
+		.then((data) => data ? data : new GraphQLError("No such entry")),
+	OrgAdmins: (parent) => dbQuery("CALL get_org_admins_by_org_id(?)", [parent.org_id])
+		.then((data) => data ? data : new GraphQLError("No such entry")),
 };
 
 
