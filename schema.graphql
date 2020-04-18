@@ -98,9 +98,13 @@ type Query {
 	superAdmin(super_admin_id: ID!): SuperAdmin!
 }
 
+type AuthPayload {
+	auth: String!
+	refresh: String!
+}
 
 type Mutation {
-	login(email: EmailAddress!, password: Password!): String!
+	login(email: EmailAddress!, password: Password!): AuthPayload!
 	signUp(
 		email: EmailAddress!, 
 		password: Password!,
@@ -108,7 +112,7 @@ type Mutation {
 		middle_name: CleanString!,
 		last_name: CleanString!,
 		applicant_year: Int!,		
-	): String!
+	): AuthPayload!
 	addApplication(project_id: ID!, applicant_id: ID!): Application!
 	deleteApplication(project_id: ID!, applicant_id: ID!): Boolean!
 	acceptOrRejectApplication(project_id: ID!, applicant_id: ID!, accept: Boolean!): Application!

@@ -15,7 +15,8 @@
     "graphql-shield": "^7.2.5",
     "graphql-yoga": "^1.18.3",
     "jsonwebtoken": "^8.5.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
