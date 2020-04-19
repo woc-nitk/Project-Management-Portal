@@ -5,19 +5,25 @@ const getOrganizations = function (year) {
 	return dbQuery("CALL get_orgs_by_year(?)", [year]).then((data) => data);
 };
 
-const addOrganization = function (name) {
-	const year = new Date().getFullYear();
-	return dbQuery("CALL add_organization(?,?)", [name, year]).then(
-		(data) => data[0],
-		(error) => new GraphQLError(error)
-	);
+const addOrganization = function (name, user) {
+	if (user.type == "superAdmin") {
+		const year = new Date().getFullYear();
+		return dbQuery("CALL add_organization(?,?)", [name, year]).then(
+			(data) => data[0],
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
-const deleteOrganization = function (orgID) {
-	return dbQuery("CALL delete_organization(?)", [orgID]).then(
-		() => true,
-		(error) => new GraphQLError(error)
-	);
+const deleteOrganization = function (orgID, user) {
+	if (user.type == "superAdmin") {
+		return dbQuery("CALL delete_organization(?)", [orgID]).then(
+			() => true,
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
 const OrganizationResolvers = {

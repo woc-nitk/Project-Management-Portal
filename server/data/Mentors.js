@@ -2,12 +2,32 @@ const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
 const auth = require("../config/auth");
 
-const getMentors = function (year, orgID) {
-	if (year == null) year = new Date().getFullYear();
-	return dbQuery("CALL get_mentors_by_org(?)", [orgID]).then((data) => data);
+const checkOrgAdminOrg = (org_admin_id, org_id) => {
+	return dbQuery("SELECT org_admin_id FROM Org_admin_belongs_to WHERE org_admin_id = (?) AND org_id = (?)", [org_admin_id, org_id]).then((data) => {if(data) return true; return false;});
 };
 
-const addMentor = function (email, password, name, org_id) {
+const checkOrgAdminMentor = (org_admin_id, mentor_id) => {
+	return dbQuery("SELECT org_admin_id FROM Org_admin_belongs_to INNER JOIN Mentot_belongs_to ON Org_admin_belongs_to.org_id = Mentor_belongs_to.org_id WHERE org_admin_id = (?) AND mentor_id = (?)", [org_admin_id,mentor_id]).then((data) => { if(data) return true; return false;});
+};
+
+const checkOrgAdminProject = (org_admin_id, project_id) => {
+	const check = (project_id_length) => { if(project_id_length > 0) return dbQuery("SELECT org_admin_id FROM Org_admin_belongs_to INNER JOIN Maintained_By ON Org_admin_belongs_to.org_id = Maintained_By.org_id WHERE org_admin_id = (?) AND project_id = (?)", [org_admin_id, project_id[project_id_length-1]]).then((data) => { if(data) return check(project_id_length-1); return false;}); else if(project_id_length == 0) return true; };
+	return check(project_id.length);
+};
+
+const getMentors = function (year, orgID, user) {
+	if(user.type == "orgAdmin" || user.type == "superAdmin") {
+		if (year == null) year = new Date().getFullYear();
+		return dbQuery("CALL get_mentors_by_org(?)", [orgID]).then((data) => data);
+	}
+	else return new GraphQLError("Insufficient permissions");
+};
+
+const addMentor = async function (email, password, name, org_id, user) {
+	if( !((user.type == "orgAdmin" && org_id.length == 1 && checkOrgAdminOrg(user.id, org_id)) || user.type == "superAdmin")) {
+		console.log(user);
+		return new GraphQLError("Insufficient permissions.");
+	}
 	const year = new Date().getFullYear();
 	password = auth.hash(password);
 	const setAutoCommit = () => {
@@ -61,14 +81,20 @@ const addMentor = function (email, password, name, org_id) {
 	return setAutoCommit();
 };
 
-const deleteMentor = function (mentorID) {
+const deleteMentor = function (mentorID, user) {
+	if(!((user.type == "orgAdmin" && checkOrgAdminMentor(user.id, mentorID)) || user.type == "superAdmin")) {
+		return new GraphQLError("Insufficient permissions.");
+	}
 	return dbQuery("CALL delete_mentor(?)", [mentorID]).then(
 		() => true,
 		(error) => new GraphQLError(error)
 	);
 };
 
-const addMentorToOrg = function (mentor_id, org_id) {
+const addMentorToOrg = function (mentor_id, org_id, user) {
+	if(!((user.type == "orgAdmin" && org_id.length == 1 && checkOrgAdminOrg(user.id,org_id)) || user.type == "superAdmin")) {
+		return new GraphQLError("Insufficient permissions.");
+	}
 	const startFunction = (org_id_length) => {
 		if (org_id_length > 0)
 			return dbQuery("CALL add_mentor_belongs_to(?,?)", [
@@ -83,7 +109,10 @@ const addMentorToOrg = function (mentor_id, org_id) {
 	return startFunction(org_id.length);
 };
 
-const removeMentorFromOrg = function (mentor_id, org_id) {
+const removeMentorFromOrg = function (mentor_id, org_id, user) {
+	if(!((user.type == "orgAdmin" && org_id.length == 1 && checkOrgAdminOrg(user.id,org_id)) || user.type == "superAdmin")) {
+		return new GraphQLError("Insufficient permissions.");
+	}
 	const startFunction = (org_id_length) => {
 		if (org_id_length > 0)
 			return dbQuery("CALL delete_mentor_belongs_to(?,?)", [
@@ -98,7 +127,10 @@ const removeMentorFromOrg = function (mentor_id, org_id) {
 	return startFunction(org_id.length);
 };
 
-const addMentorToProject = function (mentor_id, project_id) {
+const addMentorToProject = function (mentor_id, project_id, user) {
+	if(!((user.type == "orgAdmin" && checkOrgAdminProject(user.id,project_id)) || user.type == "superAdmin")) {
+		return new GraphQLError("Insufficient permissions.");
+	}
 	const startFunction = (project_id_length) => {
 		if (project_id_length > 0)
 			return dbQuery("CALL add_mentored_by(?,?)", [
@@ -113,7 +145,10 @@ const addMentorToProject = function (mentor_id, project_id) {
 	return startFunction(project_id.length);
 };
 
-const removeMentorFromProject = function (mentor_id, project_id) {
+const removeMentorFromProject = function (mentor_id, project_id, user) {
+	if(!((user.type == "orgAdmin" && checkOrgAdminProject(user.id,project_id)) || user.type == "superAdmin")) {
+		return new GraphQLError("Insufficient permissions.");
+	}
 	const startFunction = (project_id_length) => {
 		if (project_id_length > 0)
 			return dbQuery("CALL delete_mentored_by(?,?)", [

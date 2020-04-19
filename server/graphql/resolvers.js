@@ -7,15 +7,17 @@ const projects = require("../data/Projects");
 const superAdmins = require("../data/SuperAdmin");
 const customTypes = require("./customTypes");
 const auth = require("../config/auth");
+const { GraphQLError } = require("graphql");
 
 const resolvers = {
 	Query: {
-		projects: (parent, args) =>
+		projects: (parent, args, context) =>
 			projects.getProjects(
 				args.absolute_year,
 				args.org_id,
 				args.mentor_id,
-				args.applicant_id
+				args.applicant_id,
+				context.user
 			),
 		project: (parent, args) => {
 			return { project_id: args.project_id };
@@ -25,21 +27,28 @@ const resolvers = {
 		organization: (parent, args) => {
 			return { org_id: args.org_id };
 		},
-		applications: (parent, args) =>
+		applications: (parent, args, context) =>
 			applications.getApplications(
 				args.absolute_year,
 				args.project_id,
 				args.org_id,
-				args.applicant_id
+				args.applicant_id,
+				context.user
 			),
-		mentors: (parent, args) =>
-			mentors.getMentors(args.absolute_year, args.org_id),
+		mentors: (parent, args, context) =>
+			mentors.getMentors(args.absolute_year, args.org_id, context.user),
 		mentor: (parent, args) => {
 			return { mentor_id: args.mentor_id };
 		},
-		applicants: (parent, args) =>
-			applicants.getApplicants(args.absolute_year),
-		applicant: (parent, args) => {
+		applicants: (parent, args, context) =>
+			applicants.getApplicants(args.absolute_year, context.user),
+		applicant: (parent, args, context) => {
+			if (
+				context.user == undefined ||
+				(context.user.type == "applicant" &&
+					args.applicant_id != context.user.id)
+			)
+				return new GraphQLError("Insufficient permissions.");
 			return { applicant_id: args.applicant_id };
 		},
 		orgAdmin: (parent, args) => {
@@ -64,26 +73,33 @@ const resolvers = {
 				args.applicant_year
 			),
 		renewAuth: (parent, args) => auth.generateNewJwt(args.refresh),
-		addApplication: (parent, args) =>
-			applications.addApplication(args.project_id, args.application_id),
-		deleteApplication: (parent, args) =>
+		addApplication: (parent, args, context) =>
+			applications.addApplication(
+				args.project_id,
+				args.applicant_id,
+				context.user
+			),
+		deleteApplication: (parent, args, context) =>
 			applications.deleteApplication(
 				args.project_id,
-				args.application_id
+				args.applicant_id,
+				context.user
 			),
-		acceptOrRejectApplication: (parent, args) =>
+		acceptOrRejectApplication: (parent, args, context) =>
 			applications.acceptApplication(
 				args.project_id,
-				args.application_id,
-				args.accept
+				args.applicant_id,
+				args.accept,
+				context.user
 			),
-		passOrFailApplication: (parent, args) =>
+		passOrFailApplication: (parent, args, context) =>
 			applications.passApplication(
 				args.project_id,
-				args.application_id,
-				args.result
+				args.applicant_id,
+				args.result,
+				context.user
 			),
-		addProject: (parent, args) =>
+		addProject: (parent, args, context) =>
 			projects.addProject(
 				args.name,
 				args.work,
@@ -93,71 +109,98 @@ const resolvers = {
 				args.project_start_date,
 				args.project_end_date,
 				args.org_id,
-				args.mentor_ids
+				args.mentor_ids,
+				context.user
 			),
-		deleteProject: (parent, args) =>
-			projects.deleteProject(args.project_id),
-		updateProject: (parent, args) => {
+		deleteProject: (parent, args, context) =>
+			projects.deleteProject(args.project_id, context.user),
+		updateProject: (parent, args, context) => {
 			projects.updateProject(
 				args.project_id,
 				args.name,
 				args.work,
 				args.deliverables,
 				args.project_start_date,
-				args.project_end_date
+				args.project_end_date,
+				context.user
 			);
 		},
-		addApplicant: (parent, args) =>
+		addApplicant: (parent, args, context) =>
 			applicants.addApplicant(
 				args.email,
 				args.password,
 				args.first_name,
 				args.middle_name,
 				args.last_name,
-				args.applicant_year
+				args.applicant_year,
+				context.user
 			),
-		deleteApplicant: (parent, args) =>
-			applicants.deleteApplicant(args.applicant_id),
-		editApplicant: (parent, args) =>
+		deleteApplicant: (parent, args, context) =>
+			applicants.deleteApplicant(args.applicant_id, context.user),
+		editApplicant: (parent, args, context) =>
 			applicants.editApplicant(
 				args.applicant_id,
 				args.email,
-				args.password
+				args.password,
+				context.user
 			),
-		addMentor: (parent, args) =>
+		addMentor: (parent, args, context) =>
 			mentors.addMentor(
 				args.email,
 				args.password,
 				args.name,
-				args.org_id
+				args.org_id,
+				context.user
 			),
-		deleteMentor: (parent, args) => mentors.deleteMentor(args.mentor_id),
-		addOrganization: (parent, args) =>
-			organizations.addOrganization(args.org_name),
-		deleteOrganization: (parent, args) =>
-			organizations.deleteOrganization(args.org_id),
-		addOrgAdmin: (parent, args) =>
+		deleteMentor: (parent, args, context) =>
+			mentors.deleteMentor(args.mentor_id, context.user),
+		addOrganization: (parent, args, context) =>
+			organizations.addOrganization(args.org_name, context.user),
+		deleteOrganization: (parent, args, context) =>
+			organizations.deleteOrganization(args.org_id, context.user),
+		addOrgAdmin: (parent, args, context) =>
 			orgAdmins.addOrgAdmin(
 				args.email,
 				args.password,
 				args.name,
 				args.org_id,
-				args.absolute_year
+				args.absolute_year,
+				context.user
 			),
-		deleteOrgAdmin: (parent, args) =>
-			orgAdmins.deleteOrgAdmin(args.org_admin_id),
-		addMentorToOrg: (parent, args) =>
-			mentors.addMentorToOrg(args.mentor_id, args.org_id),
-		removeMentorFromOrg: (parent, args) =>
-			mentors.removeMentorFromOrg(args.mentor_id, args.org_id),
-		addMentorToProject: (parent, args) =>
-			mentors.addMentorToProject(args.mentor_id, args.project_id),
-		removeMentorFromProject: (parent, args) =>
-			mentors.removeMentorFromProject(args.mentor_id, args.project_id),
-		addPrerequisites: (parent, args) =>
-			projects.addPrerequisites(args.project_id, args.prerequisites),
-		removePrerequisites: (parent, args) =>
-			projects.removePrerequisites(args.project_id, args.prerequisites)
+		deleteOrgAdmin: (parent, args, context) =>
+			orgAdmins.deleteOrgAdmin(args.org_admin_id, context.user),
+		addMentorToOrg: (parent, args, context) =>
+			mentors.addMentorToOrg(args.mentor_id, args.org_id, context.user),
+		removeMentorFromOrg: (parent, args, context) =>
+			mentors.removeMentorFromOrg(
+				args.mentor_id,
+				args.org_id,
+				context.user
+			),
+		addMentorToProject: (parent, args, context) =>
+			mentors.addMentorToProject(
+				args.mentor_id,
+				args.project_id,
+				context.user
+			),
+		removeMentorFromProject: (parent, args, context) =>
+			mentors.removeMentorFromProject(
+				args.mentor_id,
+				args.project_id,
+				context.user
+			),
+		addPrerequisites: (parent, args, context) =>
+			projects.addPrerequisites(
+				args.project_id,
+				args.prerequisites,
+				context.user
+			),
+		removePrerequisites: (parent, args, context) =>
+			projects.removePrerequisites(
+				args.project_id,
+				args.prerequisites,
+				context.user
+			)
 	},
 	Applicant: applicants.ApplicantResolvers,
 	Application: applications.ApplicationResolvers,

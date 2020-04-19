@@ -1,1 +1,0 @@
-const { shield, rule, } = require("graphql-shield");

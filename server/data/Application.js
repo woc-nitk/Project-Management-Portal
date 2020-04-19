@@ -1,12 +1,41 @@
 const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
 
-const getApplications = function (year, projectID, orgID, applicantID) {
+const checkProjectOrg = (project_id, org_admin_id) => {
+	return dbQuery(
+		"SELECT project_id FROM Maintained_By INNER JOIN Org_admin_belongs_to ON Maintained_By.org_id = Org_admin_belongs_to.org_id WHERE Maintained_By.project_id = (?) AND Org_admin_belongs_to.org_admin_id = (?)",
+		[project_id, org_admin_id]
+	).then((data) => {
+		if (data) return true;
+		return false;
+	});
+};
+
+const checkProjectMentor = (project_id, mentor_id) => {
+	return dbQuery(
+		"SELECT project_id FROM Mentored_By WHERE project_id = (?) AND mentor_id = (?)",
+		[project_id, mentor_id]
+	).then((data) => {
+		if (data) return true;
+		return false;
+	});
+};
+
+const getApplications = async function (
+	year,
+	projectID,
+	orgID,
+	applicantID,
+	user
+) {
 	if (
 		orgID == null &&
 		applicantID == null &&
 		year == null &&
-		projectID != null
+		projectID != null &&
+		((user.type == "orgAdmin" && checkProjectOrg(projectID, user.id)) ||
+			(user.type == "mentor" && checkProjectMentor(projectID, user.id)) ||
+			(await user.type) == "superAdmin")
 	) {
 		return dbQuery("CALL get_applications_by_project(?)", [projectID]).then(
 			(data) => data,
@@ -16,7 +45,9 @@ const getApplications = function (year, projectID, orgID, applicantID) {
 		projectID == null &&
 		applicantID == null &&
 		year == null &&
-		orgID != null
+		orgID != null &&
+		user.type !== "applicant" &&
+		user.type !== "mentor"
 	) {
 		return dbQuery("CALL get_applications_by_org(?)", [orgID]).then(
 			(data) => data,
@@ -26,7 +57,9 @@ const getApplications = function (year, projectID, orgID, applicantID) {
 		orgID == null &&
 		projectID == null &&
 		year == null &&
-		applicantID != null
+		applicantID != null &&
+		(user.type == "superAdmin" ||
+			(user.type == "applicant" && user.id == applicantID))
 	) {
 		return dbQuery("CALL get_applications_by_applicant(?)", [
 			applicantID
@@ -38,7 +71,8 @@ const getApplications = function (year, projectID, orgID, applicantID) {
 		orgID == null &&
 		projectID == null &&
 		applicantID == null &&
-		year != null
+		year != null &&
+		user.type == "superAdmin"
 	) {
 		return dbQuery("CALL get_applications_by_year(?)", [year]).then(
 			(data) => data,
@@ -50,52 +84,87 @@ const getApplications = function (year, projectID, orgID, applicantID) {
 		);
 };
 
-const addApplication = function (projectID, applicantID) {
-	const year = new Date().getFullYear();
-	return dbQuery("CALL add_application(?,?,?)", [
-		projectID,
-		applicantID,
-		year
-	]).then(
-		(data) => data,
-		(error) => new GraphQLError(error)
-	);
+const addApplication = async function (projectID, applicantID, user) {
+	console.log(user);
+	console.log(applicantID);
+	if (
+		(user.type == "applicant" && user.id == applicantID) ||
+		(user.type == "orgAdmin" && checkProjectOrg(projectID, user.id)) ||
+		user.type == "superAdmin"
+	) {
+		const year = new Date().getFullYear();
+		return dbQuery("CALL add_application(?,?,?)", [
+			projectID,
+			applicantID,
+			year
+		]).then(
+			(data) => data,
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
-const deleteApplication = function (projectID, applicantID) {
-	return dbQuery("CALL delete_application(?,?)", [
-		projectID,
-		applicantID
-	]).then(
-		() => true,
-		(error) => new GraphQLError(error)
-	);
+const deleteApplication = async function (projectID, applicantID, user) {
+	if (
+		(user.type == "applicant" && user.id == applicantID) ||
+		(user.type == "orgAdmin" && checkProjectOrg(projectID, user.id)) ||
+		(await user.type) == "superAdmin"
+	) {
+		return dbQuery("CALL delete_application(?,?)", [
+			projectID,
+			applicantID
+		]).then(
+			() => true,
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
-const acceptorRejectApplication = function (projectID, applicantID, accept) {
-	const year = new Date().getFullYear();
-	return dbQuery("CALL accept_or_reject_application(?,?,?,?)", [
-		projectID,
-		applicantID,
-		year,
-		accept
-	]).then(
-		(data) => data,
-		(error) => new GraphQLError(error)
-	);
+const acceptorRejectApplication = async function (
+	projectID,
+	applicantID,
+	accept,
+	user
+) {
+	if (
+		(user.type == "mentor" && checkProjectMentor(projectID, user.id)) ||
+		(user.type == "orgAdmin" && checkProjectOrg(projectID, user.id)) ||
+		(await user.type) == "superAdmin"
+	) {
+		const year = new Date().getFullYear();
+		return dbQuery("CALL accept_or_reject_application(?,?,?,?)", [
+			projectID,
+			applicantID,
+			year,
+			accept
+		]).then(
+			(data) => data,
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
-const passApplication = function (projectID, applicantID, result) {
-	const year = new Date().getFullYear();
-	return dbQuery("CALL success_or_failure_application(?,?,?,?)", [
-		projectID,
-		applicantID,
-		year,
-		result
-	]).then(
-		(data) => data,
-		(error) => new GraphQLError(error)
-	);
+const passApplication = async function (projectID, applicantID, result, user) {
+	if (
+		(user.type == "mentor" && checkProjectMentor(projectID, user.id)) ||
+		(user.type == "orgAdmin" && checkProjectOrg(projectID, user.id)) ||
+		(await user.type) == "superAdmin"
+	) {
+		const year = new Date().getFullYear();
+		return dbQuery("CALL success_or_failure_application(?,?,?,?)", [
+			projectID,
+			applicantID,
+			year,
+			result
+		]).then(
+			(data) => data,
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
 const ApplicationResolvers = {
@@ -103,16 +172,12 @@ const ApplicationResolvers = {
 		dbQuery(
 			"SELECT applicant_id FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
-		).then((data) =>
-			data ? data.applicant_id : new GraphQLError("No such entry")
-		),
+		).then((data) => (data ? data : new GraphQLError("No such entry"))),
 	project: (parent) =>
 		dbQuery(
 			"SELECT project_id FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
-		).then((data) =>
-			data ? data.project_id : new GraphQLError("No such entry")
-		),
+		).then((data) => (data ? data : new GraphQLError("No such entry"))),
 	accepted: (parent) =>
 		dbQuery(
 			"SELECT accepted FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",

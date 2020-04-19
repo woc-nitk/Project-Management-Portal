@@ -325,9 +325,7 @@ const ProjectsResolvers = {
 		dbQuery(
 			"SELECT org_id FROM Maintained_By WHERE Maintained_By.project_id = (?)",
 			[parent.project_id]
-		).then((data) =>
-			data ? data.org_id : new GraphQLError("No such entry")
-		),
+		).then((data) => (data ? data : new GraphQLError("No such entry"))),
 	mentors: (parent) =>
 		dbQuery("CALL get_mentors_by_project(?)", [
 			parent.project_id

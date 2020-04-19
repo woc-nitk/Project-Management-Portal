@@ -2,18 +2,24 @@ const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
 const auth = require("../config/auth");
 
-const getApplicants = (year) => {
-	if (year == null) year = new Date().getFullYear();
-	return dbQuery("CALL get_applicants_by_year(?)", [year]).then(
-		(data) => data
-	);
+const getApplicants = (year, user) => {
+	if (user.type == "superAdmin") {
+		if (year == null) year = new Date().getFullYear();
+		return dbQuery("CALL get_applicants_by_year(?)", [year]).then(
+			(data) => data
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
-const deleteApplicant = function (applicantID) {
-	return dbQuery("CALL delete_applicant(?, ?)", [applicantID]).then(
-		() => true,
-		(error) => new GraphQLError(error)
-	);
+const deleteApplicant = function (applicantID, user) {
+	if (user.type == "superAdmin") {
+		return dbQuery("CALL delete_applicant(?, ?)", [applicantID]).then(
+			() => true,
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
 const addApplicant = function (
@@ -22,35 +28,45 @@ const addApplicant = function (
 	firstName,
 	middleName,
 	lastName,
-	applicantYear
+	applicantYear,
+	user
 ) {
-	const year = new Date().getFullYear();
-	password = auth.hash(password);
-	return dbQuery("CALL add_applicant(?,?,?,?,?,?,?)", [
-		email,
-		firstName,
-		middleName,
-		lastName,
-		applicantYear,
-		password,
-		year
-	]).then(
-		(data) => data[0],
-		(error) => new GraphQLError(error)
-	);
+	if (user.type == "superAdmin") {
+		const year = new Date().getFullYear();
+		password = auth.hash(password);
+		return dbQuery("CALL add_applicant(?,?,?,?,?,?,?)", [
+			email,
+			firstName,
+			middleName,
+			lastName,
+			applicantYear,
+			password,
+			year
+		]).then(
+			(data) => data[0],
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
-const editApplicant = function (applicantID, email, password) {
-	const year = new Date().getFullYear();
-	return dbQuery("CALL update_applicant(?,?,?,?)", [
-		applicantID,
-		email,
-		password,
-		year
-	]).then(
-		(data) => data[0],
-		(error) => new GraphQLError(error)
-	);
+const editApplicant = function (applicantID, email, password, user) {
+	if (
+		user.type == "superAdmin" ||
+		(user.type == "applicant" && user.id == applicantID)
+	) {
+		const year = new Date().getFullYear();
+		return dbQuery("CALL update_applicant(?,?,?,?)", [
+			applicantID,
+			email,
+			password,
+			year
+		]).then(
+			(data) => data[0],
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
 };
 
 var ApplicantResolvers = {
@@ -61,14 +77,12 @@ var ApplicantResolvers = {
 		).then((data) =>
 			data ? data.applicant_id : new GraphQLError("No such entry")
 		),
-	email: (parent) => {
-		return dbQuery(
-			"SELECT email FROM Applicants WHERE applicant_id = (?)",
-			[parent.applicant_id]
-		).then((data) =>
+	email: (parent) =>
+		dbQuery("SELECT email FROM Applicants WHERE applicant_id = (?)", [
+			parent.applicant_id
+		]).then((data) =>
 			data ? data.email : new GraphQLError("No such entry")
-		);
-	},
+		),
 	first_name: (parent) =>
 		dbQuery("SELECT first_name FROM Applicants WHERE applicant_id = (?)", [
 			parent.applicant_id

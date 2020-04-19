@@ -8,7 +8,10 @@ const getOrgAdmins = function (orgID) {
 	);
 };
 
-const addOrgAdmin = function (email, password, name, org_id, year) {
+const addOrgAdmin = function (email, password, name, org_id, year, user) {
+	if (user.type !== "superAdmin") {
+		return new GraphQLError("Insufficient permissions.");
+	}
 	if (year == null) year = new Date().getFullYear();
 	password = auth.hash(password);
 	const setAutoCommit = () => {
@@ -60,7 +63,10 @@ const addOrgAdmin = function (email, password, name, org_id, year) {
 	return setAutoCommit();
 };
 
-const deleteOrgAdmin = function (orgAdminID) {
+const deleteOrgAdmin = function (orgAdminID, user) {
+	if (user.type !== "superAdmin") {
+		return new GraphQLError("Insufficient permissions.");
+	}
 	return dbQuery("CALL delete_org_admin(?)", [orgAdminID]).then(
 		() => true,
 		(error) => new GraphQLError(error)

@@ -134,7 +134,7 @@ const signUp = (
 ) => {
 	const year = new Date().getFullYear();
 	password = hash(password);
-	const val = dbQuery("CALL add_applicant(?,?,?,?,?,?,?)", [
+	return dbQuery("CALL add_applicant(?,?,?,?,?,?,?)", [
 		email,
 		firstName,
 		middleName,
@@ -143,10 +143,14 @@ const signUp = (
 		password,
 		year
 	]).then(
-		(data) => data[0],
+		(data) => {
+			const authToken = generatejwt(data[0].applicant_id, "applicant");
+			const refreshToken = uuid.v4();
+			redisSet(authToken, refreshToken);
+			return { auth: authToken, refresh: refreshToken };
+		},
 		(error) => new GraphQLError(error)
 	);
-	return { id: val, type: "applicant" };
 };
 
 module.exports = {
