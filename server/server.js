@@ -16,6 +16,12 @@ const server = new GraphQLServer({
 	}
 });
 
-server.start((details) =>
+const corsConfig = {
+	origin: "*",
+	exposedHeaders: ['auth', 'refresh'],
+	allowedHeaders: ['auth', 'refresh'],
+};
+
+server.start({cors: corsConfig}, (details) =>
 	console.log(`Server running on http://localhost:${details.port}`)
 );
