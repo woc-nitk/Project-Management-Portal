@@ -46,7 +46,8 @@ const resolvers = {
 			if (
 				context.user == undefined ||
 				(context.user.type == "applicant" &&
-					args.applicant_id != context.user.id)
+					args.applicant_id != context.user.id) ||
+				context.user != "applicant"
 			)
 				return new GraphQLError("Insufficient permissions.");
 			return { applicant_id: args.applicant_id };
@@ -77,6 +78,7 @@ const resolvers = {
 			applications.addApplication(
 				args.project_id,
 				args.applicant_id,
+				args.proposal,
 				context.user
 			),
 		deleteApplication: (parent, args, context) =>
@@ -200,6 +202,13 @@ const resolvers = {
 				args.project_id,
 				args.prerequisites,
 				context.user
+			),
+		updateProposal: (parent, args, context) =>
+			applications.updateProposal(
+				args.applicant_id,
+				args.project_id,
+				args.proposal,
+				context.user
 			)
 	},
 	Applicant: applicants.ApplicantResolvers,
@@ -213,7 +222,8 @@ const resolvers = {
 	CleanString: customTypes.CleanString,
 	EmailAddress: customTypes.EmailAddress,
 	Password: customTypes.Password,
-	Date: customTypes.Date
+	Date: customTypes.Date,
+	URL: customTypes.URL,
 };
 
 module.exports = { resolvers };

@@ -8,6 +8,8 @@ scalar CleanString
 
 scalar Password
 
+scalar URL
+
 interface User {
 	id: ID!
 	email: EmailAddress!
@@ -55,6 +57,7 @@ type Application {
 	result: Boolean!
 	project: Project!
 	applicant: Applicant!
+	proposal: URL!
 	absolute_year: Year!
 }
 
@@ -114,7 +117,7 @@ type Mutation {
 		applicant_year: Int!,		
 	): AuthPayload!
 	renewAuth(refresh: String!): AuthPayload!
-	addApplication(project_id: ID!, applicant_id: ID!): Application!
+	addApplication(project_id: ID!, applicant_id: ID!, proposal: URL!): Application!
 	deleteApplication(project_id: ID!, applicant_id: ID!): Boolean!
 	acceptOrRejectApplication(project_id: ID!, applicant_id: ID!, accept: Boolean!): Application!
 	passOrFailApplication(project_id: ID!, applicant_id: ID!, result: Boolean!): Application!
@@ -174,4 +177,5 @@ type Mutation {
 	removeMentorFromProject(mentor_id: ID!, project_id: [ID!]!): Mentor!
 	addPrerequisites(project_id: ID!, prerequisites: [CleanString!]!): Project!
 	removePrerequisites(project_id: ID!, prerequisites: [CleanString!]!): Project!
+	updateProposal(project_id: ID!, applicant_id: ID!, proposal: URL!): Application!
 }

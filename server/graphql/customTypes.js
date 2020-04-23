@@ -7,6 +7,10 @@ const testPassword = (password) =>
 	/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{5,}$/.test(password);
 const testDateRegex = (date) =>
 	/^(20\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/.test(date);
+const testURL = (url) =>
+	/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(
+		url
+	);
 const isLeapYear = (year) =>
 	(year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 const testDate = (date) => {
@@ -165,4 +169,33 @@ const Date = new GraphQLScalarType({
 	serialize: serializeDate
 });
 
-module.exports = { Year, EmailAddress, CleanString, Password, Date };
+const serializeURL = (url) => {
+	if (typeof url === "string" && testURL(url)) {
+		return url;
+	}
+	throw new GraphQLError("Invalid URL");
+};
+
+const parseURLValue = (url) => {
+	if (testURL(url)) {
+		return url;
+	}
+	throw new GraphQLError("Invalid URL");
+};
+
+const parseURLLiteral = (ast) => {
+	if (testEmailAddress(ast.value) && ast.kind == Kind.STRING) {
+		return ast.value;
+	}
+	throw new GraphQLError("Invalid URL");
+};
+
+const URL = new GraphQLScalarType({
+	name: "URL",
+	description: "Scalar for URLs",
+	parseLiteral: parseURLLiteral,
+	parseValue: parseURLValue,
+	serialize: serializeURL
+});
+
+module.exports = { Year, EmailAddress, CleanString, Password, Date, URL };

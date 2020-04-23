@@ -84,19 +84,18 @@ const getApplications = async function (
 		);
 };
 
-const addApplication = async function (projectID, applicantID, user) {
-	console.log(user);
-	console.log(applicantID);
+const addApplication = async function (projectID, applicantID, proposal, user) {
 	if (
 		(user.type == "applicant" && user.id == applicantID) ||
 		(user.type == "orgAdmin" && checkProjectOrg(projectID, user.id)) ||
 		user.type == "superAdmin"
 	) {
 		const year = new Date().getFullYear();
-		return dbQuery("CALL add_application(?,?,?)", [
+		return dbQuery("CALL add_application(?,?,?,?)", [
 			projectID,
 			applicantID,
-			year
+			year,
+			proposal
 		]).then(
 			(data) => data,
 			(error) => new GraphQLError(error)
@@ -116,6 +115,21 @@ const deleteApplication = async function (projectID, applicantID, user) {
 			applicantID
 		]).then(
 			() => true,
+			(error) => new GraphQLError(error)
+		);
+	}
+	return new GraphQLError("Insufficient permissions.");
+};
+
+const updateProposal = function (applicantID, projectID, proposal, user) {
+	if (user.type == "applicant" && user.id == applicantID) {
+		return dbQuery("CALL update_proposal(?,?,?)", [
+			projectID,
+			applicantID,
+			new Date().getFullYear(),
+			proposal
+		]).then(
+			(data) => data,
 			(error) => new GraphQLError(error)
 		);
 	}
@@ -198,7 +212,12 @@ const ApplicationResolvers = {
 			[parent.applicant_id, parent.project_id]
 		).then((data) =>
 			data ? data.absolute_year : new GraphQLError("No such entry")
-		)
+		),
+	proposal: (parent) =>
+		dbQuery(
+			"SELECT proposal FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
+			[parent.applicant_id, parent.project_id]
+		).then((data) => (data ? data : new GraphQLError("No such entry")))
 };
 
 module.exports = {
@@ -207,5 +226,6 @@ module.exports = {
 	deleteApplication,
 	acceptorRejectApplication,
 	passApplication,
+	updateProposal,
 	ApplicationResolvers
 };
