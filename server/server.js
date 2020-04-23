@@ -18,8 +18,8 @@ const server = new GraphQLServer({
 
 const corsConfig = {
 	origin: "*",
-	exposedHeaders: ['auth', 'refresh'],
-	allowedHeaders: ['auth', 'refresh'],
+	exposedHeaders: ["auth", "refresh"],
+	allowedHeaders: ["auth", "refresh"],
 };
 
 server.start({cors: corsConfig}, (details) =>

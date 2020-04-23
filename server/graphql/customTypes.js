@@ -8,7 +8,7 @@ const testPassword = (password) =>
 const testDateRegex = (date) =>
 	/^(20\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/.test(date);
 const testURL = (url) =>
-	/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(
+	/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/.test(
 		url
 	);
 const isLeapYear = (year) =>
