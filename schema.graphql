@@ -106,8 +106,15 @@ type AuthPayload {
 	refresh: String!
 }
 
+type LoginInfo {
+	auth: String!
+	refresh: String!
+	type: String!
+	id: ID!
+}
+
 type Mutation {
-	login(email: EmailAddress!, password: Password!): AuthPayload!
+	login(email: EmailAddress!, password: Password!): LoginInfo!
 	signUp(
 		email: EmailAddress!, 
 		password: Password!,

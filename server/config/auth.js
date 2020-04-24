@@ -68,7 +68,7 @@ const login = (email, password) => {
 					const jwt = generatejwt(data.mentor_id, "mentor");
 					const refresh = uuid.v4();
 					redisSet(jwt, refresh);
-					return { auth: jwt, refresh: refresh };
+					return { auth: jwt, refresh: refresh, type: "mentor", id: data.mentor_id };
 				} else return new GraphQLError("Invalid Credentials");
 			},
 			(error) => new GraphQLError(error)
@@ -84,7 +84,7 @@ const login = (email, password) => {
 					const jwt = generatejwt(data.org_admin_id, "orgAdmin");
 					const refresh = uuid.v4();
 					redisSet(jwt, refresh);
-					return { auth: jwt, refresh: refresh };
+					return { auth: jwt, refresh: refresh, type: "orgAdmin", id: data.org_admin_id };
 				} else return checkMentor(email, password);
 			},
 			(error) => new GraphQLError(error)
@@ -100,7 +100,7 @@ const login = (email, password) => {
 					const jwt = generatejwt(data.super_admin_id, "superAdmin");
 					const refresh = uuid.v4();
 					redisSet(jwt, refresh);
-					return { auth: jwt, refresh: refresh };
+					return { auth: jwt, refresh: refresh, type: "superAdmin", id: data.super_admin_id };
 				} else return checkOrgAdmin(email, password);
 			},
 			(error) => new GraphQLError(error)
@@ -116,7 +116,7 @@ const login = (email, password) => {
 					const jwt = generatejwt(data.applicant_id, "applicant");
 					const refresh = uuid.v4();
 					redisSet(jwt, refresh);
-					return { auth: jwt, refresh: refresh };
+					return { auth: jwt, refresh: refresh, type: "applicant", id: data.applicant_id };
 				} else return checkSuperAdmin(email, password);
 			},
 			(error) => new GraphQLError(error)

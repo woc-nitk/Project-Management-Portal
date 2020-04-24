@@ -116,7 +116,7 @@ const resolvers = {
 			),
 		deleteProject: (parent, args, context) =>
 			projects.deleteProject(args.project_id, context.user),
-		updateProject: (parent, args, context) => {
+		updateProject: (parent, args, context) => 
 			projects.updateProject(
 				args.project_id,
 				args.name,
@@ -125,8 +125,7 @@ const resolvers = {
 				args.project_start_date,
 				args.project_end_date,
 				context.user
-			);
-		},
+			),
 		addApplicant: (parent, args, context) =>
 			applicants.addApplicant(
 				args.email,
