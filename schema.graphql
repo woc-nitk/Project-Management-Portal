@@ -123,7 +123,7 @@ type Mutation {
 		last_name: CleanString!,
 		applicant_year: Int!,		
 	): AuthPayload!
-	renewAuth(refresh: String!): AuthPayload!
+	renewAuth(refresh: String!): LoginInfo!
 	addApplication(project_id: ID!, applicant_id: ID!, proposal: URL!): Application!
 	deleteApplication(project_id: ID!, applicant_id: ID!): Boolean!
 	acceptOrRejectApplication(project_id: ID!, applicant_id: ID!, accept: Boolean!): Application!

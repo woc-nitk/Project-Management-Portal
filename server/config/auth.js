@@ -49,7 +49,7 @@ const generateNewJwt = (refresh) => {
 			);
 			const newRefresh = uuid.v4();
 			redisSet(newjwt, newRefresh);
-			const data = { auth: newjwt, refresh: newRefresh };
+			const data = { auth: newjwt, refresh: newRefresh, type: decoded.type, id: decoded.id };
 			console.log(data);
 			resolve(data);
 		})
