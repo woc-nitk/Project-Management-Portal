@@ -5,6 +5,7 @@ import App from "./components/App";
 import ApolloClient from "apollo-boost";
 import { ApolloProvider } from "@apollo/react-hooks";
 import { getCookie } from "./cookieFunctions";
+import { CookiesProvider } from "react-cookie";
 
 const client = new ApolloClient({
   uri: "http://localhost:4000",
@@ -22,9 +23,11 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>
+    <CookiesProvider>
+      <ApolloProvider client={client}>
+        <App />
+      </ApolloProvider>
+    </CookiesProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

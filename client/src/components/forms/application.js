@@ -7,23 +7,21 @@ const ApplicationForm = () => {
     <div className="app">
       <Formik
         initialValues={{
-          orgName: ""
+          orgName: "",
         }}
-        onSubmit={async values => {
-          await new Promise(resolve => setTimeout(resolve, 500));
+        onSubmit={async (values) => {
+          await new Promise((resolve) => setTimeout(resolve, 500));
           alert(`The entereed link is :${values.link}`);
         }}
         validationSchema={Yup.object().shape({
-          link: Yup.string()
-            .url("enter a valid url")
-            .required("Required")
+          link: Yup.string().url("enter a valid url").required("Required"),
         })}
       >
         {({ dirty, handleReset, isSubmitting }) => (
           <Form>
             <h1>Proposal</h1>
             <label htmlFor="proposal" style={{ display: "block" }}>
-              Google Drive Link
+              Link To Proposal
             </label>
             <Field type="text" name="link" placeholder="link" />
             <ErrorMessage
