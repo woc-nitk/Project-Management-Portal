@@ -43,6 +43,9 @@ function App() {
         expires: new Date(now + 1 * 3600 * 1000),
       });
     },
+    onError(err){
+      console.log(err)
+  },
   });
 
   useEffect(() => {

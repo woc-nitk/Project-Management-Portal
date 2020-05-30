@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { getProjectsQuery } from "../../queries";
 
-export default function Projects() {
+export default function Organizations() {
   const { loading, data, error } = useQuery(getProjectsQuery);
   if (loading) {
     return <h1>Loading...</h1>;
