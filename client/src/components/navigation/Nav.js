@@ -15,6 +15,14 @@ export default function Nav() {
         <NavLink to="/about/" exact activeStyle={{ display: "none" }}>
           About
         </NavLink>
+
+        <NavLink to="/login/" exact activeStyle={{ display: "none" }}>
+          Login
+        </NavLink>
+
+        <NavLink to="/project/" exact activeStyle={{ display: "none" }}>
+          Projects
+        </NavLink>
       </nav>
       <button onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
         {theme === "light" ? "Dark theme" : "Light theme"}

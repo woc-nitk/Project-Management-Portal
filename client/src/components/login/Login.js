@@ -9,20 +9,32 @@ import { useCookies } from "react-cookie";
 import { UserContext } from "../../store/UserContext";
 
 const Login = ({ redirect = "/" }) => {
-  const [logInUser, { loading, error, data }] = useMutation(loginMutation);
-  const [cookies, setCookie, removeCookie] = useCookies(["refresh", "access"]);
+  const [cookie, setCookie, removeCookie] = useCookies(["refresh", "access"]);
   const [redirectURL, setURL] = useState(null);
   const [user, setUser] = useContext(UserContext);
+  const [logInUser, { error }] = useMutation(loginMutation, {
+    onCompleted({ login }) {
+      const now = new Date().getTime();
 
-  useEffect(() => {
-    if (data) {
-      console.log(data);
-      setUser(data.login);
-      setCookie("refresh", user.refresh, { path: "/" });
-      setCookie("access", user.auth, { path: "/" });
+      // Update the global user on data return
+      setUser(login);
+
+      // Set the refresh cookie for 7 hours from current time
+      setCookie("refresh", user.refresh, {
+        path: "/",
+        expires: new Date(now + 7 * 3600 * 1000),
+      });
+
+      // Set the access cookie for 1 hour from current time
+      setCookie("access", user.auth, {
+        path: "/",
+        expires: new Date(now + 1 * 3600 * 1000),
+      });
+
+      // Set the redirect url to the one passed or default value
       setURL(redirect);
-    }
-  }, [data]);
+    },
+  });
 
   if (redirectURL) {
     return <Redirect to={redirectURL} />;
@@ -35,10 +47,6 @@ const Login = ({ redirect = "/" }) => {
           email: "",
           password: "",
         }}
-        // onSubmit={async (values) => {
-        //   await new Promise((resolve) => setTimeout(resolve, 500));
-        //   alert(`The entered email is :${values.email}`);
-        // }}
         onSubmit={(values, { setSubmitting }) =>
           logInUser({ variables: values })
         }
@@ -80,8 +88,6 @@ const Login = ({ redirect = "/" }) => {
           </Form>
         )}
       </Formik>
-
-      {/* <MoreResources /> */}
     </div>
   );
 };
