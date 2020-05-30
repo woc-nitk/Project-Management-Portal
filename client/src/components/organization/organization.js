@@ -9,7 +9,7 @@ export default function Projects() {
     }
     if (error) {
         console.log(error);
-        return <h1>Error fetching projects</h1>;
+        return <h1>Error fetching organizations</h1>;
     }
 
     return (
