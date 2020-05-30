@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { getOrganizationsQuery } from "../../queries";
 
-export default function Projects() {
+export default function Organizations() {
     const { loading, data, error } = useQuery(getOrganizationsQuery);
     if (loading) {
         return <h1>Loading...</h1>;
@@ -15,8 +15,9 @@ export default function Projects() {
     return (
         <div>
         {data.organizations.map(organization => {
-                    return ( <div key={organization.id}>
-                    <h3>{organization.name}</h3>
+                    return (
+                    <div key={organization.id}>
+                        <h3>{organization.name}</h3>
                     </div>
                 )}
             )}
