@@ -24,7 +24,7 @@ export const getOrganizationsQuery = gql`
 
 export const getProjectQuery = gql`
   query($id: ID!) {
-    organization(id: $id) {
+    project(id: $id) {
       id
       name
       work

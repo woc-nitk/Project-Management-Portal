@@ -5,6 +5,9 @@ import { UserContext } from "../store/UserContext";
 import Home from "./homepage/Home";
 import About from "./aboutpage/About";
 import Projects from "./projectspage/Projects";
+import Project from "./projectspage/Project";
+import Organizations from "./organizationspage/Organizations";
+import Organization from "./organizationspage/Organization";
 import Nav from "./navigation/Nav";
 import { useCookies } from "react-cookie";
 import { useMutation } from "@apollo/react-hooks";
@@ -43,9 +46,9 @@ function App() {
         expires: new Date(now + 1 * 3600 * 1000),
       });
     },
-    onError(err){
-      console.log(err)
-  },
+    onError(err) {
+      console.log(err);
+    },
   });
 
   useEffect(() => {
@@ -70,10 +73,10 @@ function App() {
             <Route path="/about/" exact component={About} />
             <Route path="/login/" exact component={Login} />
             <Route path="/projects/" exact component={Projects} />
-            {/* <Route path="/profile/" exact component={Profile} />
-            <Route path="/projects/:id" exact component={Project} />
             <Route path="/organizations/" exact component={Organizations} />
-            <Route path="/organizations/:id" exact component={Organization} /> */}
+            {/* <Route path="/profile/" exact component={Profile} /> */}
+            <Route path="/project/:projectId" exact component={Project} />
+            <Route path="/organization/:orgId" exact component={Organization} />
           </ThemeContext.Provider>
         </UserContext.Provider>
       </Router>
