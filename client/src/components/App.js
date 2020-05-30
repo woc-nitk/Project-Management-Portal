@@ -4,6 +4,7 @@ import { ThemeContext } from "../store/ThemeContext";
 import { UserContext } from "../store/UserContext";
 import Home from "./homepage/Home";
 import About from "./aboutpage/About";
+import Projects from "./projectspage/Projects"
 import Nav from "./navigation/Nav";
 import { useCookies } from "react-cookie";
 import { useQuery } from "@apollo/react-hooks";

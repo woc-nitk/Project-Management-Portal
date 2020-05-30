@@ -14,12 +14,13 @@ export default function Projects() {
 
   return (
     <div>
-      {data.projects.map((project) => {
-        <div key={project.id}>
+      {data.projects.map(project => {
+       return ( <div key={project.id}>
           <h1>{project.name}</h1>
           <p>{project.work}</p>
-        </div>;
-      })}
+        </div>
+      )}
+      )}
     </div>
-  );
+)
 }
