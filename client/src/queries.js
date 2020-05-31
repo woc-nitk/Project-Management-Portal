@@ -62,7 +62,7 @@ export const refreshMutation = gql`
   mutation($refresh: String!) {
     renewAuth(refresh: $refresh) {
       id
-      role
+      type
       auth
       refresh
     }
@@ -73,7 +73,7 @@ export const loginMutation = gql`
   mutation($email: EmailAddress!, $password: Password!) {
     login(email: $email, password: $password) {
       id
-      role
+      type
       auth
       refresh
     }

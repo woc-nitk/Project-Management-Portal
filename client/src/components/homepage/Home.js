@@ -14,7 +14,7 @@ const Home = () => {
   return (
     <>
       <h1>NITK Winter of Code</h1>
-      <Timeline timeline={timeline}/>
+      <Timeline timelines={timeline}/>
     </>
   );
 };

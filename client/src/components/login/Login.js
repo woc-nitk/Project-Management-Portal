@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
-//import "./forms.css";
+import "../forms/forms.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { loginMutation } from "../../queries";
@@ -34,6 +34,9 @@ const Login = ({ redirect = "/" }) => {
       // Set the redirect url to the one passed or default value
       setURL(redirect);
     },
+    onError(error) {
+      console.log("Error occured - " + error);
+    }
   });
 
   if (redirectURL) {
