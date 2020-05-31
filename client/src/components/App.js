@@ -53,7 +53,7 @@ function App() {
 
   useEffect(() => {
     // First time when thge page loads, call the mutation
-    refresh({ variables: { refresh: cookies.refresh } });
+    refresh({ variables: { refresh: cookies.refresh || "asd" } });
 
     // Call the mutation every 1 hour because every one hour, the access token becomes invalid
     const interval = setInterval(() => {

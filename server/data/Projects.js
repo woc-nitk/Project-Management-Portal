@@ -42,6 +42,16 @@ const getProjects = function (year, orgID, mentorID, applicantID) {
 			(data) => data,
 			(error) => new GraphQLError(error)
 		);
+	} else if (
+		orgID == null &&
+		mentorID == null &&
+		applicantID == null &&
+		year == null
+	) {
+		return dbQuery("CALL get_projects_by_year(?)", [new Date().getFullYear()]).then(
+			(data) => data,
+			(error) => new GraphQLError(error)
+		);
 	} else
 		return new GraphQLError("Invalid arguments passed to Query projects");
 };
@@ -284,21 +294,21 @@ const ProjectsResolvers = {
 		),
 	work: (parent) =>
 		dbQuery(
-			"SELECT project_id FROM Project WHERE Project.project_id = (?)",
+			"SELECT work_to_be_done FROM Project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
-			data ? data.project_id : new GraphQLError("No such entry")
+			data ? data.work_to_be_done : new GraphQLError("No such entry")
 		),
 	deliverables: (parent) =>
 		dbQuery(
-			"SELECT project_id FROM Project WHERE Project.project_id = (?)",
+			"SELECT deliverables FROM Project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
-			data ? data.project_id : new GraphQLError("No such entry")
+			data ? data.deliverables : new GraphQLError("No such entry")
 		),
 	prerequisites: (parent) =>
 		dbQuery("CALL get_prerequisites(?)", [parent.project_id]).then((data) =>
-			data ? data : new GraphQLError("No such entry")
+			data ? data.map((value) => value.prerequisites) : new GraphQLError("No such entry")
 		),
 	absolute_year: (parent) =>
 		dbQuery(

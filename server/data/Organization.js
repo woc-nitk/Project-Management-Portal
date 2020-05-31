@@ -2,6 +2,9 @@ const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
 
 const getOrganizations = function (year) {
+	if(year == null) {
+		year = new Date().getFullYear();
+	}
 	return dbQuery("CALL get_orgs_by_year(?)", [year]).then((data) => data);
 };
 

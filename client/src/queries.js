@@ -8,7 +8,6 @@ export const getProjectsQuery = gql`
       id
       name
       work
-      prerequisites
     }
   }
 `;
@@ -24,7 +23,7 @@ export const getOrganizationsQuery = gql`
 
 export const getProjectQuery = gql`
   query($id: ID!) {
-    project(id: $id) {
+    project(project_id: $id) {
       id
       name
       work
@@ -37,7 +36,6 @@ export const getProjectQuery = gql`
       mentors {
         id
         name
-        email
       }
     }
   }

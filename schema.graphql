@@ -87,7 +87,7 @@ type Project {
 
 type Query {
 	projects(absolute_year: Year, org_id: ID, mentor_id: ID, applicant_id: ID): [Project!]!
-	project(id: ID!): Project!
+	project(project_id: ID!): Project!
 	organizations(absolute_year: Year): [Organization!]!
 	organization(org_id: ID!): Organization!
 	applications(absolute_year: Year, applicant_id: ID, project_id: ID, org_id: ID): [Application!]!	

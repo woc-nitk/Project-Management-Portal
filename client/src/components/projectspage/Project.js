@@ -23,10 +23,15 @@ export default function Projects({ match }) {
       <h1>{data.project.name}</h1>
       <p>{data.project.work}</p>
       <ul>
-        {data.projects.prerequisites.map((p, idx) => {
-          return <li key={idx}>p</li>;
+        {data.project.prerequisites.map((p, idx) => {
+          return <li key={idx}>{p}</li>;
         })}
       </ul>
+      <ul>
+      {data.project.mentors.map((p, idx) => {
+        return <li key={idx}>{p.name}</li>;
+      })}
+    </ul>
     </div>
   );
 }
