@@ -36,8 +36,8 @@ const verifyjwt = (auth) => {
 const generateNewJwt = (refresh) => {
 	return new Promise((resolve, reject) =>
 		redisClient.hget(refresh, "token", (error, result) => {
-			if (error) reject(new GraphQLError(error));
-			if(result == null) reject(new GraphQLError("Refresh token expired."));
+			if (error) return reject(new GraphQLError(error));
+			if(result == null) return reject(new GraphQLError("Refresh token expired."));
 			const decoded = jwt.decode(result);
 			const newjwt = generatejwt(
 				decoded.id,
@@ -51,7 +51,7 @@ const generateNewJwt = (refresh) => {
 			redisSet(newjwt, newRefresh);
 			const data = { auth: newjwt, refresh: newRefresh, type: decoded.type, id: decoded.id };
 			console.log(data);
-			resolve(data);
+			return resolve(data);
 		})
 	);
 };
