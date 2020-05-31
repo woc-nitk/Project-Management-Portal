@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import Timeline from "./Timeline";
+import { UserContext } from "../../store/UserContext";
 
 const timeline = [
     {event: "Projects announced", date:"April 15, 2020"},
@@ -11,10 +12,13 @@ const timeline = [
 ]
 
 const Home = () => {
+  const [user, setUser] = useContext(UserContext);
+  console.log(user);
   return (
     <>
       <h1>NITK Winter of Code</h1>
       <Timeline timelines={timeline}/>
+      <h1>{user.type}</h1>
     </>
   );
 };

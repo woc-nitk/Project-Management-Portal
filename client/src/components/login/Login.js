@@ -20,13 +20,13 @@ const Login = ({ redirect = "/" }) => {
       setUser(login);
 
       // Set the refresh cookie for 7 hours from current time
-      setCookie("refresh", user.refresh, {
+      setCookie("refresh", login.refresh, {
         path: "/",
         expires: new Date(now + 7 * 3600 * 1000),
       });
 
       // Set the access cookie for 1 hour from current time
-      setCookie("access", user.auth, {
+      setCookie("access", login.auth, {
         path: "/",
         expires: new Date(now + 1 * 3600 * 1000),
       });
