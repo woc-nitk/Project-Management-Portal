@@ -1,7 +1,7 @@
 import { createContext } from "react";
 const user = {
   id: "",
-  role: "",
+  type: "",
   auth: "",
   refresh: "",
 };

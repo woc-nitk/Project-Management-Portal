@@ -18,7 +18,7 @@ function App() {
   const [theme, setTheme] = useState("light");
   const [user, setUser] = useState({
     id: "",
-    role: "",
+    type: "",
     auth: "",
     refresh: "",
   });

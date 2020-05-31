@@ -98,7 +98,7 @@ export const signUpMutation = gql`
       applicant_year: $applicant_year
     ) {
       id
-      role
+      type
       auth
       refresh
     }
