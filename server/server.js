@@ -1,4 +1,5 @@
 const { GraphQLServer } = require("graphql-yoga");
+const cors = require('cors');
 const GQLresolvers = require("./graphql/resolvers");
 const auth = require("./config/auth");
 
@@ -16,12 +17,7 @@ const server = new GraphQLServer({
 	}
 });
 
-const corsConfig = {
-	origin: "*",
-	exposedHeaders: ["auth", "refresh"],
-	allowedHeaders: ["auth", "refresh"],
-};
-
-server.start({cors: corsConfig}, (details) =>
+server.use(cors());
+server.start( (details) =>
 	console.log(`Server running on http://localhost:${details.port}`)
 );
