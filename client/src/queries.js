@@ -2,6 +2,74 @@ import { gql } from "apollo-boost";
 
 // Queries
 
+export const getApplicantQuery = gql`
+  query($id: ID!){
+    applicant(applicant_id: $id){
+      id
+      first_name
+      middle_name
+      last_name
+      email
+      applicant_year
+      applications {
+        project {
+          id
+          name
+        }
+        accepted
+        result
+        proposal
+      }
+    }
+  }
+`;
+
+export const getMentorQuery = gql`
+  query($id: ID!) {
+    mentor(mentor_id: $id) {
+      id
+      name
+      email
+      organization {
+        name
+        id
+      }
+      projects {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const getOrgAdminQuery = gql`
+  query($id: ID!) {
+    orgAdmin(org_admin_id: $id) {
+      id
+      name
+      email
+      organization {
+        id
+        name
+        projects {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const getSuperAdminQuery = gql`
+  query($id: ID!) {
+   superAdmin(super_admin_id: $id) {
+     id
+     name
+     email
+   }
+  }
+`;
+
 export const getProjectsQuery = gql`
   {
     projects {
