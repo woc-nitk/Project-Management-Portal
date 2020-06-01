@@ -150,18 +150,18 @@ export const signUpMutation = gql`
   mutation(
     $email: EmailAddress!
     $password: Password!
-    $first_name: CleanString!
-    $middle_name: CleanString!
-    $last_name: CleanString!
-    $applicant_year: Int!
+    $firstName: CleanString!
+    $middleName: CleanString!
+    $lastName: CleanString!
+    $year: Int!
   ) {
     signUp(
       email: $email
       password: $password
-      first_name: $first_name
-      middle_name: $middle_name
-      last_name: $last_name
-      applicant_year: $applicant_year
+      first_name: $firstName
+      middle_name: $middleName
+      last_name: $lastName
+      applicant_year: $year
     ) {
       id
       type

@@ -2,7 +2,7 @@ import React from "react";
 import "./forms.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-const ApplicantForm = () => {
+const ApplicantForm = (props) => {
   return (
     <div className="app">
       <Formik
@@ -15,10 +15,9 @@ const ApplicantForm = () => {
           confirmPassword: "",
           year: ""
         }}
-        onSubmit={async values => {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          alert(`The entereed email is :${values.email}`);
-        }}
+        onSubmit={(values, { setSubmitting }) =>
+            props.signUpUser({ variables: values })
+        }
         validationSchema={Yup.object().shape({
           firstName: Yup.string().required("Required"),
           lastName: Yup.string().required("Required"),
