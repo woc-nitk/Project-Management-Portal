@@ -1,15 +1,15 @@
 # Project Management Portal
 
-Database Schema
+### Database Schema
 
 ![Schema](Schema.png)
 
 
-GraphQL Queries
+### GraphQL Queries
 
 ![Queries](Queries.png)
 
 
-GraphQL Mutations
+### GraphQL Mutations
 
 ![Queries](Mutations.png)
