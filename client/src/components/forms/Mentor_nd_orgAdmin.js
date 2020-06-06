@@ -1,8 +1,7 @@
 import React from "react";
-import "./forms.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-const MentorForm = () => {
+const MentorForm = ({ orgId, mutation, setState }) => {
   return (
     <div className="app">
       <Formik
@@ -12,18 +11,16 @@ const MentorForm = () => {
           lastName: "",
           email: "",
           password: "",
-          confirmPassword: ""
+          confirmPassword: "",
         }}
-        onSubmit={async values => {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          alert(`The entereed email is :${values.email}`);
+        onSubmit={(values, { setSubmitting }) => {
+          mutation({ variables: { ...values, orgId } });
+          setState(false);
         }}
         validationSchema={Yup.object().shape({
           firstName: Yup.string().required("Required"),
           lastName: Yup.string().required("Required"),
-          email: Yup.string()
-            .email()
-            .required("Required"),
+          email: Yup.string().email().required("Required"),
           password: Yup.string()
             .min(8, "Password must be at least 8 characters long")
             .matches(
@@ -33,27 +30,22 @@ const MentorForm = () => {
             .required("This field is required"),
 
           confirmPassword: Yup.string().when("password", {
-            is: val => val && val.length > 0,
+            is: (val) => val && val.length > 0,
             then: Yup.string()
               .oneOf(
                 [Yup.ref("password")],
                 "Both passwords need to be the same"
               )
-              .required()
-          })
+              .required(),
+          }),
         })}
       >
         {({ dirty, handleReset, isSubmitting }) => (
           <Form>
-            <h1>Welcome Aboard</h1>
             <label htmlFor="firstName" style={{ display: "block" }}>
               First Name
             </label>
-            <Field
-              type="text"
-              name="firstName"
-              placeholder="Enter your First Name"
-            />
+            <Field type="text" name="firstName" placeholder="First Name" />
             <ErrorMessage
               className="input-feedback"
               name="firstName"
@@ -62,11 +54,7 @@ const MentorForm = () => {
             <label htmlFor="middleName" style={{ display: "block" }}>
               Middle Name
             </label>
-            <Field
-              type="text"
-              name="middleName"
-              placeholder="Enter your Middle Name"
-            />
+            <Field type="text" name="middleName" placeholder="Middle Name" />
             <ErrorMessage
               className="input-feedback"
               name="middleName"
@@ -75,11 +63,7 @@ const MentorForm = () => {
             <label htmlFor="lastName" style={{ display: "block" }}>
               Last Name
             </label>
-            <Field
-              type="text"
-              name="lastName"
-              placeholder="Enter your Last Name"
-            />
+            <Field type="text" name="lastName" placeholder="Last Name" />
             <ErrorMessage
               className="input-feedback"
               name="lastName"
@@ -100,7 +84,7 @@ const MentorForm = () => {
             <Field
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Enter password"
             />
             <ErrorMessage
               className="input-feedback"
@@ -113,7 +97,7 @@ const MentorForm = () => {
             <Field
               type="password"
               name="confirmPassword"
-              placeholder="Enter your password"
+              placeholder="Enter password"
             />
             <ErrorMessage
               className="input-feedback"
@@ -134,8 +118,6 @@ const MentorForm = () => {
           </Form>
         )}
       </Formik>
-
-      {/* <MoreResources /> */}
     </div>
   );
 };

@@ -13,6 +13,8 @@ import { useCookies } from "react-cookie";
 import { useMutation } from "@apollo/react-hooks";
 import { refreshMutation } from "../queries";
 import Login from "./login/Login";
+import ProjectApplications from "./profilepage/views/ProjectApplications";
+import OrganizationProjects from "./profilepage/views/OrganizationProjects";
 
 function App() {
   const [theme, setTheme] = useState("light");
@@ -77,6 +79,17 @@ function App() {
             {/* <Route path="/profile/" exact component={Profile} /> */}
             <Route path="/project/:projectId" exact component={Project} />
             <Route path="/organization/:orgId" exact component={Organization} />
+
+            <Route
+              path="/admin/project/:projectId"
+              exact
+              component={ProjectApplications}
+            />
+            <Route
+              path="/admin/organization/:orgId"
+              exact
+              component={OrganizationProjects}
+            />
           </ThemeContext.Provider>
         </UserContext.Provider>
       </Router>

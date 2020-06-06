@@ -2,9 +2,36 @@ import { gql } from "apollo-boost";
 
 // Queries
 
+export const getProjectApplicationsQuery = gql`
+  query($id: ID!) {
+    project(project_id: $id) {
+      id
+      name
+      project_start_date
+      project_end_date
+      applications {
+        applicant {
+          id
+          name
+        }
+        proposal
+      }
+    }
+  }
+`;
+
+export const getOrgMentorsQuery = gql`
+  query($org_id: ID!) {
+    mentors(org_id: $org_id) {
+      name
+      id
+    }
+  }
+`;
+
 export const getApplicantQuery = gql`
-  query($id: ID!){
-    applicant(applicant_id: $id){
+  query($id: ID!) {
+    applicant(applicant_id: $id) {
       id
       first_name
       middle_name
@@ -62,11 +89,11 @@ export const getOrgAdminQuery = gql`
 
 export const getSuperAdminQuery = gql`
   query($id: ID!) {
-   superAdmin(super_admin_id: $id) {
-     id
-     name
-     email
-   }
+    superAdmin(super_admin_id: $id) {
+      id
+      name
+      email
+    }
   }
 `;
 
@@ -123,6 +150,55 @@ export const getOrganizationQuery = gql`
 `;
 
 // Mutations
+
+export const passFailApplicationMutation = gql`
+  mutation($p_id: ID!, $appl_id: ID!, $pass: Boolean!) {
+    passOrFailApplication(
+      project_id: $p_id
+      applicant_id: $appl_id
+      result: $pass
+    ) {
+      accepted
+      result
+    }
+  }
+`;
+
+export const acceptRejectApplicationMutation = gql`
+  mutation($p_id: ID!, $appl_id: ID!, $accept: Boolean!) {
+    acceptOrRejectApplication(
+      project_id: $p_id
+      applicant_id: $appl_id
+      accept: $accept
+    ) {
+      accepted
+      result
+    }
+  }
+`;
+
+export const addMentorMutation = gql`
+  mutation(
+    $email: EmailAddress!
+    $password: Password!
+    $name: CleanString!
+    $orgId: [ID!]!
+  ) {
+    addMentor(email: $email, password: $password, name: $name, org_id: $orgId) {
+      name
+      id
+    }
+  }
+`;
+
+export const addOrgMutation = gql`
+  mutation($orgName: CleanString!) {
+    addOrganization(org_name: $orgName) {
+      id
+      name
+    }
+  }
+`;
 
 export const refreshMutation = gql`
   mutation($refresh: String!) {
