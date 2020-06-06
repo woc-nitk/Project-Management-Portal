@@ -15,6 +15,7 @@ import { refreshMutation } from "../queries";
 import Login from "./login/Login";
 import ProjectApplications from "./profilepage/views/ProjectApplications";
 import OrganizationProjects from "./profilepage/views/OrganizationProjects";
+import SignUp from "./signup/applicant";
 
 function App() {
   const [theme, setTheme] = useState("light");
@@ -74,6 +75,7 @@ function App() {
             <Route path="/" exact component={Home} />
             <Route path="/about/" exact component={About} />
             <Route path="/login/" exact component={Login} />
+            <Route path="/signup/" exact component={SignUp} />
             <Route path="/projects/" exact component={Projects} />
             <Route path="/organizations/" exact component={Organizations} />
             {/* <Route path="/profile/" exact component={Profile} /> */}
