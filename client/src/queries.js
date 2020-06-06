@@ -239,8 +239,6 @@ export const signUpMutation = gql`
       last_name: $lastName
       applicant_year: $year
     ) {
-      id
-      type
       auth
       refresh
     }
