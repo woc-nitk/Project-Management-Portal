@@ -555,7 +555,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `add_organization`(
 IN _org_name VARCHAR(100), IN _absolute_year YEAR
 )
 BEGIN
-INSERT INTO Organizations(org_name, absolute_year) Values(_org_name, _absolute_year); 
+INSERT INTO Organizations(org_name, absolute_year) Values(_org_name, _absolute_year);
 SELECT org_id FROM Organizations WHERE Organizations.org_name = _org_name AND Organizations.absolute_year = _absolute_year;
 END ;;
 DELIMITER ;
@@ -578,7 +578,7 @@ IN _email VARCHAR(255), IN _name VARCHAR(20), IN _org_admin_password VARCHAR(128
 )
 BEGIN
 INSERT INTO Org_Admins(email, org_admin_name, org_admin_password, absolute_year ) VALUES(_email, _name, _org_admin_password, _absolute_year);
-SELECT Org_Admins.org_admin_id FROM Org_Admins WHERE Org_Admins.email = _email AND Org_Admins.absolute_year = _absolute_year; 
+SELECT Org_Admins.org_admin_id FROM Org_Admins WHERE Org_Admins.email = _email AND Org_Admins.absolute_year = _absolute_year;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -768,7 +768,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_application`(
 IN _project_id INT, IN _applicant_id INT
 )
 BEGIN
-DELETE FROM Application 
+DELETE FROM Application
 WHERE Application.project_id = _project_id AND Application.applicant_id = _applicant_id;
 END ;;
 DELIMITER ;
@@ -811,7 +811,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_mentored_by`(
 IN _mentor_id INT, IN _project_id INT
 )
 BEGIN
-DELETE FROM Mentored_By 
+DELETE FROM Mentored_By
 WHERE Mentored_By.project_id = _project_id AND Mentored_By.mentor_id = _mentor_id;
 END ;;
 DELIMITER ;
@@ -833,7 +833,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_mentor_belongs_to`(
 IN _mentor_id INT, IN _org_id INT
 )
 BEGIN
-DELETE FROM Mentor_belongs_to 
+DELETE FROM Mentor_belongs_to
 WHERE Mentor_belongs_to.mentor_id = _mentor_id AND Mentor_belongs_to.org_id = _org_id;
 END ;;
 DELIMITER ;
@@ -1111,6 +1111,23 @@ BEGIN
 SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.applicant_id = _applicant_id;
 END ;;
 DELIMITER ;
+
+
+--
+-- Temporary table structure for view `applicationsbyorg`
+--
+
+DROP TABLE IF EXISTS `applicationsbyorg`;
+/*!50001 DROP VIEW IF EXISTS `applicationsbyorg`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `applicationsbyorg` (
+  `applicant_id` tinyint NOT NULL,
+  `project_id` tinyint NOT NULL,
+  `org_id` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -1128,8 +1145,9 @@ DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_org`(
 IN _org_id INT
 )
-BEGIN
-SELECT Application.applicant_id, Application.project_id FROM Application INNER JOIN Maintained_By ON Application.project_id = Maintained_By.project_id AND  Maintained_By.org_id = _org_id;
+ BEGIN
+ select applicant_id,project_id from ApplicationsByOrg
+  where org_id=_org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1174,6 +1192,21 @@ BEGIN
 SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.absolute_year = _year;
 END ;;
 DELIMITER ;
+
+--
+-- Temporary table structure for view `mentorsbyorg`
+--
+
+DROP TABLE IF EXISTS `mentorsbyorg`;
+/*!50001 DROP VIEW IF EXISTS `mentorsbyorg`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `mentorsbyorg` (
+  `mentor_id` tinyint NOT NULL,
+  `org_id` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -1192,7 +1225,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_mentors_by_org`(
 IN _org_id INT
 )
 BEGIN
-SELECT Mentors.mentor_id FROM Mentors INNER JOIN Mentor_belongs_to ON Mentors.mentor_id = Mentor_belongs_to.mentor_id AND Mentor_belongs_to.org_id = _org_id;
+select mentor_id from mentorsByOrg where org_id=_org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1384,6 +1417,28 @@ BEGIN
 SELECT prerequisites FROM Prerequisites WHERE Prerequisites.project_id = _project_id;
 END ;;
 DELIMITER ;
+
+--
+-- Temporary table structure for view `getprojects`
+--
+
+DROP TABLE IF EXISTS `getprojects`;
+/*!50001 DROP VIEW IF EXISTS `getprojects`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `getprojects` (
+  `project_id` tinyint NOT NULL,
+  `work_to_be_done` tinyint NOT NULL,
+  `project_name` tinyint NOT NULL,
+  `deliverables` tinyint NOT NULL,
+  `absolute_year` tinyint NOT NULL,
+  `project_start_date` tinyint NOT NULL,
+  `project_end_date` tinyint NOT NULL,
+  `org_id` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -1399,12 +1454,30 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_projects`(
-IN _absolute_year YEAR, IN _org_id INT 
+IN _absolute_year YEAR, IN _org_id INT
 )
 BEGIN
-SELECT * FROM Project INNER JOIN Maintained_By ON Project.project_id = Maintained_By.project_id WHERE Project.absolute_year = _absolute_year AND Maintained_By.org_id = _org_id;
+select * from getProjects
+where absolute_year=_absolute_year and org_id=_org_id;
 END ;;
 DELIMITER ;
+
+--
+-- Temporary table structure for view `projectsbyapplicant`
+--
+
+DROP TABLE IF EXISTS `projectsbyapplicant`;
+/*!50001 DROP VIEW IF EXISTS `projectsbyapplicant`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `projectsbyapplicant` (
+  `project_id` tinyint NOT NULL,
+  `applicant_id` tinyint NOT NULL,
+  `accepted` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -1423,7 +1496,8 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_projects_by_applicant`(
 IN _applicant_id INT
 )
 BEGIN
-SELECT Project.project_id FROM Project INNER JOIN Application ON Project.project_id = Application.project_id WHERE Application.applicant_id = _applicant_id AND Application.accepted = 1;
+select project id from projectsByApplicant
+where applicant_id=_applicant_id and accepted=1;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1486,7 +1560,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_projects_by_year`(
 IN _year YEAR
 )
 BEGIN
-SELECT * FROM Project WHERE Project.absolute_year = _year; 
+SELECT * FROM Project WHERE Project.absolute_year = _year;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1526,7 +1600,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_super_admins_by_year`(
 IN _year YEAR
 )
 BEGIN
-SELECT super_admin_id FROM Super_Admins WHERE Super_Admins.absolute_year = _year; 
+SELECT super_admin_id FROM Super_Admins WHERE Super_Admins.absolute_year = _year;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1570,7 +1644,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `update_applicant`(
 IN _applicant_id INT, IN _email VARCHAR(255), IN _applicant_password VARCHAR(128), IN _absolute_year YEAR
 )
 BEGIN
-UPDATE Applicants 
+UPDATE Applicants
 SET Applicants.email = _email,
     Applicants.applicant_password = _applicant_password
 WHERE Applicants.applicant_id = _applicant_id AND Applicants.absolute_year = _absolute_year;
@@ -1599,7 +1673,7 @@ UPDATE Project
 SET Project.work_to_be_done = _work_to_be_done,
 	Project.project_name = _project_name,
     Project.deliverables = _deliverables
-WHERE Project.project_id = _project_id AND Project.absolute_year = _absolute_year; 
+WHERE Project.project_id = _project_id AND Project.absolute_year = _absolute_year;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
