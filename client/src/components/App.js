@@ -8,7 +8,7 @@ import Projects from "./projectspage/Projects";
 import Project from "./projectspage/Project";
 import Organizations from "./organizationspage/Organizations";
 import Organization from "./organizationspage/Organization";
-import Nav from "./navigation/Nav";
+import Nav from "./navbar/Navbar";
 import { useCookies } from "react-cookie";
 import { useMutation } from "@apollo/react-hooks";
 import { refreshMutation } from "../queries";
@@ -16,6 +16,7 @@ import Login from "./login/Login";
 import ProjectApplications from "./profilepage/views/ProjectApplications";
 import OrganizationProjects from "./profilepage/views/OrganizationProjects";
 import SignUp from "./signup/applicant";
+import Pofile from "./profilepage/Profile";
 
 function App() {
   const [theme, setTheme] = useState("light");
@@ -78,7 +79,7 @@ function App() {
             <Route path="/signup/" exact component={SignUp} />
             <Route path="/projects/" exact component={Projects} />
             <Route path="/organizations/" exact component={Organizations} />
-            {/* <Route path="/profile/" exact component={Profile} /> */}
+            <Route path="/profile/" exact component={Profile} />
             <Route path="/project/:projectId" exact component={Project} />
             <Route path="/organization/:orgId" exact component={Organization} />
 

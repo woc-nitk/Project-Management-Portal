@@ -1,24 +1,25 @@
 import React from "react";
 import styled from "styled-components";
 import { useSpring, animated, config } from "react-spring";
-import { ReactComponent as Sun } from "../../assets/sun.svg";
-import { ReactComponent as Moon } from "../../assets/moon.svg";
+// import { ReactComponent as Sun } from "../../assets/sun.svg";
+// import { ReactComponent as Moon } from "../../assets/moon.svg";
+import { NavLink } from "react-router-dom";
 
 import Brand from "./Brand";
 import BurgerMenu from "./BurgerMenu";
 import CollapseMenu from "./CollapseMenu";
 
-const Navbar = props => {
+const Navbar = (props) => {
   const barAnimation = useSpring({
     from: { transform: "translate3d(0, -10rem, 0)" },
-    transform: "translate3d(0, 0, 0)"
+    transform: "translate3d(0, 0, 0)",
   });
 
   const linkAnimation = useSpring({
     from: { transform: "translate3d(0, 30px, 0)", opacity: 0 },
     to: { transform: "translate3d(0, 0, 0)", opacity: 1 },
     delay: 800,
-    config: config.wobbly
+    config: config.wobbly,
   });
 
   return (
@@ -27,10 +28,34 @@ const Navbar = props => {
         <FlexContainer>
           <Brand />
           <NavLinks style={linkAnimation}>
-            <a href="/">link n1</a>
-            <a href="/">link n2</a>
-            <a href="/">link n3</a>
-            <a href="/">link n4</a>
+            <NavLink to="/" exact activeStyle={{ display: "none" }}>
+              Home
+            </NavLink>
+            <NavLink to="/about" exact activeStyle={{ display: "none" }}>
+              About
+            </NavLink>
+            <NavLink to="/projects" exact activeStyle={{ display: "none" }}>
+              Projects
+            </NavLink>
+            <NavLink
+              to="/organizations"
+              exact
+              activeStyle={{ display: "none" }}
+            >
+              Orgs
+            </NavLink>
+            <NavLink to="/profile" exact activeStyle={{ display: "none" }}>
+              Profile
+            </NavLink>
+            <div>
+              <NavLink to="/login" exact activeStyle={{ display: "none" }}>
+                Login
+              </NavLink>
+              {"/"}
+              <NavLink to="/signup" exact activeStyle={{ display: "none" }}>
+                Signup
+              </NavLink>
+            </div>
           </NavLinks>
           <RightSide>
             <BurgerWrapper>
@@ -39,7 +64,7 @@ const Navbar = props => {
                 handleNavbar={props.handleNavbar}
               />
             </BurgerWrapper>
-            <Sun style={{ height: "28px", fill: "var(--text-prim)" }} />
+            {/* <Sun style={{ height: "28px", fill: "var(--text-prim)" }} /> */}
           </RightSide>
         </FlexContainer>
       </NavBar>
@@ -58,7 +83,7 @@ const NavBar = styled(animated.nav)`
   width: 100%;
   top: 0;
   left: 0;
-  background: var(--bg-prim);
+  background: var(--dark-0);
   z-index: 1;
   font-size: 1.4rem;
 `;
@@ -78,7 +103,7 @@ const NavLinks = styled(animated.ul)`
   margin: auto 0;
 
   & a {
-    color: var(--text-prim);
+    color: var(--silver-0);
     text-transform: uppercase;
     font-weight: 600;
     border-bottom: 1px solid transparent;
@@ -88,7 +113,7 @@ const NavLinks = styled(animated.ul)`
     cursor: pointer;
 
     &:hover {
-      color: var(--text-sec);
+      color: var(--silver-3);
       border-bottom: 1px solid var(--text-sec);
     }
 

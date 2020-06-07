@@ -191,6 +191,25 @@ export const addMentorMutation = gql`
   }
 `;
 
+export const addOrgAdminMutation = gql`
+  mutation(
+    $email: EmailAddress!
+    $password: Password!
+    $name: CleanString!
+    $orgId: [ID!]!
+  ) {
+    addOrgAdmin(
+      email: $email
+      password: $password
+      name: $name
+      org_id: $orgId
+    ) {
+      name
+      id
+    }
+  }
+`;
+
 export const addOrgMutation = gql`
   mutation($orgName: CleanString!) {
     addOrganization(org_name: $orgName) {
