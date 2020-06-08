@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { getOrganizationsQuery } from "../../../queries";
-import Link from "react-router-dom";
+import {Link} from "react-router-dom";
 
 export default function Organizations() {
   const { loading, data, error } = useQuery(getOrganizationsQuery);
@@ -16,7 +16,7 @@ export default function Organizations() {
     <div>
       <ul>
         {data.organizations.map((org, idx) => {
-          <li key={idx}>
+          return <li key={idx}>
             <Link to={`admin/organization/${org.id}`}>
               <p>{org.name}</p>
             </Link>

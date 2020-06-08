@@ -15,6 +15,18 @@ export default function ProjectApplications({ match }) {
     variables: { id: projectId },
   });
 
+  const [passFail] = useMutation(passFailApplicationMutation, {
+    onError(err) {
+      console.log(err);
+    },
+  });
+
+  const [acceptReject] = useMutation(acceptRejectApplicationMutation, {
+    onError(err) {
+      console.log(err);
+    },
+  });
+
   if (loading) return <h1>Loading...</h1>;
 
   if (error) {
@@ -22,22 +34,11 @@ export default function ProjectApplications({ match }) {
     return <h1>Error occurred!</h1>;
   }
 
-  [passFail] = useMutation(passFailApplicationMutation, {
-    onError(err) {
-      console.log(err);
-    },
-  });
-
-  [acceptReject] = useMutation(acceptRejectApplicationMutation, {
-    onError(err) {
-      console.log(err);
-    },
-  });
 
   return (
     <div>
       {data.project.applications.map((application, idx) => {
-        <div key={idx}>
+        return <div key={idx}>
           <a href={application.proposal}>{application.applicant.name}</a>
           {/* Display options depending on date here */}
           <div className="actions">

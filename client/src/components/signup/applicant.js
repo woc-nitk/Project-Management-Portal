@@ -45,8 +45,11 @@ const SignUp = ({ redirect = "/" }) => {
     }
 
     return (
-        <ApplicantForm signUpUser={signUpUser} error={error}/>
-
+       <div style={{
+           maxWidth:"1000px",
+           margin:"0 auto"
+       }}> <ApplicantForm signUpUser={signUpUser} error={error}/>
+       </div>
     )
 };
 

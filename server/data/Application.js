@@ -97,7 +97,7 @@ const addApplication = async function (projectID, applicantID, proposal, user) {
 			year,
 			proposal
 		]).then(
-			(data) => data,
+			(data) => { console.log(data); return data[0]; },
 			(error) => new GraphQLError(error)
 		);
 	}
@@ -148,13 +148,14 @@ const acceptorRejectApplication = async function (
 		(await user.type) == "superAdmin"
 	) {
 		const year = new Date().getFullYear();
+		if(accept) accept = 1; else accept = 0;
 		return dbQuery("CALL accept_or_reject_application(?,?,?,?)", [
 			projectID,
 			applicantID,
 			year,
 			accept
 		]).then(
-			(data) => data,
+			(data) => data[0],
 			(error) => new GraphQLError(error)
 		);
 	}
@@ -188,10 +189,10 @@ const ApplicationResolvers = {
 			[parent.applicant_id, parent.project_id]
 		).then((data) => (data ? data : new GraphQLError("No such entry"))),
 	project: (parent) =>
-		dbQuery(
+		{console.log("-----PARENT-----"); console.log(parent); console.log("-----"); return dbQuery(
 			"SELECT project_id FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
-		).then((data) => (data ? data : new GraphQLError("No such entry"))),
+		).then((data) => (data ? data : new GraphQLError("No such entry"))); },
 	accepted: (parent) =>
 		dbQuery(
 			"SELECT accepted FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
@@ -217,7 +218,7 @@ const ApplicationResolvers = {
 		dbQuery(
 			"SELECT proposal FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
-		).then((data) => (data ? data : new GraphQLError("No such entry")))
+		).then((data) => (data ? data.proposal : new GraphQLError("No such entry")))
 };
 
 module.exports = {

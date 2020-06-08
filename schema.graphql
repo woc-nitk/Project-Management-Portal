@@ -53,8 +53,8 @@ type SuperAdmin implements User {
 }
 
 type Application {
-	accepted: Boolean!
-	result: Boolean!
+	accepted: Boolean
+	result: Boolean
 	project: Project!
 	applicant: Applicant!
 	proposal: URL!

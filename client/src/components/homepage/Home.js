@@ -13,7 +13,7 @@ const timeline = [
 
 const Home = () => {
   const [user, setUser] = useContext(UserContext);
-  console.log(user);
+  // console.log(user);
   return (
     <>
       <h1>NITK Winter of Code</h1>

@@ -1,4 +1,4 @@
-const dbQuery = require("../config/db");
+const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
 
 const getSuperAdmins = function (year) {

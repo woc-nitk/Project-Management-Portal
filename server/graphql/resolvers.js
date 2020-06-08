@@ -46,10 +46,14 @@ const resolvers = {
 			if (
 				context.user == undefined ||
 				(context.user.type == "applicant" &&
-					args.applicant_id != context.user.id) ||
-				context.user != "applicant"
-			)
-				return new GraphQLError("Insufficient permissions.");
+					args.applicant_id != context.user.id)
+			) {
+				console.log(context.user);
+				console.log(args.applicant_id);
+				console.log(args.applicant_id == context.user.id);
+				return new GraphQLError("Insufficient permissions");
+
+			}
 			return { applicant_id: args.applicant_id };
 		},
 		orgAdmin: (parent, args) => {
@@ -88,7 +92,7 @@ const resolvers = {
 				context.user
 			),
 		acceptOrRejectApplication: (parent, args, context) =>
-			applications.acceptApplication(
+			applications.acceptorRejectApplication(
 				args.project_id,
 				args.applicant_id,
 				args.accept,

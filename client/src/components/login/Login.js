@@ -8,7 +8,7 @@ import { loginMutation } from "../../queries";
 import { useCookies } from "react-cookie";
 import { UserContext } from "../../store/UserContext";
 
-const Login = ({ redirect = "/" }) => {
+const Login = ({ redirect = "/profile" }) => {
   const [cookie, setCookie, removeCookie] = useCookies(["refresh", "access"]);
   const [redirectURL, setURL] = useState(null);
   const [user, setUser] = useContext(UserContext);

@@ -10,6 +10,7 @@ import UserDetails from "./UserDetails";
 import AdminProjects from "./views/Projects";
 import Modal from "react-modal";
 import MentorForm from "../forms/Mentor_nd_orgAdmin";
+import { Link } from "react-router-dom";
 
 Modal.setAppElement("#root");
 
@@ -19,6 +20,14 @@ export default function OrgAdminProfile() {
     variables: { id: user.id },
   });
 
+  const [addMentor] = useMutation(addMentorMutation, {
+    onError(err) {
+      console.log(err);
+    },
+  });
+  const [mentorModal, setMentorModal] = useState(false);
+  const [projectModal, setProjectModal] = useState(false);
+
   if (loading) {
     return <h1>Loading...</h1>;
   }
@@ -27,13 +36,7 @@ export default function OrgAdminProfile() {
     console.log(error);
     return <h1>Some error has occured</h1>;
   }
-  [addMentor] = useMutation(addMentorMutation, {
-    onError(err) {
-      console.log(err);
-    },
-  });
-  const [mentorModal, setMentorModal] = useState(false);
-  const [projectModal, setProjectModal] = useState(false);
+
 
   function closeMentorModal() {
     setMentorModal(false);
@@ -81,9 +84,8 @@ export default function OrgAdminProfile() {
 
       <Link to="#">All mentors</Link>
       <hr />
-      <Link to="#">
         <button>Add Project</button>
-      </Link>
+
       <AdminProjects projects={data.orgAdmin.organization.projects} />
     </>
   );

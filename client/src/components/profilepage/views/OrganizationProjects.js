@@ -13,14 +13,6 @@ export default function OrganizationProjects({ match }) {
   const { loading, data, error } = useQuery(getOrganizationQuery, {
     variables: { org_id: orgId },
   });
-
-  if (loading) return <h1>Loading...</h1>;
-
-  if (error) {
-    console.log(error);
-    return <h1>Error occurred!</h1>;
-  }
-
   const [orgAdminModal, setOrgAdminModal] = useState(false);
 
   const [addOrgAdmin] = useMutation(addOrgAdminMutation, {
@@ -28,6 +20,14 @@ export default function OrganizationProjects({ match }) {
       console.log(err);
     },
   });
+  if (loading) return <h1>Loading...</h1>;
+
+  if (error) {
+    console.log(error);
+    return <h1>Error occurred!</h1>;
+  }
+
+
 
   return (
     <div>

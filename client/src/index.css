@@ -43,7 +43,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
+.light {
+  color: var(--dark-0);
+  background-color: var(--silver-2);
+}
+
+/* code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
@@ -137,7 +142,7 @@ button.outline {
   background-color: #eee;
   border: 1px solid #aaa;
   color: #555;
-}
+} */
 
 .modalContent {
   display: flex;

@@ -47,15 +47,12 @@ const Navbar = (props) => {
             <NavLink to="/profile" exact activeStyle={{ display: "none" }}>
               Profile
             </NavLink>
-            <div>
-              <NavLink to="/login" exact activeStyle={{ display: "none" }}>
-                Login
-              </NavLink>
-              {"/"}
-              <NavLink to="/signup" exact activeStyle={{ display: "none" }}>
-                Signup
-              </NavLink>
-            </div>
+            <NavLink to="/login" exact activeStyle={{ display: "none" }}>
+            Login
+          </NavLink>
+          <NavLink to="/signup" exact activeStyle={{ display: "none" }}>
+            Signup
+          </NavLink>
           </NavLinks>
           <RightSide>
             <BurgerWrapper>
@@ -79,13 +76,14 @@ const Navbar = (props) => {
 export default Navbar;
 
 const NavBar = styled(animated.nav)`
-  position: fixed;
   width: 100%;
   top: 0;
   left: 0;
   background: var(--dark-0);
-  z-index: 1;
+  z-index: 2;
   font-size: 1.4rem;
+  top: 0;
+  position: sticky;
 `;
 
 const FlexContainer = styled.div`
@@ -111,10 +109,11 @@ const NavLinks = styled(animated.ul)`
     transition: all 300ms linear 0s;
     text-decoration: none;
     cursor: pointer;
+    font-size: 16px;
 
     &:hover {
       color: var(--silver-3);
-      border-bottom: 1px solid var(--text-sec);
+      border-bottom: 1px solid var(--silver-3);
     }
 
     @media (max-width: 768px) {

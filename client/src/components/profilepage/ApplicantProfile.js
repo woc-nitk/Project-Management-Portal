@@ -6,7 +6,7 @@ import UserDetails from "./UserDetails";
 import { Link } from "react-router-dom";
 
 export default function ApplicantProfile() {
-  const user = useContext(UserContext);
+  const [user] = useContext(UserContext);
   const { loading, data, error } = useQuery(getApplicantQuery, {
     variables: { id: user.id },
   });
@@ -35,7 +35,7 @@ export default function ApplicantProfile() {
       {data.applicant.applications.map((application, idx) => {
         return (
           <div key={idx}>
-            <Link to={`/project/application.project.id`}>
+            <Link to={`/project/${application.project.id}`}>
               <p>{application.project.name}</p>
             </Link>
             <a href={application.proposal}>Proposal</a>

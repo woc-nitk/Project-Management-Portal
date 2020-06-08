@@ -8,9 +8,7 @@ const testPassword = (password) =>
 const testDateRegex = (date) =>
 	/^(20\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))$/.test(date);
 const testURL = (url) =>
-	/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/.test(
-		url
-	);
+	/^(https?):\/\/[^\s$.?#].[^\s]*$/.test(url);
 const isLeapYear = (year) =>
 	(year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
 const testDate = (date) => {
@@ -173,7 +171,9 @@ const serializeURL = (url) => {
 	if (typeof url === "string" && testURL(url)) {
 		return url;
 	}
-	throw new GraphQLError("Invalid URL");
+	console.log(url);
+	console.log(typeof url === "string");
+	throw new GraphQLError("Invalid URL - " + testURL(url));
 };
 
 const parseURLValue = (url) => {
@@ -184,7 +184,7 @@ const parseURLValue = (url) => {
 };
 
 const parseURLLiteral = (ast) => {
-	if (testEmailAddress(ast.value) && ast.kind == Kind.STRING) {
+	if (testURL(ast.value) && ast.kind == Kind.STRING) {
 		return ast.value;
 	}
 	throw new GraphQLError("Invalid URL");

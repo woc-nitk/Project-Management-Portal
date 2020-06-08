@@ -16,7 +16,7 @@ import Login from "./login/Login";
 import ProjectApplications from "./profilepage/views/ProjectApplications";
 import OrganizationProjects from "./profilepage/views/OrganizationProjects";
 import SignUp from "./signup/applicant";
-import Pofile from "./profilepage/Profile";
+import Profile from "./profilepage/Profile";
 
 function App() {
   const [theme, setTheme] = useState("light");
@@ -27,6 +27,10 @@ function App() {
     refresh: "",
   });
   const [cookies, setCookie, removeCookie] = useCookies(["refresh", "access"]);
+  const [navbarOpen, setNav] = useState(false);
+  const handleNavbar = () => {
+    setNav(!navbarOpen);
+  };
 
   // Uncomment all lines from here to the end of useEffect if this doesn't work 😅
 
@@ -65,13 +69,14 @@ function App() {
     }, 3600000);
     return () => clearInterval(interval);
   }, []);
+  console.log(user);
 
   return (
     <div className={`App ${theme}`} style={{ minHeight: "100vh" }}>
       <Router>
         <UserContext.Provider value={[user, setUser]}>
           <ThemeContext.Provider value={[theme, setTheme]}>
-            <Nav />
+            <Nav navbarState={navbarOpen} handleNavbar={handleNavbar} />
 
             <Route path="/" exact component={Home} />
             <Route path="/about/" exact component={About} />
@@ -79,7 +84,7 @@ function App() {
             <Route path="/signup/" exact component={SignUp} />
             <Route path="/projects/" exact component={Projects} />
             <Route path="/organizations/" exact component={Organizations} />
-            <Route path="/profile/" exact component={Profile} />
+            <Route exact path="/profile" render={() => <Profile  user={user} />} />
             <Route path="/project/:projectId" exact component={Project} />
             <Route path="/organization/:orgId" exact component={Organization} />
 

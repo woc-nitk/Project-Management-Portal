@@ -51,7 +51,23 @@ const ApplicantForm = (props) => {
       >
         {({ dirty, handleReset, isSubmitting }) => (
           <Form>
-            <h1>Welcome Aboard</h1>
+            <h1 style={{
+              marginBottom:"2rem",
+              fontSize:"42px"
+            }}>Sign Up</h1>
+            <label htmlFor="regNumber" style={{ display: "block" }}>
+            Registration Number
+          </label>
+          <Field
+            type="text"
+            name="regNumber"
+            placeholder="xxxxxx"
+          />
+          <ErrorMessage
+            className="input-feedback"
+            name="regNumber"
+            component="div"
+          />
             <label htmlFor="firstName" style={{ display: "block" }}>
               First Name
             </label>
@@ -124,21 +140,6 @@ const ApplicantForm = (props) => {
             <ErrorMessage
               className="input-feedback"
               name="confirmPassword"
-              component="div"
-            />
-            <label htmlFor="year" style={{ display: "block" }}>
-              Year of Study
-            </label>
-            <Field name="year" as="select" placeholder="year of study">
-              <option value="">Select</option>
-              <option value="first">First</option>
-              <option value="second">Second</option>
-              <option value="third">Third</option>
-              <option value="fourth">rth</option>
-            </Field>
-            <ErrorMessage
-              className="input-feedback"
-              name="year"
               component="div"
             />
             <br />

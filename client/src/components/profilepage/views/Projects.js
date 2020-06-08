@@ -6,7 +6,7 @@ export default function Projects({ projects }) {
     <div>
       <ul>
         {projects.map((project, idx) => {
-          <li key={idx}>
+          return <li key={idx}>
             <Link to={`admin/project/${project.id}`}>
               <p>{project.name}</p>
             </Link>

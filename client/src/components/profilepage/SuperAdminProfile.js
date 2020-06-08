@@ -10,10 +10,17 @@ import AdminOrganizations from "./views/Organizations";
 Modal.setAppElement("#root");
 
 export default function SuperAdminProfile() {
-  const user = useContext(UserContext);
+  const [user] = useContext(UserContext);
   const { loading, data, error } = useQuery(getSuperAdminQuery, {
     variables: { id: user.id },
   });
+
+  const [addOrg] = useMutation(addOrgMutation, {
+    onError(err) {
+      console.log(err);
+    },
+  });
+  const [orgModal, setOrgModal] = useState(false);
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -23,12 +30,6 @@ export default function SuperAdminProfile() {
     console.log(error);
     return <h1>Some error has occured</h1>;
   }
-  [addOrg] = useMutation(addOrgMutation, {
-    onError(err) {
-      console.log(err);
-    },
-  });
-  const [orgModal, setOrgModal] = useState(false);
 
   function closeModal() {
     setOrgModal(false);
