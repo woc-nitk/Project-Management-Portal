@@ -33,8 +33,7 @@ CREATE TABLE `Applicants` (
   `applicant_year` int(11) NOT NULL,
   `applicant_password` varchar(128) NOT NULL,
   `absolute_year` year(4) NOT NULL,
-  PRIMARY KEY (`applicant_id`,`absolute_year`),
-  UNIQUE KEY `email` (`email`,`absolute_year`)
+  PRIMARY KEY (`applicant_id`,`absolute_year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -62,9 +61,6 @@ CREATE TABLE `Application` (
   `absolute_year` year(4) NOT NULL,
   `proposal` varchar(250) NOT NULL,
   PRIMARY KEY (`applicant_id`,`project_id`,`absolute_year`),
-  KEY `applicant_id_and_abs_year_in_application` (`applicant_id`,`absolute_year`),
-  KEY `project_id_idx` (`project_id`),
-  KEY `absolute_year_in_application_idx` (`absolute_year`),
   CONSTRAINT `applicant_id_and_abs_year_in_application` FOREIGN KEY (`applicant_id`, `absolute_year`) REFERENCES `Applicants` (`applicant_id`, `absolute_year`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `project_id_in_application` FOREIGN KEY (`project_id`) REFERENCES `Project` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -105,9 +101,6 @@ CREATE TABLE `Maintained_By` (
   `org_id` int(11) NOT NULL,
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`project_id`,`absolute_year`,`org_id`),
-  KEY `org_id_idx` (`org_id`),
-  KEY `project_id_and_abs_year_in_maintained_by` (`project_id`),
-  KEY `abs_year_in_maintained_by_idx` (`absolute_year`),
   CONSTRAINT `org_id_in_maintained_by` FOREIGN KEY (`org_id`) REFERENCES `Organizations` (`org_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `project_id_and_abs_year_in_maintained_by` FOREIGN KEY (`project_id`, `absolute_year`) REFERENCES `Project` (`project_id`, `absolute_year`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -119,6 +112,7 @@ CREATE TABLE `Maintained_By` (
 
 LOCK TABLES `Maintained_By` WRITE;
 /*!40000 ALTER TABLE `Maintained_By` DISABLE KEYS */;
+INSERT INTO `Maintained_By` VALUES (12,25,0000),(13,21,0000);
 /*!40000 ALTER TABLE `Maintained_By` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -134,9 +128,6 @@ CREATE TABLE `Mentor_belongs_to` (
   `org_id` int(11) NOT NULL,
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`mentor_id`,`org_id`,`absolute_year`),
-  KEY `mentor_id_in_mentor_belongs_to` (`mentor_id`),
-  KEY `org_id` (`org_id`),
-  KEY `mentor_id_in_mentor_belongs_to_idx` (`mentor_id`,`absolute_year`),
   CONSTRAINT `mentor_id_in_mentor_belongs_to` FOREIGN KEY (`mentor_id`, `absolute_year`) REFERENCES `Mentors` (`mentor_id`, `absolute_year`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `org_id_and_abs_year_in_mentor_belongs_to` FOREIGN KEY (`org_id`) REFERENCES `Organizations` (`org_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -163,8 +154,6 @@ CREATE TABLE `Mentored_By` (
   `mentor_id` int(11) NOT NULL,
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`project_id`,`mentor_id`,`absolute_year`),
-  KEY `mentor_id_and_abs_year_in_mentored_by` (`mentor_id`),
-  KEY `mentor_id_and_abs_year_in_mentored_by_idx` (`mentor_id`,`absolute_year`),
   CONSTRAINT `mentor_id_and_abs_year_in_mentored_by` FOREIGN KEY (`mentor_id`, `absolute_year`) REFERENCES `Mentors` (`mentor_id`, `absolute_year`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `project_id_in_mentored_by` FOREIGN KEY (`project_id`) REFERENCES `Project` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -192,8 +181,7 @@ CREATE TABLE `Mentors` (
   `mentor_name` varchar(20) NOT NULL,
   `mentor_password` varchar(128) NOT NULL,
   `absolute_year` year(4) NOT NULL,
-  PRIMARY KEY (`mentor_id`,`absolute_year`),
-  UNIQUE KEY `email` (`email`,`absolute_year`)
+  PRIMARY KEY (`mentor_id`,`absolute_year`)
 ) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -232,8 +220,7 @@ CREATE TABLE `Org_Admins` (
   `org_admin_name` varchar(20) NOT NULL,
   `org_admin_password` varchar(128) NOT NULL,
   `absolute_year` year(4) NOT NULL,
-  PRIMARY KEY (`org_admin_id`,`absolute_year`),
-  UNIQUE KEY `email_and_abs_year` (`email`,`absolute_year`)
+  PRIMARY KEY (`org_admin_id`,`absolute_year`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -258,9 +245,6 @@ CREATE TABLE `Org_admin_belongs_to` (
   `org_admin_id` int(11) NOT NULL,
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`org_id`,`org_admin_id`,`absolute_year`),
-  KEY `org_admin_id_idx` (`org_admin_id`),
-  KEY `org_id_and_abs_year_in_org_admin_belongs_to` (`org_id`),
-  KEY `org_id_and_abs_year_in_oabt_idx` (`org_id`,`absolute_year`),
   CONSTRAINT `org_admin_id_in_org_admin_belongs_to` FOREIGN KEY (`org_admin_id`) REFERENCES `Org_Admins` (`org_admin_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `org_id_and_abs_year_in_oabt` FOREIGN KEY (`org_id`, `absolute_year`) REFERENCES `Organizations` (`org_id`, `absolute_year`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -286,8 +270,7 @@ CREATE TABLE `Organizations` (
   `org_id` int(11) NOT NULL AUTO_INCREMENT,
   `org_name` varchar(100) NOT NULL,
   `absolute_year` year(4) NOT NULL,
-  PRIMARY KEY (`org_id`,`absolute_year`),
-  UNIQUE KEY `name_UNIQUE` (`org_name`)
+  PRIMARY KEY (`org_id`,`absolute_year`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -311,7 +294,6 @@ CREATE TABLE `Prerequisites` (
   `project_id` int(11) NOT NULL,
   `prerequisites` varchar(2000) NOT NULL,
   PRIMARY KEY (`project_id`,`prerequisites`),
-  KEY `project_id_and_abs_year_in_prerequisites` (`project_id`),
   CONSTRAINT `project_id_and_abs_year_in_prerequisites` FOREIGN KEY (`project_id`) REFERENCES `Project` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -380,9 +362,6 @@ CREATE TABLE `Super_Admin_Manages` (
   `org_id` int(11) NOT NULL,
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`super_admin_id`,`org_id`,`absolute_year`),
-  KEY `org_id_in_super_admin_manages` (`org_id`),
-  KEY `super_admin_id_and_abs_year_in_super_admin_manages` (`super_admin_id`,`absolute_year`),
-  KEY `absolute_year_in_super_admin_manages_idx` (`absolute_year`),
   CONSTRAINT `org_id_in_super_admin_manages` FOREIGN KEY (`org_id`) REFERENCES `Organizations` (`org_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `super_admin_id_and_abs_year_in_super_admin_manages` FOREIGN KEY (`super_admin_id`, `absolute_year`) REFERENCES `Super_Admins` (`super_admin_id`, `absolute_year`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -410,9 +389,7 @@ CREATE TABLE `Super_Admins` (
   `super_admin_name` varchar(20) NOT NULL,
   `super_admin_password` varchar(128) NOT NULL,
   `absolute_year` year(4) NOT NULL,
-  PRIMARY KEY (`super_admin_id`,`absolute_year`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `email_UNIQUE` (`email`)
+  PRIMARY KEY (`super_admin_id`,`absolute_year`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -437,9 +414,6 @@ CREATE TABLE `Supervises` (
   `mentor_id` int(11) NOT NULL,
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`org_admin_id`,`mentor_id`,`absolute_year`),
-  KEY `org_admin_id_and_abd_year_in_supervises` (`org_admin_id`,`absolute_year`),
-  KEY `mentor_id_idx` (`mentor_id`),
-  KEY `absolute_year_in_supervises_idx` (`absolute_year`),
   CONSTRAINT `mentor_id_in_supervises` FOREIGN KEY (`mentor_id`) REFERENCES `Mentors` (`mentor_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `org_admin_id_and_abd_year_in_supervises` FOREIGN KEY (`org_admin_id`, `absolute_year`) REFERENCES `Org_Admins` (`org_admin_id`, `absolute_year`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
