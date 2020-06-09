@@ -47,13 +47,9 @@ const resolvers = {
 				context.user == undefined ||
 				(context.user.type == "applicant" &&
 					args.applicant_id != context.user.id)
-			) {
-				console.log(context.user);
-				console.log(args.applicant_id);
-				console.log(args.applicant_id == context.user.id);
+			)
 				return new GraphQLError("Insufficient permissions");
 
-			}
 			return { applicant_id: args.applicant_id };
 		},
 		orgAdmin: (parent, args) => {
@@ -64,7 +60,7 @@ const resolvers = {
 			superAdmins.getSuperAdmins(args.absolute_year),
 		superAdmin: (parent, args) => {
 			return { super_admin_id: args.super_admin_id };
-		}
+		},
 	},
 	Mutation: {
 		login: (parent, args) => auth.login(args.email, args.password),
@@ -120,7 +116,7 @@ const resolvers = {
 			),
 		deleteProject: (parent, args, context) =>
 			projects.deleteProject(args.project_id, context.user),
-		updateProject: (parent, args, context) => 
+		updateProject: (parent, args, context) =>
 			projects.updateProject(
 				args.project_id,
 				args.name,
@@ -212,7 +208,7 @@ const resolvers = {
 				args.project_id,
 				args.proposal,
 				context.user
-			)
+			),
 	},
 	Applicant: applicants.ApplicantResolvers,
 	Application: applications.ApplicationResolvers,

@@ -48,7 +48,9 @@ const getProjects = function (year, orgID, mentorID, applicantID) {
 		applicantID == null &&
 		year == null
 	) {
-		return dbQuery("CALL get_projects_by_year(?)", [new Date().getFullYear()]).then(
+		return dbQuery("CALL get_projects_by_year(?)", [
+			new Date().getFullYear(),
+		]).then(
 			(data) => data,
 			(error) => new GraphQLError(error)
 		);
@@ -88,16 +90,16 @@ const addProject = function (
 			deliverables,
 			year,
 			startDate,
-			endDate
+			endDate,
 		]).then(
 			(data) => addProjectToOrg(data[0].project_id, org_id),
 			(error) => rollbackTransaction(error)
 		);
 	};
-	const addProjectToOrg = (project_id) => {
+	const addProjectToOrg = (project_id, org_id) => {
 		return dbQuery("CALL add_project_maintained_by(?,?)", [
 			project_id,
-			org_id
+			org_id,
 		]).then(
 			() => addMentorsToProject(project_id, mentor_id.length),
 			(error) => rollbackTransaction(error)
@@ -107,7 +109,7 @@ const addProject = function (
 		if (mentor_id_length > 0)
 			return dbQuery("CALL add_mentored_by(?,?)", [
 				project_id,
-				parseInt(mentor_id[mentor_id_length - 1])
+				parseInt(mentor_id[mentor_id_length - 1]),
 			]).then(
 				() => addMentorsToProject(project_id, mentor_id_length - 1),
 				(error) => rollbackTransaction(error)
@@ -119,7 +121,7 @@ const addProject = function (
 		if (prerequisites_length > 0)
 			return dbQuery("CALL add_prerequisite(?,?)", [
 				project_id,
-				prerequisites[prerequisites_length - 1]
+				prerequisites[prerequisites_length - 1],
 			]).then(
 				() =>
 					addPrerequisitesToProject(
@@ -193,7 +195,7 @@ const updateProject = function (
 				[work, projectID]
 			).then(
 				() => updateWork(work),
-				(error) => new rollbackTransaction(error)
+				(error) => rollbackTransaction(error)
 			);
 		else return updateDeliverables(deliverables);
 	};
@@ -204,7 +206,7 @@ const updateProject = function (
 				[deliverables, projectID]
 			).then(
 				() => updateStartDate(startDate),
-				(error) => new rollbackTransaction(error)
+				(error) => rollbackTransaction(error)
 			);
 		else return updateStartDate(startDate);
 	};
@@ -215,7 +217,7 @@ const updateProject = function (
 				[startDate, projectID]
 			).then(
 				() => updateEndDate(endDate),
-				(error) => new rollbackTransaction(error)
+				(error) => rollbackTransaction(error)
 			);
 		else return updateEndDate(endDate);
 	};
@@ -226,7 +228,7 @@ const updateProject = function (
 				[endDate, projectID]
 			).then(
 				() => commitTransaction(projectID),
-				(error) => new rollbackTransaction(error)
+				(error) => rollbackTransaction(error)
 			);
 		else return commitTransaction(projectID);
 	};
@@ -252,7 +254,7 @@ const addPrerequisites = function (projectID, prerequisites) {
 		if (prerequisites_length > 0)
 			return dbQuery("CALL add_prerequisite(?,?)", [
 				projectID,
-				prerequisites[prerequisites_length - 1]
+				prerequisites[prerequisites_length - 1],
 			]).then(
 				() => startFunction(prerequisites - 1),
 				(error) => new GraphQLError(error)
@@ -267,7 +269,7 @@ const removePrerequisites = function (projectID, prerequisites) {
 		if (prerequisites_length > 0)
 			return dbQuery("CALL delete_prerequisite(?,?)", [
 				projectID,
-				prerequisites[prerequisites_length - 1]
+				prerequisites[prerequisites_length - 1],
 			]).then(
 				() => startFunction(prerequisites - 1),
 				(error) => new GraphQLError(error)
@@ -308,7 +310,9 @@ const ProjectsResolvers = {
 		),
 	prerequisites: (parent) =>
 		dbQuery("CALL get_prerequisites(?)", [parent.project_id]).then((data) =>
-			data ? data.map((value) => value.prerequisites) : new GraphQLError("No such entry")
+			data
+				? data.map((value) => value.prerequisites)
+				: new GraphQLError("No such entry")
 		),
 	absolute_year: (parent) =>
 		dbQuery(
@@ -338,12 +342,12 @@ const ProjectsResolvers = {
 		).then((data) => (data ? data : new GraphQLError("No such entry"))),
 	mentors: (parent) =>
 		dbQuery("CALL get_mentors_by_project(?)", [
-			parent.project_id
+			parent.project_id,
 		]).then((data) => (data ? data : new GraphQLError("No such entry"))),
 	applications: (parent) =>
 		dbQuery("CALL get_applications_by_project(?)", [
-			parent.project_id
-		]).then((data) => (data ? data : new GraphQLError("No such entry")))
+			parent.project_id,
+		]).then((data) => (data ? data : new GraphQLError("No such entry"))),
 };
 
 module.exports = {
@@ -353,5 +357,5 @@ module.exports = {
 	updateProject,
 	addPrerequisites,
 	removePrerequisites,
-	ProjectsResolvers
+	ProjectsResolvers,
 };
