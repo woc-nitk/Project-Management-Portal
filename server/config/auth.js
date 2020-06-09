@@ -167,10 +167,6 @@ const changePassword = (refresh, oldPassword, newPassword) => {
 			if (error) return reject(new GraphQLError(error));
 			if(result == null) return reject(new GraphQLError("Refresh token expired."));
 			const deets = jwt.decode(result);
-			redisClient.hdel(refresh, "token", (error, result) => {
-				if(error) return new GraphQLError(error);
-				return result;
-			});
 			const year = new Date().getFullYear();
 			if(deets.type == "applicant") {
 				return resolve(dbQuery(
@@ -179,7 +175,11 @@ const changePassword = (refresh, oldPassword, newPassword) => {
 				).then(
 					(data) => {
 						if (data && compare(oldPassword, data.applicant_password)) {
-							dbQuery("UPDATE Applicants SET applicant_password = (?) WHERE applicant_id = (?) AND absolute_year = (?)",
+							redisClient.hdel(refresh, "token", (error, result) => {
+								if(error) return new GraphQLError(error);
+								return result;
+							});
+							return dbQuery("UPDATE Applicants SET applicant_password = (?) WHERE applicant_id = (?) AND absolute_year = (?)",
 								[hash(newPassword), deets.id, year]
 							).then((data) => true, (error) => new GraphQLError(error));
 						} else return new GraphQLError("Old Password incorrect!");
@@ -194,7 +194,11 @@ const changePassword = (refresh, oldPassword, newPassword) => {
 				).then(
 					(data) => {
 						if (data && compare(oldPassword, data.mentor_password)) {
-							dbQuery("UPDATE Mentors SET mentor_password = (?) WHERE mentor_id = (?) AND absolute_year = (?)",
+							redisClient.hdel(refresh, "token", (error, result) => {
+								if(error) return new GraphQLError(error);
+								return result;
+							});
+							return dbQuery("UPDATE Mentors SET mentor_password = (?) WHERE mentor_id = (?) AND absolute_year = (?)",
 								[hash(newPassword), deets.id, year]
 							).then((data) => true, (error) => new GraphQLError(error));
 						} else return new GraphQLError("Old Password incorrect!");
@@ -209,7 +213,11 @@ const changePassword = (refresh, oldPassword, newPassword) => {
 				).then(
 					(data) => {
 						if (data && compare(oldPassword, data.org_admin_password)) {
-							dbQuery("UPDATE Org_Admins SET org_admin_password = (?) WHERE org_admin_id = (?) AND absolute_year = (?)",
+							redisClient.hdel(refresh, "token", (error, result) => {
+								if(error) return new GraphQLError(error);
+								return result;
+							});
+							return dbQuery("UPDATE Org_Admins SET org_admin_password = (?) WHERE org_admin_id = (?) AND absolute_year = (?)",
 								[hash(newPassword), deets.id, year]
 							).then((data) => true, (error) => new GraphQLError(error));
 						} else return new GraphQLError("Old Password incorrect!");
@@ -223,8 +231,12 @@ const changePassword = (refresh, oldPassword, newPassword) => {
 					[deets.id, year]
 				).then(
 					(data) => {
-						if (data && compare(oldPassword, data.applicant_password)) {
-							dbQuery("UPDATE Super_Admins SET super_admin_password = (?) WHERE super_admin_id = (?) AND absolute_year = (?)",
+						if (data && compare(oldPassword, data.super_admin_password)) {
+							redisClient.hdel(refresh, "token", (error, result) => {
+								if(error) return new GraphQLError(error);
+								return result;
+							});
+							return dbQuery("UPDATE Super_Admins SET super_admin_password = (?) WHERE super_admin_id = (?) AND absolute_year = (?)",
 								[hash(newPassword), deets.id, year]
 							).then((data) => true, (error) => new GraphQLError(error));
 						} else return new GraphQLError("Old Password incorrect!");
