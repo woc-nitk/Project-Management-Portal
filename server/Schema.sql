@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `DBMS_Project` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `DBMS_Project`;
 -- MySQL dump 10.13  Distrib 5.7.29, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: DBMS_Project
@@ -23,7 +25,7 @@ DROP TABLE IF EXISTS `Applicants`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Applicants` (
-  `applicant_id` int(11) NOT NULL AUTO_INCREMENT,
+  `applicant_id` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
   `first_name` varchar(20) NOT NULL,
   `middle_name` varchar(20) NOT NULL,
@@ -33,7 +35,7 @@ CREATE TABLE `Applicants` (
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`applicant_id`,`absolute_year`),
   UNIQUE KEY `email` (`email`,`absolute_year`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,8 +57,8 @@ DROP TABLE IF EXISTS `Application`;
 CREATE TABLE `Application` (
   `project_id` int(11) NOT NULL,
   `applicant_id` int(11) NOT NULL,
-  `accepted` tinyint(4) NOT NULL,
-  `result` tinyint(4) NOT NULL,
+  `accepted` tinyint(4) DEFAULT NULL,
+  `result` tinyint(4) DEFAULT NULL,
   `absolute_year` year(4) NOT NULL,
   `proposal` varchar(250) NOT NULL,
   PRIMARY KEY (`applicant_id`,`project_id`,`absolute_year`),
@@ -78,6 +80,20 @@ LOCK TABLES `Application` WRITE;
 UNLOCK TABLES;
 
 --
+-- Temporary table structure for view `ApplicationsByOrg`
+--
+
+DROP TABLE IF EXISTS `ApplicationsByOrg`;
+/*!50001 DROP VIEW IF EXISTS `ApplicationsByOrg`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `ApplicationsByOrg` AS SELECT 
+ 1 AS `applicant_id`,
+ 1 AS `project_id`,
+ 1 AS `org_id`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `Maintained_By`
 --
 
@@ -87,11 +103,13 @@ DROP TABLE IF EXISTS `Maintained_By`;
 CREATE TABLE `Maintained_By` (
   `project_id` int(11) NOT NULL,
   `org_id` int(11) NOT NULL,
-  PRIMARY KEY (`project_id`,`org_id`),
+  `absolute_year` year(4) NOT NULL,
+  PRIMARY KEY (`project_id`,`absolute_year`,`org_id`),
   KEY `org_id_idx` (`org_id`),
   KEY `project_id_and_abs_year_in_maintained_by` (`project_id`),
+  KEY `abs_year_in_maintained_by_idx` (`absolute_year`),
   CONSTRAINT `org_id_in_maintained_by` FOREIGN KEY (`org_id`) REFERENCES `Organizations` (`org_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `project_id_and_abs_year_in_maintained_by` FOREIGN KEY (`project_id`) REFERENCES `Project` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `project_id_and_abs_year_in_maintained_by` FOREIGN KEY (`project_id`, `absolute_year`) REFERENCES `Project` (`project_id`, `absolute_year`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -114,10 +132,12 @@ DROP TABLE IF EXISTS `Mentor_belongs_to`;
 CREATE TABLE `Mentor_belongs_to` (
   `mentor_id` int(11) NOT NULL,
   `org_id` int(11) NOT NULL,
-  PRIMARY KEY (`mentor_id`,`org_id`),
+  `absolute_year` year(4) NOT NULL,
+  PRIMARY KEY (`mentor_id`,`org_id`,`absolute_year`),
   KEY `mentor_id_in_mentor_belongs_to` (`mentor_id`),
   KEY `org_id` (`org_id`),
-  CONSTRAINT `mentor_id_in_mentor_belongs_to` FOREIGN KEY (`mentor_id`) REFERENCES `Mentors` (`mentor_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  KEY `mentor_id_in_mentor_belongs_to_idx` (`mentor_id`,`absolute_year`),
+  CONSTRAINT `mentor_id_in_mentor_belongs_to` FOREIGN KEY (`mentor_id`, `absolute_year`) REFERENCES `Mentors` (`mentor_id`, `absolute_year`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `org_id_and_abs_year_in_mentor_belongs_to` FOREIGN KEY (`org_id`) REFERENCES `Organizations` (`org_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -141,10 +161,11 @@ DROP TABLE IF EXISTS `Mentored_By`;
 CREATE TABLE `Mentored_By` (
   `project_id` int(11) NOT NULL,
   `mentor_id` int(11) NOT NULL,
-  PRIMARY KEY (`project_id`,`mentor_id`),
-  KEY `mentor_id_idx` (`mentor_id`),
+  `absolute_year` year(4) NOT NULL,
+  PRIMARY KEY (`project_id`,`mentor_id`,`absolute_year`),
   KEY `mentor_id_and_abs_year_in_mentored_by` (`mentor_id`),
-  CONSTRAINT `mentor_id_and_abs_year_in_mentored_by` FOREIGN KEY (`mentor_id`) REFERENCES `Mentors` (`mentor_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  KEY `mentor_id_and_abs_year_in_mentored_by_idx` (`mentor_id`,`absolute_year`),
+  CONSTRAINT `mentor_id_and_abs_year_in_mentored_by` FOREIGN KEY (`mentor_id`, `absolute_year`) REFERENCES `Mentors` (`mentor_id`, `absolute_year`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `project_id_in_mentored_by` FOREIGN KEY (`project_id`) REFERENCES `Project` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -186,6 +207,19 @@ LOCK TABLES `Mentors` WRITE;
 UNLOCK TABLES;
 
 --
+-- Temporary table structure for view `MentorsByOrg`
+--
+
+DROP TABLE IF EXISTS `MentorsByOrg`;
+/*!50001 DROP VIEW IF EXISTS `MentorsByOrg`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `MentorsByOrg` AS SELECT 
+ 1 AS `mentor_id`,
+ 1 AS `org_id`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `Org_Admins`
 --
 
@@ -200,7 +234,7 @@ CREATE TABLE `Org_Admins` (
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`org_admin_id`,`absolute_year`),
   UNIQUE KEY `email_and_abs_year` (`email`,`absolute_year`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -222,11 +256,13 @@ DROP TABLE IF EXISTS `Org_admin_belongs_to`;
 CREATE TABLE `Org_admin_belongs_to` (
   `org_id` int(11) NOT NULL,
   `org_admin_id` int(11) NOT NULL,
-  PRIMARY KEY (`org_id`,`org_admin_id`),
+  `absolute_year` year(4) NOT NULL,
+  PRIMARY KEY (`org_id`,`org_admin_id`,`absolute_year`),
   KEY `org_admin_id_idx` (`org_admin_id`),
   KEY `org_id_and_abs_year_in_org_admin_belongs_to` (`org_id`),
+  KEY `org_id_and_abs_year_in_oabt_idx` (`org_id`,`absolute_year`),
   CONSTRAINT `org_admin_id_in_org_admin_belongs_to` FOREIGN KEY (`org_admin_id`) REFERENCES `Org_Admins` (`org_admin_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `org_id_and_abs_year_in_org_admin_belongs_to` FOREIGN KEY (`org_id`) REFERENCES `Organizations` (`org_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `org_id_and_abs_year_in_oabt` FOREIGN KEY (`org_id`, `absolute_year`) REFERENCES `Organizations` (`org_id`, `absolute_year`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -252,7 +288,7 @@ CREATE TABLE `Organizations` (
   `absolute_year` year(4) NOT NULL,
   PRIMARY KEY (`org_id`,`absolute_year`),
   UNIQUE KEY `name_UNIQUE` (`org_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -305,7 +341,7 @@ CREATE TABLE `Project` (
   `project_start_date` date NOT NULL,
   `project_end_date` date NOT NULL,
   PRIMARY KEY (`project_id`,`absolute_year`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -316,6 +352,21 @@ LOCK TABLES `Project` WRITE;
 /*!40000 ALTER TABLE `Project` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Project` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary table structure for view `ProjectsByApplicant`
+--
+
+DROP TABLE IF EXISTS `ProjectsByApplicant`;
+/*!50001 DROP VIEW IF EXISTS `ProjectsByApplicant`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `ProjectsByApplicant` AS SELECT 
+ 1 AS `project_id`,
+ 1 AS `applicant_id`,
+ 1 AS `accepted`,
+ 1 AS `result`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `Super_Admin_Manages`
@@ -362,7 +413,7 @@ CREATE TABLE `Super_Admins` (
   PRIMARY KEY (`super_admin_id`,`absolute_year`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -404,6 +455,25 @@ LOCK TABLES `Supervises` WRITE;
 UNLOCK TABLES;
 
 --
+-- Temporary table structure for view `getProjects`
+--
+
+DROP TABLE IF EXISTS `getProjects`;
+/*!50001 DROP VIEW IF EXISTS `getProjects`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `getProjects` AS SELECT 
+ 1 AS `project_id`,
+ 1 AS `work_to_be_done`,
+ 1 AS `project_name`,
+ 1 AS `deliverables`,
+ 1 AS `absolute_year`,
+ 1 AS `project_start_date`,
+ 1 AS `project_end_date`,
+ 1 AS `org_id`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Dumping events for database 'DBMS_Project'
 --
 
@@ -421,12 +491,13 @@ UNLOCK TABLES;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `accept_or_reject_application`(
-IN _project_id INT, IN _application_id INT, IN _absolute_year YEAR, IN _accepted TINYINT
+IN _project_id INT, IN _applicant_id INT, IN _absolute_year YEAR, IN _accepted TINYINT
 )
 BEGIN
 UPDATE Application
 SET Application.accepted = _accepted
-WHERE Appliaction.project_id =  _project_id AND Application.application_id = _application_id AND Application.absolute_year = _absolute_year;
+WHERE Application.project_id =  _project_id AND Application.applicant_id = _applicant_id AND Application.absolute_year = _absolute_year;
+SELECT project_id, applicant_id FROM Application WHERE Application.applicant_id = _applicant_id AND Application.project_id = _project_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -469,7 +540,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `add_application`(
 IN _project_id INT, IN _applicant_id INT, IN _absolute_year YEAR, IN _proposal VARCHAR(250)
 )
 BEGIN
-INSERT INTO Application(project_id, applicant_id, accepted, result, absolute_year, proposal) Values(_project_id, _applicant_id, 0, 0, _absolute_year, _proposal);
+INSERT INTO Application(project_id, applicant_id, absolute_year, proposal) Values(_project_id, _applicant_id, _absolute_year, _proposal);
 SELECT project_id, applicant_id FROM Application WHERE Application.applicant_id = _applicant_id AND Application.project_id = _project_id;
 END ;;
 DELIMITER ;
@@ -555,7 +626,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `add_organization`(
 IN _org_name VARCHAR(100), IN _absolute_year YEAR
 )
 BEGIN
-INSERT INTO Organizations(org_name, absolute_year) Values(_org_name, _absolute_year);
+INSERT INTO Organizations(org_name, absolute_year) Values(_org_name, _absolute_year); 
 SELECT org_id FROM Organizations WHERE Organizations.org_name = _org_name AND Organizations.absolute_year = _absolute_year;
 END ;;
 DELIMITER ;
@@ -578,7 +649,7 @@ IN _email VARCHAR(255), IN _name VARCHAR(20), IN _org_admin_password VARCHAR(128
 )
 BEGIN
 INSERT INTO Org_Admins(email, org_admin_name, org_admin_password, absolute_year ) VALUES(_email, _name, _org_admin_password, _absolute_year);
-SELECT Org_Admins.org_admin_id FROM Org_Admins WHERE Org_Admins.email = _email AND Org_Admins.absolute_year = _absolute_year;
+SELECT Org_Admins.org_admin_id FROM Org_Admins WHERE Org_Admins.email = _email AND Org_Admins.absolute_year = _absolute_year; 
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -768,7 +839,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_application`(
 IN _project_id INT, IN _applicant_id INT
 )
 BEGIN
-DELETE FROM Application
+DELETE FROM Application 
 WHERE Application.project_id = _project_id AND Application.applicant_id = _applicant_id;
 END ;;
 DELIMITER ;
@@ -811,7 +882,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_mentored_by`(
 IN _mentor_id INT, IN _project_id INT
 )
 BEGIN
-DELETE FROM Mentored_By
+DELETE FROM Mentored_By 
 WHERE Mentored_By.project_id = _project_id AND Mentored_By.mentor_id = _mentor_id;
 END ;;
 DELIMITER ;
@@ -833,7 +904,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `delete_mentor_belongs_to`(
 IN _mentor_id INT, IN _org_id INT
 )
 BEGIN
-DELETE FROM Mentor_belongs_to
+DELETE FROM Mentor_belongs_to 
 WHERE Mentor_belongs_to.mentor_id = _mentor_id AND Mentor_belongs_to.org_id = _org_id;
 END ;;
 DELIMITER ;
@@ -1108,26 +1179,9 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_applicant`(
 IN _applicant_id INT
 )
 BEGIN
-SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.applicant_id = _applicant_id;
+SELECT applicant_id, project_id FROM ProjectsByApplicant WHERE applicant_id = _applicant_id;
 END ;;
 DELIMITER ;
-
-
---
--- Temporary table structure for view `applicationsbyorg`
---
-
-DROP TABLE IF EXISTS `applicationsbyorg`;
-/*!50001 DROP VIEW IF EXISTS `applicationsbyorg`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE TABLE `applicationsbyorg` (
-  `applicant_id` tinyint NOT NULL,
-  `project_id` tinyint NOT NULL,
-  `org_id` tinyint NOT NULL
-) ENGINE=MyISAM */;
-SET character_set_client = @saved_cs_client;
-
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -1145,9 +1199,8 @@ DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_org`(
 IN _org_id INT
 )
- BEGIN
- select applicant_id,project_id from ApplicationsByOrg
-  where org_id=_org_id;
+BEGIN
+SELECT applicant_id, project_id FROM ApplicationsByOrg WHERE org_id = _org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1168,7 +1221,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_project`(
 IN _project_id INT
 )
 BEGIN
-SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.project_id = _project_id;
+SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.project_id = _project_id AND NOT Application.accepted = 0;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1189,24 +1242,9 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_applications_by_year`(
 IN _year YEAR
 )
 BEGIN
-SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.absolute_year = _year;
+SELECT Application.applicant_id, Application.project_id FROM Application WHERE Application.absolute_year = _year AND NOT Application.accepted = 0;
 END ;;
 DELIMITER ;
-
---
--- Temporary table structure for view `mentorsbyorg`
---
-
-DROP TABLE IF EXISTS `mentorsbyorg`;
-/*!50001 DROP VIEW IF EXISTS `mentorsbyorg`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE TABLE `mentorsbyorg` (
-  `mentor_id` tinyint NOT NULL,
-  `org_id` tinyint NOT NULL
-) ENGINE=MyISAM */;
-SET character_set_client = @saved_cs_client;
-
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -1225,7 +1263,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_mentors_by_org`(
 IN _org_id INT
 )
 BEGIN
-select mentor_id from mentorsByOrg where org_id=_org_id;
+SELECT mentor_id FROM MentorsByOrg WHERE org_id = _org_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1417,28 +1455,6 @@ BEGIN
 SELECT prerequisites FROM Prerequisites WHERE Prerequisites.project_id = _project_id;
 END ;;
 DELIMITER ;
-
---
--- Temporary table structure for view `getprojects`
---
-
-DROP TABLE IF EXISTS `getprojects`;
-/*!50001 DROP VIEW IF EXISTS `getprojects`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE TABLE `getprojects` (
-  `project_id` tinyint NOT NULL,
-  `work_to_be_done` tinyint NOT NULL,
-  `project_name` tinyint NOT NULL,
-  `deliverables` tinyint NOT NULL,
-  `absolute_year` tinyint NOT NULL,
-  `project_start_date` tinyint NOT NULL,
-  `project_end_date` tinyint NOT NULL,
-  `org_id` tinyint NOT NULL
-) ENGINE=MyISAM */;
-SET character_set_client = @saved_cs_client;
-
-
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -1454,30 +1470,12 @@ SET character_set_client = @saved_cs_client;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_projects`(
-IN _absolute_year YEAR, IN _org_id INT
+IN _absolute_year YEAR, IN _org_id INT 
 )
 BEGIN
-select * from getProjects
-where absolute_year=_absolute_year and org_id=_org_id;
+SELECT * FROM Project INNER JOIN Maintained_By ON Project.project_id = Maintained_By.project_id WHERE Project.absolute_year = _absolute_year AND Maintained_By.org_id = _org_id;
 END ;;
 DELIMITER ;
-
---
--- Temporary table structure for view `projectsbyapplicant`
---
-
-DROP TABLE IF EXISTS `projectsbyapplicant`;
-/*!50001 DROP VIEW IF EXISTS `projectsbyapplicant`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE TABLE `projectsbyapplicant` (
-  `project_id` tinyint NOT NULL,
-  `applicant_id` tinyint NOT NULL,
-  `accepted` tinyint NOT NULL
-) ENGINE=MyISAM */;
-SET character_set_client = @saved_cs_client;
-
-
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -1496,8 +1494,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_projects_by_applicant`(
 IN _applicant_id INT
 )
 BEGIN
-select project id from projectsByApplicant
-where applicant_id=_applicant_id and accepted=1;
+SELECT Project.project_id FROM Project INNER JOIN Application ON Project.project_id = Application.project_id WHERE Application.applicant_id = _applicant_id AND Application.accepted = 1;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1560,7 +1557,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_projects_by_year`(
 IN _year YEAR
 )
 BEGIN
-SELECT * FROM Project WHERE Project.absolute_year = _year;
+SELECT Project.project_id FROM Project WHERE Project.absolute_year = _year; 
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1600,7 +1597,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `get_super_admins_by_year`(
 IN _year YEAR
 )
 BEGIN
-SELECT super_admin_id FROM Super_Admins WHERE Super_Admins.absolute_year = _year;
+SELECT super_admin_id FROM Super_Admins WHERE Super_Admins.absolute_year = _year; 
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1618,12 +1615,12 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`dev`@`localhost` PROCEDURE `success_or_failure_application`(
-IN _project_id INT, IN _application_id INT, IN _absolute_year YEAR, IN _result TINYINT
+IN _project_id INT, IN _applicant_id INT, IN _absolute_year YEAR, IN _result TINYINT
 )
 BEGIN
 UPDATE Application
 SET Application.result = _result
-WHERE Appliaction.project_id =  _project_id AND Application.application_id = _application_id AND Application.absolute_year = _absolute_year AND Application.accepted = 1;
+WHERE Application.project_id =  _project_id AND Application.applicant_id = _applicant_id AND Application.absolute_year = _absolute_year AND Application.accepted = 1;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1644,7 +1641,7 @@ CREATE DEFINER=`dev`@`localhost` PROCEDURE `update_applicant`(
 IN _applicant_id INT, IN _email VARCHAR(255), IN _applicant_password VARCHAR(128), IN _absolute_year YEAR
 )
 BEGIN
-UPDATE Applicants
+UPDATE Applicants 
 SET Applicants.email = _email,
     Applicants.applicant_password = _applicant_password
 WHERE Applicants.applicant_id = _applicant_id AND Applicants.absolute_year = _absolute_year;
@@ -1673,7 +1670,7 @@ UPDATE Project
 SET Project.work_to_be_done = _work_to_be_done,
 	Project.project_name = _project_name,
     Project.deliverables = _deliverables
-WHERE Project.project_id = _project_id AND Project.absolute_year = _absolute_year;
+WHERE Project.project_id = _project_id AND Project.absolute_year = _absolute_year; 
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1703,6 +1700,78 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Final view structure for view `ApplicationsByOrg`
+--
+
+/*!50001 DROP VIEW IF EXISTS `ApplicationsByOrg`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`dev`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `ApplicationsByOrg` AS select `Application`.`applicant_id` AS `applicant_id`,`Application`.`project_id` AS `project_id`,`Maintained_By`.`org_id` AS `org_id` from (`Application` join `Maintained_By`) where (`Application`.`project_id` = `Maintained_By`.`project_id`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `MentorsByOrg`
+--
+
+/*!50001 DROP VIEW IF EXISTS `MentorsByOrg`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`dev`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `MentorsByOrg` AS select `Mentors`.`mentor_id` AS `mentor_id`,`Mentor_belongs_to`.`org_id` AS `org_id` from (`Mentors` join `Mentor_belongs_to`) where (`Mentors`.`mentor_id` = `Mentor_belongs_to`.`mentor_id`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `ProjectsByApplicant`
+--
+
+/*!50001 DROP VIEW IF EXISTS `ProjectsByApplicant`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`dev`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `ProjectsByApplicant` AS select `Project`.`project_id` AS `project_id`,`Application`.`applicant_id` AS `applicant_id`,`Application`.`accepted` AS `accepted`,`Application`.`result` AS `result` from (`Project` join `Application`) where (`Application`.`project_id` = `Project`.`project_id`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `getProjects`
+--
+
+/*!50001 DROP VIEW IF EXISTS `getProjects`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`dev`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `getProjects` AS select `Project`.`project_id` AS `project_id`,`Project`.`work_to_be_done` AS `work_to_be_done`,`Project`.`project_name` AS `project_name`,`Project`.`deliverables` AS `deliverables`,`Project`.`absolute_year` AS `absolute_year`,`Project`.`project_start_date` AS `project_start_date`,`Project`.`project_end_date` AS `project_end_date`,`Maintained_By`.`org_id` AS `org_id` from (`Project` join `Maintained_By`) where (`Project`.`project_id` = `Maintained_By`.`project_id`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1713,4 +1782,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-23 22:49:59
+-- Dump completed on 2020-06-09 19:12:21
