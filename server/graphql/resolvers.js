@@ -73,6 +73,8 @@ const resolvers = {
 				args.last_name,
 				args.applicant_year
 			),
+		logout: (parent, args) => auth.logOut(args.refresh),
+		changePassword: (parent, args) => auth.changePassword(args.refresh, args.oldPassword, args.newPassword),
 		renewAuth: (parent, args) => auth.generateNewJwt(args.refresh),
 		addApplication: (parent, args, context) =>
 			applications.addApplication(

@@ -154,6 +154,88 @@ const signUp = (
 	);
 };
 
+const logOut = (refresh) => {
+	return redisClient.hdel(refresh, "token", (error, result) => {
+		if(error) return new GraphQLError(error);
+		return result;
+	});
+};
+
+const changePassword = (refresh, oldPassword, newPassword) => {
+	return new Promise((resolve, reject) =>
+		redisClient.hget(refresh, "token", (error, result) => {
+			if (error) return reject(new GraphQLError(error));
+			if(result == null) return reject(new GraphQLError("Refresh token expired."));
+			const deets = jwt.decode(result);
+			redisClient.hdel(refresh, "token", (error, result) => {
+				if(error) return new GraphQLError(error);
+				return result;
+			});
+			const year = new Date().getFullYear();
+			if(deets.type == "applicant") {
+				return resolve(dbQuery(
+					"SELECT applicant_password FROM Applicants WHERE applicant_id = (?) AND absolute_year = (?)",
+					[deets.id, year]
+				).then(
+					(data) => {
+						if (data && compare(oldPassword, data.applicant_password)) {
+							dbQuery("UPDATE Applicants SET applicant_password = (?) WHERE applicant_id = (?) AND absolute_year = (?)",
+								[hash(newPassword), deets.id, year]
+							).then((data) => true, (error) => new GraphQLError(error));
+						} else return new GraphQLError("Old Password incorrect!");
+					},
+					(error) => new GraphQLError(error)
+				));
+			}
+			if(deets.type == "mentor") {
+				return resolve(dbQuery(
+					"SELECT mentor_password FROM Mentors WHERE mentor_id = (?) AND absolute_year = (?)",
+					[deets.id, year]
+				).then(
+					(data) => {
+						if (data && compare(oldPassword, data.mentor_password)) {
+							dbQuery("UPDATE Mentors SET mentor_password = (?) WHERE mentor_id = (?) AND absolute_year = (?)",
+								[hash(newPassword), deets.id, year]
+							).then((data) => true, (error) => new GraphQLError(error));
+						} else return new GraphQLError("Old Password incorrect!");
+					},
+					(error) => new GraphQLError(error)
+				));
+			}
+			if(deets.type == "orgAdmin") {
+				return resolve(dbQuery(
+					"SELECT org_admin_password FROM Org_Admins WHERE org_admin_id = (?) AND absolute_year = (?)",
+					[deets.id, year]
+				).then(
+					(data) => {
+						if (data && compare(oldPassword, data.org_admin_password)) {
+							dbQuery("UPDATE Org_Admins SET org_admin_password = (?) WHERE org_admin_id = (?) AND absolute_year = (?)",
+								[hash(newPassword), deets.id, year]
+							).then((data) => true, (error) => new GraphQLError(error));
+						} else return new GraphQLError("Old Password incorrect!");
+					},
+					(error) => new GraphQLError(error)
+				));
+			}
+			if(deets.type == "superAdmin") {
+				return resolve(dbQuery(
+					"SELECT super_admin_password FROM Super_Admins WHERE super_admin_id = (?) AND absolute_year = (?)",
+					[deets.id, year]
+				).then(
+					(data) => {
+						if (data && compare(oldPassword, data.applicant_password)) {
+							dbQuery("UPDATE Super_Admins SET super_admin_password = (?) WHERE super_admin_id = (?) AND absolute_year = (?)",
+								[hash(newPassword), deets.id, year]
+							).then((data) => true, (error) => new GraphQLError(error));
+						} else return new GraphQLError("Old Password incorrect!");
+					},
+					(error) => new GraphQLError(error)
+				));
+			}
+		})
+	);
+}
+
 module.exports = {
 	login,
 	signUp,
@@ -161,5 +243,7 @@ module.exports = {
 	compare,
 	generatejwt,
 	verifyjwt,
-	generateNewJwt
+	generateNewJwt,
+	logOut,
+	changePassword
 };
