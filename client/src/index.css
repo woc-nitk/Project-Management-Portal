@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap");
 :root {
   /* All the colors to be used for the project are defined below.
   These are the nord color scheme(https://www.nordtheme.com/) colors with two additions: 
@@ -27,18 +28,20 @@
   --green: #a3be8c;
   --purple: #b48ead;
 }
-* {
+*,*::after,*::before {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html {
+  font-size: 62.5%;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: "Montserrat", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -48,31 +51,16 @@ body {
   background-color: var(--silver-2);
 }
 
-/* code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
+/*
 
-.light {
-  color: var(--dark-0);
-  background-color: var(--silver-0);
-}
+
 
 .dark {
   color: var(--silver-2);
   background-color: var(--dark-1);
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
-    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-size: 14px;
-  line-height: 1.5;
-}
 
-.app {
-  margin: 2rem;
-}
 
 form a {
   color: #08c;
@@ -143,15 +131,82 @@ button.outline {
   border: 1px solid #aaa;
   color: #555;
 } */
+a {
+  color: #08c;
+}
+
+
+input {
+  padding: 0.5rem;
+  font-size: 16px;
+  max-width: 100%;
+  display: block;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+
+input:focus {
+  border-color: #007eff;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 0 3px rgba(0, 126, 255, 0.1);
+  outline: none;
+}
+
+input.error {
+  border-color: red;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.input-feedback {
+  color: red;
+  margin-top: 0.25rem;
+}
+
+button {
+  max-width: 150px;
+  margin: 20px 0;
+  padding: 12px 20px;
+  border-style: none;
+  border-radius: 5px;
+  background-color: #08c;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+  font-size: 17px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+button + button {
+  margin-left: 0.5rem;
+}
+
+button.outline {
+  background-color: #eee;
+  border: 1px solid #aaa;
+  color: #555;
+}
 
 .modalContent {
   display: flex;
+  font-size: 16px;
   flex-direction: column;
   align-items: flex-start;
 }
 
 .closeModal {
-  margin-top: 5px;
-  margin-right: 10px;
   align-self: flex-end;
+  font-size: 2.3em;
 }
