@@ -15,7 +15,6 @@ const queryFunction = (query, params) => {
 	return new Promise((resolve, reject) => {
 		connectionPool.getConnection(function (error, connection) {
 			if (error) {
-				connection.release();
 				reject(error);
 			}
 			const dbQueryFunction = (query, params) => {

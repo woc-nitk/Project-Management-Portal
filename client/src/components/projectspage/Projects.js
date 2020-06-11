@@ -16,7 +16,7 @@ export default function Projects() {
   return (
     <div className="container">
       <h1 style={{
-        fontSize="36px",
+        fontSize:"36px",
         marginTop:"60px",
         marginBottom:"5px"
       }}>
