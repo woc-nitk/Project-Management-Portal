@@ -125,7 +125,7 @@ const NavLinks = styled(animated.ul)`
 const RightSide = styled.div`
   width: 85px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   @media (min-width: 768px) {
     width: 4vw;
