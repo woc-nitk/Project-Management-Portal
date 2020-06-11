@@ -6,9 +6,7 @@ const MentorForm = ({ orgId, mutation, setState }) => {
     <div className="app">
       <Formik
         initialValues={{
-          firstName: "",
-          middleName: "",
-          lastName: "",
+          name: "",
           email: "",
           password: "",
           confirmPassword: "",
@@ -18,8 +16,7 @@ const MentorForm = ({ orgId, mutation, setState }) => {
           setState(false);
         }}
         validationSchema={Yup.object().shape({
-          firstName: Yup.string().required("Required"),
-          lastName: Yup.string().required("Required"),
+          name: Yup.string().required("Required"),
           email: Yup.string().email().required("Required"),
           password: Yup.string()
             .min(8, "Password must be at least 8 characters long")
@@ -42,31 +39,13 @@ const MentorForm = ({ orgId, mutation, setState }) => {
       >
         {({ dirty, handleReset, isSubmitting }) => (
           <Form>
-            <label htmlFor="firstName" style={{ display: "block" }}>
-              First Name
+            <label htmlFor="name" style={{ display: "block" }}>
+              Name
             </label>
-            <Field type="text" name="firstName" placeholder="First Name" />
+            <Field type="text" name="name" placeholder="First Name" />
             <ErrorMessage
               className="input-feedback"
-              name="firstName"
-              component="div"
-            />
-            <label htmlFor="middleName" style={{ display: "block" }}>
-              Middle Name
-            </label>
-            <Field type="text" name="middleName" placeholder="Middle Name" />
-            <ErrorMessage
-              className="input-feedback"
-              name="middleName"
-              component="div"
-            />
-            <label htmlFor="lastName" style={{ display: "block" }}>
-              Last Name
-            </label>
-            <Field type="text" name="lastName" placeholder="Last Name" />
-            <ErrorMessage
-              className="input-feedback"
-              name="lastName"
+              name="name"
               component="div"
             />
             <label htmlFor="email" style={{ display: "block" }}>

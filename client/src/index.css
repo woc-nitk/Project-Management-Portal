@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Montserrat:400,600&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,600&display=swap");
 :root {
   /* All the colors to be used for the project are defined below.
   These are the nord color scheme(https://www.nordtheme.com/) colors with two additions: 
@@ -28,7 +28,9 @@
   --green: #a3be8c;
   --purple: #b48ead;
 }
-*,*::after,*::before {
+*,
+*::after,
+*::before {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -134,7 +136,6 @@ button.outline {
 a {
   color: #08c;
 }
-
 
 input {
   padding: 0.5rem;

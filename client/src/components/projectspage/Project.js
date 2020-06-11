@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { getProjectQuery } from "../../queries";
 
-export default function Projects({ match }) {
+export default function Projects({ match, user }) {
   const {
     params: { projectId },
   } = match;
@@ -19,7 +19,7 @@ export default function Projects({ match }) {
   }
 
   return (
-    <div key={data.project.id}>
+    <div key={user.id}>
       <h1>{data.project.name}</h1>
       <p>{data.project.work}</p>
       <ul>
@@ -28,10 +28,10 @@ export default function Projects({ match }) {
         })}
       </ul>
       <ul>
-      {data.project.mentors.map((p, idx) => {
-        return <li key={idx}>{p.name}</li>;
-      })}
-    </ul>
+        {data.project.mentors.map((p, idx) => {
+          return <li key={idx}>{p.name}</li>;
+        })}
+      </ul>
     </div>
   );
 }

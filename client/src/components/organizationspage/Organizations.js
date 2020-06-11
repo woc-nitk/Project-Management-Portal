@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { getOrganizationsQuery } from "../../queries";
+import OrganizationCard from "../cards/OrganizationCard";
 
 export default function Organizations() {
   const { loading, data, error } = useQuery(getOrganizationsQuery);
@@ -13,12 +14,17 @@ export default function Organizations() {
   }
 
   return (
-    <div>
+    <div className="container">
       {data.organizations.map((organization) => {
         return (
-          <div key={organization.id}>
-            <h3>{organization.name}</h3>
-          </div>
+          <OrganizationCard
+            key={organization.id}
+            title={organization.name}
+            url={`/organization/${organization.id}`}
+            desc={
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            }
+          />
         );
       })}
     </div>

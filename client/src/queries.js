@@ -100,6 +100,10 @@ export const getSuperAdminQuery = gql`
 export const getProjectsQuery = gql`
   {
     projects {
+      organization {
+        id
+        name
+      }
       id
       name
       work

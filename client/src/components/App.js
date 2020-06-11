@@ -84,8 +84,16 @@ function App() {
             <Route path="/signup/" exact component={SignUp} />
             <Route path="/projects/" exact component={Projects} />
             <Route path="/organizations/" exact component={Organizations} />
-            <Route exact path="/profile" render={() => <Profile  user={user} />} />
-            <Route path="/project/:projectId" exact component={Project} />
+            <Route
+              exact
+              path="/profile"
+              render={() => <Profile user={user} />}
+            />
+            <Route
+              path="/project/:projectId"
+              exact
+              render={() => <Project user={user} />}
+            />
             <Route path="/organization/:orgId" exact component={Organization} />
 
             <Route
