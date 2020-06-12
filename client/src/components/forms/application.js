@@ -1,17 +1,22 @@
 import React from "react";
-import "./forms.css";
+// import "./forms.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-const ApplicationForm = () => {
+const ApplicationForm = ({ pId, aId, mutation }) => {
   return (
     <div className="app">
       <Formik
         initialValues={{
-          orgName: "",
+          link: "",
         }}
         onSubmit={async (values) => {
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          alert(`The entereed link is :${values.link}`);
+          mutation({
+            variables: {
+              project_id: pId,
+              applicant_id: aId,
+              proposal: values.link,
+            },
+          });
         }}
         validationSchema={Yup.object().shape({
           link: Yup.string().url("enter a valid url").required("Required"),
@@ -19,11 +24,11 @@ const ApplicationForm = () => {
       >
         {({ dirty, handleReset, isSubmitting }) => (
           <Form>
-            <h1>Proposal</h1>
-            <label htmlFor="proposal" style={{ display: "block" }}>
+            <h1 style={{ marginTop: "60px", marginBottom: "10px" }}>Apply</h1>
+            <label htmlFor="link" style={{ display: "block" }}>
               Link To Proposal
             </label>
-            <Field type="text" name="link" placeholder="link" />
+            <Field type="text" name="link" placeholder="Proposal URL" />
             <ErrorMessage
               className="input-feedback"
               name="link"

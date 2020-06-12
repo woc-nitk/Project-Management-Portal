@@ -3,7 +3,6 @@ import React from "react";
 export default function UserDetails(props) {
   return (
     <div>
-      <h1>Profile</h1>
       <h2>{props.name}</h2>
       <p>
         <i>{props.email}</i>

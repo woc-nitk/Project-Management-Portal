@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import { getOrganizationQuery } from "../../queries";
+import ProjectCard from "../cards/ProjectCard";
 
 export default function Organization({ match }) {
   const {
@@ -18,15 +19,26 @@ export default function Organization({ match }) {
   }
 
   return (
-    <div>
-      <h1>{data.organization.name}</h1>
-      <h5>Organization ID:{data.organization.id}</h5>
-      <h2>Projects under {data.organization.name}</h2>
-      <ul>
+    <div className="container" style={{ fontSize: "16px" }}>
+      <h1 style={{ marginTop: "60px", marginBottom: "20px" }}>
+        {data.organization.name}
+      </h1>
+      <p>{data.organization.description}</p>
+      <h2 style={{ marginTop: "40px", marginTop: "5px" }}>
+        Projects under {data.organization.name}
+      </h2>
+      <hr></hr>
+      <div className="grid">
         {data.organization.projects.map((proj) => {
-          return <li key={proj.id}>{proj.name}</li>;
+          return (
+            <ProjectCard
+              title={proj.name}
+              url={`/project/${proj.id}`}
+              desc={proj.work}
+            />
+          );
         })}
-      </ul>
+      </div>
     </div>
   );
 }

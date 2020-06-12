@@ -38,9 +38,7 @@ export default function Organizations() {
               key={organization.id}
               title={organization.name}
               url={`/organization/${organization.id}`}
-              desc={
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              }
+              desc={organization.description}
             />
           );
         })}

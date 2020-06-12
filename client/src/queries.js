@@ -148,9 +148,11 @@ export const getOrganizationQuery = gql`
     organization(org_id: $org_id) {
       id
       name
+      description
       projects {
         id
         name
+        work
       }
     }
   }
@@ -250,6 +252,18 @@ export const addOrgMutation = gql`
     addOrganization(org_name: $orgName) {
       id
       name
+    }
+  }
+`;
+
+export const addApplicationMutation = gql`
+  mutation($project_id: ID!, $applicant_id: ID!, $proposal: URL!) {
+    addApplication(
+      project_id: $project_id
+      applicant_id: $applicant_id
+      proposal: $proposal
+    ) {
+      proposal
     }
   }
 `;

@@ -232,3 +232,12 @@ button.outline {
     justify-content: space-evenly;
   }
 }
+
+@media (max-width: 960px) {
+  .container {
+    width: 100vw;
+  }
+  .grid {
+    justify-content: center;
+  }
+}
