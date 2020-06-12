@@ -236,7 +236,7 @@ const ProjectForm = ({ org_id, setState }) => {
               Mentor(optional)
             </label>
             <Field as="select" name="mentor2">
-              <option value="">None</option>
+              <option value="">None</option>;
               {data.mentors.map((mentor) => {
                 return (
                   <option key={mentor.id} value={mentor.id}>

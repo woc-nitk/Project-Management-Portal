@@ -292,23 +292,20 @@ export const loginMutation = gql`
 
 export const signUpMutation = gql`
   mutation(
+    $regNum: ID!
     $email: EmailAddress!
     $password: Password!
     $firstName: CleanString!
     $middleName: CleanString!
     $lastName: CleanString!
-    $year: Int!
   ) {
     signUp(
+      reg_num: $regNum
       email: $email
       password: $password
       first_name: $firstName
       middle_name: $middleName
       last_name: $lastName
-      applicant_year: $year
-    ) {
-      auth
-      refresh
-    }
+    ) 
   }
 `;

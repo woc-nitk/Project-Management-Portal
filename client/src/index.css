@@ -241,3 +241,6 @@ button.outline {
     justify-content: center;
   }
 }
+form {
+  font-size: 16px;
+}
