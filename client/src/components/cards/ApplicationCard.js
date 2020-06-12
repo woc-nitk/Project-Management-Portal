@@ -5,14 +5,26 @@ export default function ApplicationCard(props) {
   return (
     <Card>
       <Org>{props.org}</Org>
-      <Title>{props.title}</Title>
+      <a
+        href={props.url}
+        style={{
+          fontWeight: "600",
+          color: "black",
+          marginTop: "5px",
+          textDecoration: "none",
+          fontSize: "27px",
+          color: "#4c566a",
+        }}
+      >
+        {props.title}
+      </a>
       <Status>
         {props.accepted && <Accepted>Accepted</Accepted>}
         {props.rejected && <Rejected>Rejected</Rejected>}
+        {props.pending && <Pending>Pending</Pending>}
         {props.update && (
           <Update onClick={() => props.handleClick()}>Update</Update>
         )}
-        {props.pending && <Pending>Pending</Pending>}
       </Status>
     </Card>
   );
@@ -36,12 +48,6 @@ const Org = styled.h4`
   font-size: 16px;
   margin-right: 0;
   margin-left: auto;
-`;
-
-const Title = styled.h3`
-  font-weight: 600;
-  margin-top: 5px;
-  font-size: 27px;
 `;
 
 const Status = styled.div`

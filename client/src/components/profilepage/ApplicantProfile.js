@@ -3,7 +3,9 @@ import { UserContext } from "../../store/UserContext";
 import { useQuery } from "@apollo/react-hooks";
 import { getApplicantQuery } from "../../queries";
 import UserDetails from "./UserDetails";
+import styled from "styled-components";
 import { Link } from "react-router-dom";
+import ApplicationCard from "../cards/ApplicationCard";
 
 export default function ApplicantProfile() {
   const [user] = useContext(UserContext);
@@ -24,7 +26,16 @@ export default function ApplicantProfile() {
   const year = data.applicant.allpicant_year;
 
   return (
-    <>
+    <div className="container">
+      <h1
+        style={{
+          fontWeight: "400",
+          fontSize: "48px",
+        }}
+      >
+        Dashboard
+      </h1>
+      <br></br>
       <UserDetails
         name={name}
         type={user.type}
@@ -32,17 +43,66 @@ export default function ApplicantProfile() {
         email={data.applicant.email}
       />
 
-      {data.applicant.applications.map((application, idx) => {
-        return (
-          <div key={idx}>
-            <Link to={`/project/${application.project.id}`}>
-              <p>{application.project.name}</p>
-            </Link>
-            <a href={application.proposal}>Proposal</a>
-            <p>Status: Show status here!!</p>
-          </div>
-        );
-      })}
-    </>
+      <h2
+        style={{
+          fontWeight: "400",
+          fontSize: "36px",
+        }}
+      >
+        Applications
+      </h2>
+
+      <hr
+        style={{
+          flex: "0 0 100%",
+          marginBottom: "50px",
+        }}
+      ></hr>
+
+      <Grid>
+        {data.applicant.applications.map((application, idx) => {
+          let accepted;
+          let rejected;
+          let pending;
+          let update = false;
+          if (application.accepted === true) {
+            accepted = true;
+            rejected = false;
+            pending = false;
+          } else if (application.accepted === false) {
+            accepted = false;
+            rejected = true;
+            pending = false;
+          } else {
+            pending = true;
+            update = true;
+            accepted = false;
+            rejected = false;
+          }
+          return (
+            <ApplicationCard
+              org={application.organization.name}
+              title={application.project.name}
+              url={application.proposal}
+              accepted={accepted}
+              rejected={rejected}
+              pending={pending}
+              update={update}
+              handleClick={() => {}}
+            />
+          );
+        })}
+      </Grid>
+    </div>
   );
 }
+
+const Grid = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  @media (max-width: 960px) {
+    justify-content: space-evenly;
+  }
+`;

@@ -15,25 +15,35 @@ export default function Projects() {
 
   return (
     <div className="container">
-      <h1 style={{
-        fontSize="36px",
-        marginTop:"60px",
-        marginBottom:"5px"
-      }}>
+      <h1
+        style={{
+          fontSize: "36px",
+          marginTop: "60px",
+          marginBottom: "5px",
+        }}
+      >
         Projects
       </h1>
-      <hr style={{flex:"0 0 100%",marginBottom:"50px"}}/>
-      {data.projects.map((project) => {
-        return (
-          <ProjectCard
-            key={project.id}
-            org={project.organization.id}
-            url={`/project/${project.id}`}
-            title={project.name}
-            desc={project.work}
-          />
-        );
-      })}
+      <hr
+        style={{
+          flex: "0 0 100%",
+          marginBottom: "50px",
+        }}
+      />
+
+      <div className="gird">
+        {data.projects.map((project) => {
+          return (
+            <ProjectCard
+              key={project.id}
+              org={project.organization.id}
+              url={`/project/${project.id}`}
+              title={project.name}
+              desc={project.work}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

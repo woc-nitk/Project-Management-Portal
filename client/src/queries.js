@@ -42,6 +42,9 @@ export const getApplicantQuery = gql`
         project {
           id
           name
+          organization {
+            name
+          }
         }
         accepted
         result

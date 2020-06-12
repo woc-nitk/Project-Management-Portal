@@ -211,3 +211,24 @@ button.outline {
   align-self: flex-end;
   font-size: 2.3em;
 }
+
+.container {
+  max-width: 120rem;
+  margin: 0 auto;
+}
+
+.grid {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+@media (max-width: 960px) {
+  .container {
+    max-width: 90vw;
+  }
+  .grid {
+    justify-content: space-evenly;
+  }
+}
