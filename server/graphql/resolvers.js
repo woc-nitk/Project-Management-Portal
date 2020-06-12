@@ -66,12 +66,12 @@ const resolvers = {
 		login: (parent, args) => auth.login(args.email, args.password),
 		signUp: (parent, args) =>
 			auth.signUp(
+				args.reg_num,
 				args.email,
 				args.password,
 				args.first_name,
 				args.middle_name,
-				args.last_name,
-				args.applicant_year
+				args.last_name
 			),
 		logout: (parent, args) => auth.logOut(args.refresh),
 		changePassword: (parent, args) => auth.changePassword(args.refresh, args.oldPassword, args.newPassword),

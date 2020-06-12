@@ -116,13 +116,13 @@ type LoginInfo {
 type Mutation {
 	login(email: EmailAddress!, password: Password!): LoginInfo!
 	signUp(
+		reg_num: ID!,
 		email: EmailAddress!, 
 		password: Password!,
 		first_name: CleanString!,
 		middle_name: CleanString!,
-		last_name: CleanString!,
-		applicant_year: Int!,		
-	): AuthPayload!
+		last_name: CleanString!,	
+	): Boolean!
 	logout(refresh: String!): Boolean!
 	changePassword(refresh: String!, oldPassword: Password!, newPassword: Password!): Boolean! 
 	renewAuth(refresh: String!): LoginInfo!

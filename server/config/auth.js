@@ -126,6 +126,7 @@ const login = (email, password) => {
 };
 
 const signUp = (
+	reg_num,
 	email,
 	password,
 	firstName,
@@ -134,21 +135,18 @@ const signUp = (
 	applicantYear
 ) => {
 	const year = new Date().getFullYear();
-	password = hash(password);
-	return dbQuery("CALL add_applicant(?,?,?,?,?,?,?)", [
+	return dbQuery("CALL add_applicant(?,?,?,?,?,?,?,?)", [
+		reg_num,
 		email,
 		firstName,
 		middleName,
 		lastName,
 		applicantYear,
-		password,
+		hash(password),
 		year
 	]).then(
 		(data) => {
-			const authToken = generatejwt(data[0].applicant_id, "applicant");
-			const refreshToken = uuid.v4();
-			redisSet(authToken, refreshToken);
-			return { auth: authToken, refresh: refreshToken };
+			return true;
 		},
 		(error) => new GraphQLError(error)
 	);

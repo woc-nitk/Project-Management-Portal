@@ -13,7 +13,7 @@ const ApplicantForm = (props) => {
           email: "",
           password: "",
           confirmPassword: "",
-          year: ""
+          regNum: ""
         }}
         onSubmit={(values, { setSubmitting }) =>
             props.signUpUser({ variables: values })
@@ -39,14 +39,9 @@ const ApplicantForm = (props) => {
                 [Yup.ref("password")],
                 "Both passwords need to be the same"
               )
-              .required(),
-            year: Yup.string()
-              .oneOf(["first", "second", "third", "fourth"], "Invalid")
-              .required("Required")
+              .required()
           }),
-          year: Yup.string()
-            .oneOf(["first", "second", "third", "fourth"], "Invalid")
-            .required("Required")
+          regNum: Yup.string().matches(/^[0-9]{6,6}$/, "Registration number should be 6 digits").required("Required"),
         })}
       >
         {({ dirty, handleReset, isSubmitting }) => (
@@ -55,17 +50,17 @@ const ApplicantForm = (props) => {
               marginBottom:"2rem",
               fontSize:"42px"
             }}>Sign Up</h1>
-            <label htmlFor="regNumber" style={{ display: "block" }}>
+            <label htmlFor="regNum" style={{ display: "block" }}>
             Registration Number
           </label>
           <Field
             type="text"
-            name="regNumber"
+            name="regNum"
             placeholder="xxxxxx"
           />
           <ErrorMessage
             className="input-feedback"
-            name="regNumber"
+            name="regNum"
             component="div"
           />
             <label htmlFor="firstName" style={{ display: "block" }}>

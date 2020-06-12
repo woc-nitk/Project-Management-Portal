@@ -108,7 +108,7 @@ export default function OrgAdminProfile() {
       <Modal
         isOpen={projectModal}
         onRequestClose={() => {
-          setProjectModal(flase);
+          setProjectModal(false);
         }}
         contentLabel="ProjectModal"
         style={{
