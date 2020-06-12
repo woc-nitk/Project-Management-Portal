@@ -158,6 +158,34 @@ export const getOrganizationQuery = gql`
 
 // Mutations
 
+export const addProjectMutation = gql`
+  mutation(
+    $name: CleanString!
+    $work: CleanString!
+    $deliverables: CleanString!
+    $prerequisites: [CleanString!]!
+    $absolute_year: Year!
+    $project_start_date: Date!
+    $project_end_date: Date!
+    $org_id: ID!
+    $mentor_ids: [ID!]!
+  ) {
+    addProject(
+      name: $name
+      work: $work
+      deliverables: $deliverables
+      prerequisites: $prerequisites
+      absolute_year: $absolute_year
+      project_start_date: $project_start_date
+      project_end_date: $project_end_date
+      org_id: $org_id
+      mentor_ids: $mentor_ids
+    ) {
+      name
+    }
+  }
+`;
+
 export const passFailApplicationMutation = gql`
   mutation($p_id: ID!, $appl_id: ID!, $pass: Boolean!) {
     passOrFailApplication(

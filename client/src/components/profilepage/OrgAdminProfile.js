@@ -1,16 +1,13 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../../store/UserContext";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import {
-  getOrgAdminQuery,
-  getOrgMentorsQuery,
-  addMentorMutation,
-} from "../../queries";
+import { getOrgAdminQuery, addMentorMutation } from "../../queries";
 import UserDetails from "./UserDetails";
 import AdminProjects from "./views/Projects";
 import Modal from "react-modal";
 import MentorForm from "../forms/Mentor_nd_orgAdmin";
 import { Link } from "react-router-dom";
+import ProjectForm from "../forms/project";
 
 Modal.setAppElement("#root");
 
@@ -37,7 +34,6 @@ export default function OrgAdminProfile() {
     return <h1>Some error has occured</h1>;
   }
 
-
   function closeMentorModal() {
     setMentorModal(false);
   }
@@ -61,6 +57,20 @@ export default function OrgAdminProfile() {
         isOpen={mentorModal}
         onRequestClose={closeMentorModal}
         contentLabel="MentorModal"
+        style={{
+          content: {
+            minWidth: "300px",
+            // height:"50rem"
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%,-50%",
+            padding: "3rem",
+            paddingTop: "1rem",
+          },
+        }}
       >
         <div className="modalContent">
           <button
@@ -68,8 +78,11 @@ export default function OrgAdminProfile() {
             onClick={closeMentorModal}
             style={{
               background: "none",
+              color: "#000000",
               border: "none",
-              fontSize: "36px",
+              margin: "0",
+              padding: "0",
+              boxShadow: "none",
             }}
           >
             x
@@ -84,7 +97,59 @@ export default function OrgAdminProfile() {
 
       <Link to="#">All mentors</Link>
       <hr />
-        <button>Add Project</button>
+
+      <button
+        onClick={() => {
+          setProjectModal(true);
+        }}
+      >
+        Add Project
+      </button>
+      <Modal
+        isOpen={projectModal}
+        onRequestClose={() => {
+          setProjectModal(flase);
+        }}
+        contentLabel="ProjectModal"
+        style={{
+          content: {
+            minWidth: "300px",
+            // height:"50rem"
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%,-50%",
+            padding: "3rem",
+            paddingTop: "1rem",
+          },
+        }}
+      >
+        <div className="modalContent">
+          <button
+            className="closeModal"
+            onClick={() => {
+              setProjectModal(false);
+            }}
+            style={{
+              background: "none",
+              color: "#000000",
+              border: "none",
+              margin: "0",
+              padding: "0",
+              boxShadow: "none",
+            }}
+          >
+            x
+          </button>
+          <ProjectForm
+            mutation={addMentor}
+            orgId={data.orgAdmin.organization.id}
+            setState={setProjectModal}
+          />
+        </div>
+      </Modal>
 
       <AdminProjects projects={data.orgAdmin.organization.projects} />
     </>
