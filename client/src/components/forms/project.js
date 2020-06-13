@@ -1,7 +1,6 @@
 import React from "react";
-//import "./forms.css";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { getOrgMentorsQuery, addProjectMutation } from "../../queries";
+import { getOrgMentorsQuery, addProjectMutation, getOrgAdminQuery } from "../../queries";
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -9,6 +8,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const ProjectForm = ({ org_id, setState }) => {
+  const [random, setRandom] = React.useState("");
   const { loading, data, error } = useQuery(getOrgMentorsQuery, {
     variables: { org_id: org_id },
   });
@@ -17,7 +17,9 @@ const ProjectForm = ({ org_id, setState }) => {
     onError(err) {
       console.log(err);
     },
-    refetchQueries: ["getOrgAdminQuery"],
+    onCompleted() {
+      setRandom("Random");
+    },    
   });
 
   if (loading) return <h2>Loading...</h2>;
@@ -50,6 +52,7 @@ const ProjectForm = ({ org_id, setState }) => {
           let mentors = [];
           if (values.mentor1) mentors.push(values.mentor1);
           if (values.mentor2) mentors.push(values.mentor2);
+          console.log(mentors);
           const variables = {
             name: values.name,
             work: values.work,
@@ -77,16 +80,16 @@ const ProjectForm = ({ org_id, setState }) => {
             org_id: org_id,
             mentor_ids: mentors,
           };
-          addProject(variables);
+          addProject({variables});
           setState(false);
         }}
         validationSchema={Yup.object().shape({
           name: Yup.string().required("Required"),
           work: Yup.string().required("Required"),
           deliverables: Yup.string().required("Required"),
-          prerequisite1: Yup.date().required("Required"),
+          prerequisite1: Yup.string().required("Required"),
           projectStartDate: Yup.date().required("Required"),
-          projectEndDate: Yup.string().required("Required"),
+          projectEndDate: Yup.date().required("Required"),
           mentor1: Yup.string().required("Required"),
         })}
       >
@@ -117,7 +120,7 @@ const ProjectForm = ({ org_id, setState }) => {
               Work to be done
             </label>
             <Field
-              component="textArea"
+              component="textarea"
               name="work"
               placeholder="Enter the work to be done"
             />
@@ -219,6 +222,7 @@ const ProjectForm = ({ org_id, setState }) => {
               Mentor
             </label>
             <Field as="select" name="mentor1">
+            <option value="">Select</option>
               {data.mentors.map((mentor) => {
                 return (
                   <option key={mentor.id} value={mentor.id}>
@@ -236,7 +240,7 @@ const ProjectForm = ({ org_id, setState }) => {
               Mentor(optional)
             </label>
             <Field as="select" name="mentor2">
-              <option value="">None</option>;
+              <option value="">None</option>
               {data.mentors.map((mentor) => {
                 return (
                   <option key={mentor.id} value={mentor.id}>

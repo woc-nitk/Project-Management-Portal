@@ -6,16 +6,18 @@ const MentorForm = ({ orgId, mutation, setState }) => {
     <div className="app">
       <Formik
         initialValues={{
+          regNum: "",
           name: "",
           email: "",
           password: "",
           confirmPassword: "",
         }}
         onSubmit={(values, { setSubmitting }) => {
-          mutation({ variables: { ...values, orgId } });
+          mutation({ variables: { ...values, orgId, absolute_year: new Date().getFullYear() } });
           setState(false);
         }}
         validationSchema={Yup.object().shape({
+          regNum: Yup.string().required("Required").matches(/^[0-9]{6,6}$/, "Registration number should be 6 digits"),
           name: Yup.string().required("Required"),
           email: Yup.string().email().required("Required"),
           password: Yup.string()
@@ -39,6 +41,15 @@ const MentorForm = ({ orgId, mutation, setState }) => {
       >
         {({ dirty, handleReset, isSubmitting }) => (
           <Form>
+          <label htmlFor="regNum" style={{ display: "block" }}>
+              Registration number
+            </label>
+            <Field type="text" name="regNum" placeholder="xxxxxx" />
+            <ErrorMessage
+              className="input-feedback"
+              name="regNum"
+              component="div"
+            />
             <label htmlFor="name" style={{ display: "block" }}>
               Name
             </label>

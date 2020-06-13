@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { useSpring, animated, config } from "react-spring";
-// import { ReactComponent as Sun } from "../../assets/sun.svg";
-// import { ReactComponent as Moon } from "../../assets/moon.svg";
 import { NavLink } from "react-router-dom";
 
 import Brand from "./Brand";

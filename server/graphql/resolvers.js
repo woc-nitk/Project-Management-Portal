@@ -130,12 +130,12 @@ const resolvers = {
 			),
 		addApplicant: (parent, args, context) =>
 			applicants.addApplicant(
+				args.reg_num,
 				args.email,
 				args.password,
 				args.first_name,
 				args.middle_name,
 				args.last_name,
-				args.applicant_year,
 				context.user
 			),
 		deleteApplicant: (parent, args, context) =>
@@ -149,6 +149,7 @@ const resolvers = {
 			),
 		addMentor: (parent, args, context) =>
 			mentors.addMentor(
+				args.reg_num,
 				args.email,
 				args.password,
 				args.name,
@@ -158,11 +159,12 @@ const resolvers = {
 		deleteMentor: (parent, args, context) =>
 			mentors.deleteMentor(args.mentor_id, context.user),
 		addOrganization: (parent, args, context) =>
-			organizations.addOrganization(args.org_name, context.user),
+			organizations.addOrganization(args.org_name, args.description, context.user),
 		deleteOrganization: (parent, args, context) =>
 			organizations.deleteOrganization(args.org_id, context.user),
 		addOrgAdmin: (parent, args, context) =>
 			orgAdmins.addOrgAdmin(
+				args.reg_num,
 				args.email,
 				args.password,
 				args.name,

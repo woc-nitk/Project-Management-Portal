@@ -42,7 +42,7 @@ type OrgAdmin implements User {
 	email: EmailAddress!
 	name: CleanString!
 	absolute_year: Year!
-	organization: [Organization!]
+	organization: Organization!
 }
 
 type SuperAdmin implements User {
@@ -64,6 +64,7 @@ type Application {
 type Organization {
 	id: ID!
 	name: CleanString!
+	description: String!
 	projects: [Project!]!
 	mentors: [Mentor!]!
 	OrgAdmins: [OrgAdmin!]!
@@ -154,25 +155,27 @@ type Mutation {
 		mentors: CleanString,
 	): Project!
 	addApplicant(
+		reg_num: ID!,
 		email: EmailAddress!,
 		password: Password!,
 		first_name: CleanString!,
 		middle_name: CleanString!,
 		last_name: CleanString!,
-		applicant_year: Int!,
 	): Applicant!
 	deleteApplicant(applicant_id: ID!): Boolean!
 	editApplicant(applicant_id: ID!, email: EmailAddress, password: Password, applicant_year: Int): Applicant!
 	addMentor(
+		reg_num: ID!,
 		email: EmailAddress!,
 		password: Password!,
 		name: CleanString!,
 		org_id: [ID!]!,
 	): Mentor!
 	deleteMentor(mentor_id: ID!): Boolean!
-	addOrganization(org_name: CleanString!): Organization!
+	addOrganization(org_name: CleanString!, description: CleanString!): Organization!
 	deleteOrganization(org_id: ID!): Boolean!
 	addOrgAdmin(
+		reg_num: ID!,
 		email: EmailAddress!,
 		password: Password!,
 		name: CleanString!,

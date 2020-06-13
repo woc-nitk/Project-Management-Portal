@@ -1,18 +1,45 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../../store/UserContext";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { getOrgAdminQuery, addMentorMutation } from "../../queries";
+import { getOrgAdminQuery, addMentorMutation, logoutMutation, addProjectMutation } from "../../queries";
 import UserDetails from "./UserDetails";
 import AdminProjects from "./views/Projects";
 import Modal from "react-modal";
+import { useCookies } from "react-cookie";
 import MentorForm from "../forms/Mentor_nd_orgAdmin";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import ProjectForm from "../forms/project";
 
 Modal.setAppElement("#root");
 
-export default function OrgAdminProfile() {
-  const user = useContext(UserContext);
+export default function OrgAdminProfile({user, setUser}) {
+
+  const [redirectURL, setURL] = useState(null);
+  const [cookie, setCookie, removeCookie] = useCookies(["refresh", "access"]);
+  const [logOut] = useMutation(logoutMutation, {
+    variables: {
+      refresh: cookie.refresh
+    },
+    onCompleted() {
+      setUser({});      
+      // Set the refresh cookie for 7 hours from current time
+      removeCookie("refresh", {
+        path: "/",
+      });
+
+      // Set the access cookie for 1 hour from current time
+      removeCookie("access", {
+        path: "/",
+      });
+
+      // Set the redirect url to the one passed or default value
+      setURL("/");
+    },
+    onError(error) {
+      console.log("Error occured - " + error);
+    }
+  });
+
   const { loading, data, error } = useQuery(getOrgAdminQuery, {
     variables: { id: user.id },
   });
@@ -22,8 +49,20 @@ export default function OrgAdminProfile() {
       console.log(err);
     },
   });
+
+  const [addProject] = useMutation(addProjectMutation, {
+    onError(error) {
+      console.log(error);
+    },
+  });
+
   const [mentorModal, setMentorModal] = useState(false);
   const [projectModal, setProjectModal] = useState(false);
+
+
+  if (redirectURL) {
+    return <Redirect to="/" />;
+  }
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -37,15 +76,17 @@ export default function OrgAdminProfile() {
   function closeMentorModal() {
     setMentorModal(false);
   }
-
+  console.log(data);
   return (
     <>
-      <UserDetails
-        name={data.orgAdmin.name}
-        type={user.type}
-        org={data.orgAdmin.organization.name}
-        email={data.orgAdmin.email}
-      />
+      <h1>{data.orgAdmin.name}</h1>
+      <h2 style={{textTransform:"capitalize"}}>{user.type}</h2>
+      <h2>Organization: {data.orgAdmin.organization.name}</h2>
+      <i><h3>Email: {data.orgAdmin.email}</h3></i>
+      <button onClick={() => logOut()}>
+      Logout
+      </button>
+
       <button
         onClick={() => {
           setMentorModal(true);
@@ -53,6 +94,7 @@ export default function OrgAdminProfile() {
       >
         Add Mentor
       </button>
+      <br></br>
       <Modal
         isOpen={mentorModal}
         onRequestClose={closeMentorModal}
@@ -94,8 +136,6 @@ export default function OrgAdminProfile() {
           />
         </div>
       </Modal>
-
-      <Link to="#">All mentors</Link>
       <hr />
 
       <button
@@ -105,6 +145,7 @@ export default function OrgAdminProfile() {
       >
         Add Project
       </button>
+      <br></br>
       <Modal
         isOpen={projectModal}
         onRequestClose={() => {
@@ -144,8 +185,8 @@ export default function OrgAdminProfile() {
             x
           </button>
           <ProjectForm
-            mutation={addMentor}
-            orgId={data.orgAdmin.organization.id}
+            mutation={addProject}
+            org_id={data.orgAdmin.organization.id}
             setState={setProjectModal}
           />
         </div>

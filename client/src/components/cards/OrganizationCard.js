@@ -27,13 +27,14 @@ export default function OrganizationCard(props) {
 const Card = styled.div`
   position: relative;
   font-family: "Montserrat", sans-serif;
-  width: 300px;
+  width: 310px;
   height: 150px;
   border-radius: 20px;
   box-shadow: 0px 3px 10px #888888;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  background: white;
   margin-bottom: 50px;
 `;
 
@@ -47,5 +48,5 @@ const Desc = styled.p`
   max-height: 3em;
   position: absolute;
   font-size: 16px;
-  top: 110px;
+  top: 5em;
 `;

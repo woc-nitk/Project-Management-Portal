@@ -10,18 +10,20 @@ export default function ProjectApplications({ match }) {
   const {
     params: { projectId },
   } = match;
-
+  console.log("Entered");
   const { loading, data, error } = useQuery(getProjectApplicationsQuery, {
     variables: { id: projectId },
   });
 
   const [passFail] = useMutation(passFailApplicationMutation, {
+    refetchQueries: ["getProjectApplicationsQuery"],
     onError(err) {
       console.log(err);
     },
   });
 
   const [acceptReject] = useMutation(acceptRejectApplicationMutation, {
+    refetchQueries: ["getProjectApplicationsQuery"],
     onError(err) {
       console.log(err);
     },
@@ -37,18 +39,22 @@ export default function ProjectApplications({ match }) {
   const startDate = new Date(`${data.project.project_start_date}`).getTime();
   const endDate = new Date(`${data.project.project_end_date}`).getTime();
   const now = new Date().getTime();
-
+  
   return (
-    <div>
+    <div className="container">
+    <h1> Applications submitted to {data.project.name} </h1>
+    <br></br>
       {data.project.applications.map((application, idx) => {
+        
+        console.log("Applications " + application);
         return (
-          <div key={idx}>
-            <a href={application.proposal}>{application.applicant.name}</a>
-            {now < startDate ? (
+          <div key={idx} style={{ margin:"50px 0"}} >
+            <a href={application.proposal} style={{fontSize: "20px"}}>{application.applicant.first_name}</a>
+            {now < startDate && application.proposal.accept && (
               <div className="actions">
                 <button
                   onClick={() => {
-                    passFail({
+                    acceptReject({
                       variables: {
                         p_id: projectId,
                         appl_id: application.applicant.id,
@@ -61,7 +67,7 @@ export default function ProjectApplications({ match }) {
                 </button>
                 <button
                   onClick={() => {
-                    passFail({
+                    acceptReject({
                       variables: {
                         p_id: projectId,
                         appl_id: application.applicant.id,
@@ -73,7 +79,7 @@ export default function ProjectApplications({ match }) {
                   Reject
                 </button>
               </div>
-            ) : (
+            ) } { now > endDate && application.proposal.result == null && application.proposal.accepted && (
               <div className="actions">
                 <button
                   onClick={() => {

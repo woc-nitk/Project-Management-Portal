@@ -31,12 +31,12 @@ export default function Projects() {
         }}
       />
 
-      <div className="gird">
+      <div className="grid">
         {data.projects.map((project) => {
           return (
             <ProjectCard
               key={project.id}
-              org={project.organization.id}
+              org={project.organization.name}
               url={`/project/${project.id}`}
               title={project.name}
               desc={project.work}

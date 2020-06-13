@@ -12,7 +12,7 @@ export const getProjectApplicationsQuery = gql`
       applications {
         applicant {
           id
-          name
+          first_name
         }
         proposal
       }
@@ -119,6 +119,7 @@ export const getOrganizationsQuery = gql`
     organizations {
       id
       name
+      description
     }
   }
 `;
@@ -216,12 +217,13 @@ export const acceptRejectApplicationMutation = gql`
 
 export const addMentorMutation = gql`
   mutation(
+    $regNum: ID!
     $email: EmailAddress!
     $password: Password!
     $name: CleanString!
     $orgId: [ID!]!
   ) {
-    addMentor(email: $email, password: $password, name: $name, org_id: $orgId) {
+    addMentor(reg_num:$regNum, email: $email, password: $password, name: $name, org_id: $orgId) {
       name
       id
     }
@@ -230,16 +232,20 @@ export const addMentorMutation = gql`
 
 export const addOrgAdminMutation = gql`
   mutation(
+    $regNum: ID!
     $email: EmailAddress!
     $password: Password!
     $name: CleanString!
-    $orgId: [ID!]!
+    $orgId: ID!
+    $absolute_year: Year!
   ) {
     addOrgAdmin(
+      reg_num:$regNum,
       email: $email
       password: $password
       name: $name
       org_id: $orgId
+      absolute_year: $absolute_year
     ) {
       name
       id
@@ -268,6 +274,18 @@ export const addApplicationMutation = gql`
   }
 `;
 
+export const updateApplcation = gql`
+  mutation($project_id: ID!, $applicant_id: ID!, $proposal: URL!) {
+    updateProposal(
+      project_id: $project_id
+      applicant_id: $applicant_id
+      proposal: $proposal
+    ) {
+      proposal
+    }
+  }
+`;
+
 export const refreshMutation = gql`
   mutation($refresh: String!) {
     renewAuth(refresh: $refresh) {
@@ -287,6 +305,12 @@ export const loginMutation = gql`
       auth
       refresh
     }
+  }
+`;
+
+export const logoutMutation = gql`
+  mutation($refresh: String!) {
+    logout(refresh: $refresh) 
   }
 `;
 

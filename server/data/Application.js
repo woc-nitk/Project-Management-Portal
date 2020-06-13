@@ -123,13 +123,13 @@ const deleteApplication = async function (projectID, applicantID, user) {
 
 const updateProposal = function (applicantID, projectID, proposal, user) {
 	if (user.type == "applicant" && user.id == applicantID) {
-		return dbQuery("CALL update_proposal(?,?,?)", [
+		return dbQuery("CALL update_proposal(?,?,?,?)", [
 			projectID,
 			applicantID,
 			new Date().getFullYear(),
 			proposal
 		]).then(
-			(data) => data,
+			(data) => data[0],
 			(error) => new GraphQLError(error)
 		);
 	}
@@ -143,8 +143,8 @@ const acceptorRejectApplication = async function (
 	user
 ) {
 	if (
-		(user.type == "mentor" && checkProjectMentor(projectID, user.id)) ||
-		(user.type == "orgAdmin" && checkProjectOrg(projectID, user.id)) ||
+		(user.type == "mentor" && await checkProjectMentor(projectID, user.id)) ||
+		(user.type == "orgAdmin" && await checkProjectOrg(projectID, user.id)) ||
 		(await user.type) == "superAdmin"
 	) {
 		const year = new Date().getFullYear();
@@ -175,7 +175,7 @@ const passApplication = async function (projectID, applicantID, result, user) {
 			year,
 			result
 		]).then(
-			(data) => data,
+			(data) => data[0],
 			(error) => new GraphQLError(error)
 		);
 	}

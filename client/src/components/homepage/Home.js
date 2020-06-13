@@ -16,9 +16,12 @@ const Home = () => {
   // console.log(user);
   return (
     <>
-      <h1>NITK Winter of Code</h1>
-      <Timeline timelines={timeline}/>
-      <h1>{user.type}</h1>
+    <div className="home">
+      <h1>NITK<br></br>Winter of Code</h1>
+    </div>
+    <br></br>
+    <h1 style={{textAlign:"center", fontSize:"36px"}}>Timeline</h1>
+    <Timeline timelines={timeline}/>
     </>
   );
 };

@@ -14,7 +14,7 @@ const getApplicants = (year, user) => {
 
 const deleteApplicant = function (applicantID, user) {
 	if (user.type == "superAdmin") {
-		return dbQuery("CALL delete_applicant(?, ?)", [applicantID]).then(
+		return dbQuery("CALL delete_applicant(?)", [applicantID]).then(
 			() => true,
 			(error) => new GraphQLError(error)
 		);
@@ -23,23 +23,23 @@ const deleteApplicant = function (applicantID, user) {
 };
 
 const addApplicant = function (
+	reg_num,
 	email,
 	password,
 	firstName,
 	middleName,
 	lastName,
-	applicantYear,
 	user
 ) {
 	if (user.type == "superAdmin") {
 		const year = new Date().getFullYear();
 		password = auth.hash(password);
 		return dbQuery("CALL add_applicant(?,?,?,?,?,?,?)", [
+			reg_num,
 			email,
 			firstName,
 			middleName,
 			lastName,
-			applicantYear,
 			password,
 			year
 		]).then(

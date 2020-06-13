@@ -12,7 +12,7 @@ import Nav from "./navbar/Navbar";
 import { useCookies } from "react-cookie";
 import { useMutation } from "@apollo/react-hooks";
 import { refreshMutation } from "../queries";
-import Login from "./login/Login";
+import Login, {Logout} from "./login/Login";
 import ProjectApplications from "./profilepage/views/ProjectApplications";
 import OrganizationProjects from "./profilepage/views/OrganizationProjects";
 import SignUp from "./signup/applicant";
@@ -76,23 +76,24 @@ function App() {
       <Router>
         <UserContext.Provider value={[user, setUser]}>
           <ThemeContext.Provider value={[theme, setTheme]}>
-            <Nav navbarState={navbarOpen} handleNavbar={handleNavbar} />
+            <Nav navbarState={navbarOpen} handleNavbar={handleNavbar} user={user} />
 
             <Route path="/" exact component={Home} />
             <Route path="/about/" exact component={About} />
             <Route path="/login/" exact component={Login} />
+            <Route path="/logout/" exact component={Logout} />
             <Route path="/signup/" exact component={SignUp} />
             <Route path="/projects/" exact component={Projects} />
             <Route path="/organizations/" exact component={Organizations} />
             <Route
               exact
               path="/profile"
-              render={() => <Profile user={user} />}
+              render={() => <Profile user={user} setUser={setUser}/>}
             />
             <Route
-              path="/project/:projectId"
               exact
-              render={() => <Project user={user} />}
+              path="/project/:projectId"
+              render={(props) => <Project {...props} user={user} />}
             />
             <Route path="/organization/:orgId" exact component={Organization} />
 

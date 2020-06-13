@@ -1,6 +1,14 @@
 const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
 
+const checkOrgAdminOrg = (org_admin_id, org_id) => {
+	return dbQuery("SELECT org_admin_id FROM Org_admin_belongs_to WHERE org_admin_id = (?) AND org_id = (?)", [org_admin_id, org_id]).then((data) => {if(data) return true; return false;});
+};
+
+const checkOrgAdminMentor = (org_admin_id, mentor_id) => {
+	return dbQuery("SELECT org_admin_id FROM Org_admin_belongs_to INNER JOIN Mentor_belongs_to ON Org_admin_belongs_to.org_id = Mentor_belongs_to.org_id WHERE org_admin_id = (?) AND mentor_id = (?)", [org_admin_id,mentor_id]).then((data) => { if(data) return true; return false;});
+};
+
 const getProjects = function (year, orgID, mentorID, applicantID) {
 	if (
 		orgID == null &&
@@ -58,7 +66,7 @@ const getProjects = function (year, orgID, mentorID, applicantID) {
 		return new GraphQLError("Invalid arguments passed to Query projects");
 };
 
-const addProject = function (
+const addProject = async function (
 	name,
 	work,
 	deliverables,
@@ -67,8 +75,16 @@ const addProject = function (
 	startDate,
 	endDate,
 	org_id,
-	mentor_id
+	mentor_id,
+	user
 ) {
+	if(user.type == undefined || user.type == "applicant" || (user.type == "orgAdmin" && !(await checkOrgAdminOrg(user.id, org_id)))) {
+		return new GraphQLError("Insufficient Permissions");
+	}
+	for(var i=0; i<mentor_id.length; i++) {
+		if(!await checkOrgAdminMentor(user.id, mentor_id[i]))
+		return new GraphQLError("Insufficient Permissions.");
+	}
 	if (year == null) year = new Date().getFullYear();
 	const setAutoCommit = () => {
 		return dbQuery("SET AUTOCOMMIT=0").then(
@@ -97,9 +113,10 @@ const addProject = function (
 		);
 	};
 	const addProjectToOrg = (project_id, org_id) => {
-		return dbQuery("CALL add_project_maintained_by(?,?)", [
+		return dbQuery("CALL add_project_maintained_by(?,?,?)", [
 			project_id,
 			org_id,
+			year,
 		]).then(
 			() => addMentorsToProject(project_id, mentor_id.length),
 			(error) => rollbackTransaction(error)
@@ -107,9 +124,10 @@ const addProject = function (
 	};
 	const addMentorsToProject = (project_id, mentor_id_length) => {
 		if (mentor_id_length > 0)
-			return dbQuery("CALL add_mentored_by(?,?)", [
+			return dbQuery("CALL add_mentored_by(?,?,?)", [
 				project_id,
 				parseInt(mentor_id[mentor_id_length - 1]),
+				year,
 			]).then(
 				() => addMentorsToProject(project_id, mentor_id_length - 1),
 				(error) => rollbackTransaction(error)
@@ -326,14 +344,14 @@ const ProjectsResolvers = {
 			"SELECT project_start_date FROM Project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
-			data ? data.project_start_date : new GraphQLError("No such entry")
+			data ? data.project_start_date.toISOString().slice(0, 10) : new GraphQLError("No such entry")
 		),
 	project_end_date: (parent) =>
 		dbQuery(
 			"SELECT project_end_date FROM Project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
-			data ? data.project_end_date : new GraphQLError("No such entry")
+			data ? data.project_end_date.toISOString().slice(0, 10) : new GraphQLError("No such entry")
 		),
 	organization: (parent) =>
 		dbQuery(

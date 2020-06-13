@@ -11,7 +11,7 @@ export default function ProjectCard(props) {
         style={{
           fontWeight: "600",
           color: "black",
-          marginTop: "5px",
+          marginTop: "3px",
           textDecoration: "none",
           fontSize: "22px",
         }}
@@ -35,6 +35,7 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 50px;
+  background: white;
 `;
 
 const Org = styled.h4`
@@ -52,4 +53,5 @@ const Desc = styled.p`
   -webkit-line-clamp: 2;
   line-height: 1.5em;
   max-height: 3em;
+  font-size:14px;
 `;

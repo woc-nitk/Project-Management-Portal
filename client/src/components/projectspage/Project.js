@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 import { getProjectQuery, addApplicationMutation } from "../../queries";
 import AppicationForm from "../forms/application";
 
@@ -33,14 +33,14 @@ export default function Projects({ match, user }) {
   }
 
   return (
-    <div key={user.id} className="container" style={{ fontSize: "16px" }}>
+    <div key={user.id} className="container" style={{ fontSize: "20px" }}>
       {success && (
         <div className="input-feedback" style={{ color: "var(--green)" }}>
           Successfully applied to project
         </div>
       )}
       {er && <div className="input-feedback">Some error occurred</div>}
-      <h1>{data.project.name}</h1>
+      <h1 style={{ marginTop: "40px", marginBottom: "10px", fontSize:"3em" }}>{data.project.name}</h1>
       <h3 style={{ marginTop: "40px", marginBottom: "10px" }}>Work:</h3>
       <p>{data.project.work}</p>
       <h3 style={{ marginTop: "40px", marginBottom: "10px" }}>Deliverables:</h3>

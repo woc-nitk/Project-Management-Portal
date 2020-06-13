@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
-import "../forms/forms.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { loginMutation } from "../../queries";
+import { loginMutation, logoutMutation } from "../../queries";
 import { useCookies } from "react-cookie";
 import { UserContext } from "../../store/UserContext";
 
@@ -44,7 +43,11 @@ const Login = ({ redirect = "/profile" }) => {
   }
 
   return (
-    <div className="app">
+    <div className="container" style={{fontSize: "16px"}}>
+    <h1 style={{
+      marginTop:"60px",
+      marginBottom: "20px"
+    }}>Login</h1>
       <Formik
         initialValues={{
           email: "",
@@ -92,6 +95,46 @@ const Login = ({ redirect = "/profile" }) => {
         )}
       </Formik>
     </div>
+  );
+};
+
+export const Logout = ({ redirect = "/" }) => {
+  const [cookie, setCookie, removeCookie] = useCookies(["refresh", "access"]);
+  const [redirectURL, setURL] = useState(null);
+  const [user, setUser] = useContext(UserContext);
+  const [logOut, { error }] = useMutation(logoutMutation, {
+    variables: {
+      refresh: cookie.refresh
+    },
+    onCompleted() {
+
+      setUser({});
+
+      
+      // Set the refresh cookie for 7 hours from current time
+      removeCookie("refresh", {
+        path: "/",
+      });
+
+      // Set the access cookie for 1 hour from current time
+      removeCookie("access", {
+        path: "/",
+      });
+
+      // Set the redirect url to the one passed or default value
+      setURL(redirect);
+    },
+    onError(error) {
+      console.log("Error occured - " + error);
+    }
+  });
+
+  if (redirectURL) {
+    return <Redirect to={redirectURL} />;
+  }
+
+  return (
+    null
   );
 };
 

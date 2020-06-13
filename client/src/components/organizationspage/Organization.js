@@ -20,11 +20,11 @@ export default function Organization({ match }) {
 
   return (
     <div className="container" style={{ fontSize: "16px" }}>
-      <h1 style={{ marginTop: "60px", marginBottom: "20px" }}>
+      <h1 style={{ marginTop: "60px", marginBottom: "30px", fontSize:"3.5em" }}>
         {data.organization.name}
       </h1>
-      <p>{data.organization.description}</p>
-      <h2 style={{ marginTop: "40px", marginTop: "5px" }}>
+      <p style={{ fontSize:"20px" }}>{data.organization.description}</p>
+      <h2 style={{ marginTop: "40px", marginBottom: "5px" }}>
         Projects under {data.organization.name}
       </h2>
       <hr></hr>

@@ -8,8 +8,8 @@ const getOrgAdmins = function (orgID) {
 	);
 };
 
-const addOrgAdmin = function (email, password, name, org_id, year, user) {
-	if (user.type !== "superAdmin") {
+const addOrgAdmin = function (reg_num, email, password, name, org_id, year, user) {
+	if (user.type != "superAdmin") {
 		return new GraphQLError("Insufficient permissions.");
 	}
 	if (year == null) year = new Date().getFullYear();
@@ -27,7 +27,8 @@ const addOrgAdmin = function (email, password, name, org_id, year, user) {
 		);
 	};
 	const addOrgAdmin = (email, name, password, year) => {
-		return dbQuery("CALL add_org_admin(?,?,?,?)", [
+		return dbQuery("CALL add_org_admin(?,?,?,?,?)", [
+			reg_num,
 			email,
 			name,
 			password,
@@ -38,9 +39,10 @@ const addOrgAdmin = function (email, password, name, org_id, year, user) {
 		);
 	};
 	const addOrgAdminOrg = (org_admin_id) => {
-		return dbQuery("CALL add_org_admin_belongs_to(?,?)", [
+		return dbQuery("CALL add_org_admin_belongs_to(?,?, ?)", [
 			parseInt(org_id),
-			org_admin_id
+			org_admin_id,
+			new Date().getFullYear()
 		]).then(
 			() => commitTransaction(org_admin_id),
 			(error) => rollbackTransaction(error)
@@ -104,7 +106,7 @@ const OrgAdminResolvers = {
 	organization: (parent) =>
 		dbQuery("CALL get_org_admins_orgs(?)", [
 			parent.org_admin_id
-		]).then((data) => (data ? data : new GraphQLError("No such entry")))
+		]).then((data) => (data ? data[0] : new GraphQLError("No such entry")))
 };
 
 module.exports = {

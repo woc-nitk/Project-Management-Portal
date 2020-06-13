@@ -30,14 +30,14 @@ export default function OrganizationProjects({ match }) {
 
 
   return (
-    <div>
+    <div className="container">
       {/* 
       X-Get the org id from params,
       X-Show org name
       X-Give add org admin button
       X-Display the admin project component
       */}
-      <h1>{data.organization.name}</h1>
+      <h1 style={{fontSize:"48px", margin:"50px 0"}}>{data.organization.name}</h1>
       <hr></hr>
       <button onClick={() => setOrgAdminModal(true)}>
         Add Organization Admin
@@ -48,6 +48,20 @@ export default function OrganizationProjects({ match }) {
           setOrgAdminModal(false);
         }}
         contentLabel="OrgAdminModal"
+        style={{
+          content: {
+            minWidth: "300px",
+            // height:"50rem"
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%,-50%",
+            padding: "3rem",
+            paddingTop: "1rem",
+          },
+        }}
       >
         <div className="modalContent">
           <button
@@ -57,15 +71,18 @@ export default function OrganizationProjects({ match }) {
             }}
             style={{
               background: "none",
+              color: "#000000",
               border: "none",
-              fontSize: "36px",
+              margin: "0",
+              padding: "0",
+              boxShadow: "none",
             }}
           >
             x
           </button>
           <OrgAdminForm
             mutation={addOrgAdmin}
-            orgId={[orgId]}
+            orgId={orgId}
             setState={setOrgAdminModal}
           />
         </div>

@@ -1,17 +1,55 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { UserContext } from "../../store/UserContext";
-import { useQuery } from "@apollo/react-hooks";
-import { getApplicantQuery } from "../../queries";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import { Redirect } from "react-router-dom";
+import { getApplicantQuery, updateApplcation, logoutMutation } from "../../queries";
 import UserDetails from "./UserDetails";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import ApplicationCard from "../cards/ApplicationCard";
+import Modal from "react-modal";
+import { useCookies } from "react-cookie";
+import { UpdateProposal } from "../forms/Organisation";
 
-export default function ApplicantProfile() {
-  const [user] = useContext(UserContext);
+export default function ApplicantProfile({user, setUser}) {
+  const [redirectURL, setURL] = useState(null);
+  const [cookie, setCookie, removeCookie] = useCookies(["refresh", "access"]);
+  const [updateApp] = useMutation(updateApplcation, {
+    onError: (error) => console.log(error)
+  });
+  const [applicant_id, set_applicant_id] = useState("");
+  const [project_id, set_project_id] = useState("");
+  const [openModal, set_open_modal] = useState(false);
+  const [logOut] = useMutation(logoutMutation, {
+    variables: {
+      refresh: cookie.refresh
+    },
+    onCompleted() {
+      setUser({});      
+      // Set the refresh cookie for 7 hours from current time
+      removeCookie("refresh", {
+        path: "/",
+      });
+
+      // Set the access cookie for 1 hour from current time
+      removeCookie("access", {
+        path: "/",
+      });
+
+      // Set the redirect url to the one passed or default value
+      setURL("/");
+    },
+    onError(error) {
+      console.log("Error occured - " + error);
+    }
+  });
   const { loading, data, error } = useQuery(getApplicantQuery, {
     variables: { id: user.id },
   });
+
+  if (redirectURL) {
+    return <Redirect to="/" />;
+  }
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -24,17 +62,8 @@ export default function ApplicantProfile() {
 
   const name = `${data.applicant.first_name} ${data.applicant.middle_name} ${data.applicant.last_name}`;
   const year = data.applicant.allpicant_year;
-
   return (
     <div className="container">
-      <h1
-        style={{
-          fontWeight: "400",
-          fontSize: "48px",
-        }}
-      >
-        Dashboard
-      </h1>
       <br></br>
       <UserDetails
         name={name}
@@ -42,6 +71,10 @@ export default function ApplicantProfile() {
         year={year}
         email={data.applicant.email}
       />
+
+      <button onClick={() => logOut()}>
+      Logout
+      </button>
 
       <h2
         style={{
@@ -81,18 +114,57 @@ export default function ApplicantProfile() {
           }
           return (
             <ApplicationCard
-              org={application.organization.name}
+              org={application.project.organization.name}
               title={application.project.name}
               url={application.proposal}
               accepted={accepted}
               rejected={rejected}
               pending={pending}
               update={update}
-              handleClick={() => {}}
+              handleClick={() => {set_applicant_id(user.id); set_project_id(application.project.id); set_open_modal(true);}}
             />
           );
         })}
       </Grid>
+      <Modal
+        isOpen={openModal}
+        onRequestClose={() => set_open_modal(false)}
+        contentLabel="MentorModal"
+        style={{
+          content: {
+            minWidth: "300px",
+            // height:"50rem"
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%,-50%",
+            padding: "3rem",
+            paddingTop: "1rem",
+          },
+        }}
+      >
+        <div className="modalContent">
+          <button
+            className="closeModal"
+            onClick={() => set_open_modal(false)}
+            style={{
+              background: "none",
+              color: "#000000",
+              border: "none",
+              margin: "0",
+              padding: "0",
+              boxShadow: "none",
+            }}
+          >
+            x
+          </button>
+          <UpdateProposal mutation={updateApp} setState={set_open_modal} project_id={project_id} applicant_id={applicant_id}/>
+        </div>
+        
+      </Modal>
+
     </div>
   );
 }

@@ -2,7 +2,6 @@ import ApplicantForm from "../forms/Applicant";
 import React, { useState, useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
-import "../forms/forms.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { signUpMutation } from "../../queries";

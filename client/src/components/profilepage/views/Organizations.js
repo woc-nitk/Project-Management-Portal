@@ -13,7 +13,7 @@ export default function Organizations() {
   }
 
   return (
-    <div>
+    <div style={{fontSize:"18px"}}>
       <ul>
         {data.organizations.map((org, idx) => {
           return <li key={idx}>

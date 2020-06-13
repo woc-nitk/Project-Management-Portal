@@ -23,8 +23,8 @@ const getMentors = function (year, orgID, user) {
 	else return new GraphQLError("Insufficient permissions");
 };
 
-const addMentor = async function (email, password, name, org_id, user) {
-	if( !((user.type == "orgAdmin" && org_id.length == 1 && checkOrgAdminOrg(user.id, org_id)) || user.type == "superAdmin")) {
+const addMentor = async function (reg_num, email, password, name, org_id, user) {
+	if( !((user.type == "orgAdmin" && org_id.length == 1 && await checkOrgAdminOrg(user.id, org_id)) || user.type == "superAdmin")) {
 		console.log(user);
 		return new GraphQLError("Insufficient permissions.");
 	}
@@ -43,7 +43,8 @@ const addMentor = async function (email, password, name, org_id, user) {
 		);
 	};
 	const addMentorToMentors = (email, name, password, year) => {
-		return dbQuery("CALL add_mentor(?,?,?,?)", [
+		return dbQuery("CALL add_mentor(?,?,?,?,?)", [
+			reg_num,
 			email,
 			name,
 			password,
@@ -55,9 +56,10 @@ const addMentor = async function (email, password, name, org_id, user) {
 	};
 	const addMentorOrgs = (mentor_id, org_id_length) => {
 		if (org_id_length > 0)
-			return dbQuery("CALL add_mentor_belongs_to(?,?)", [
+			return dbQuery("CALL add_mentor_belongs_to(?,?,?)", [
 				mentor_id,
-				parseInt(org_id[org_id_length - 1])
+				parseInt(org_id[org_id_length - 1]),
+				new Date().getFullYear()
 			]).then(
 				() => addMentorOrgs(mentor_id, org_id_length - 1),
 				(error) => rollbackTransaction(error)
@@ -81,8 +83,8 @@ const addMentor = async function (email, password, name, org_id, user) {
 	return setAutoCommit();
 };
 
-const deleteMentor = function (mentorID, user) {
-	if(!((user.type == "orgAdmin" && checkOrgAdminMentor(user.id, mentorID)) || user.type == "superAdmin")) {
+const deleteMentor = async function (mentorID, user) {
+	if(!((user.type == "orgAdmin" && await checkOrgAdminMentor(user.id, mentorID)) || user.type == "superAdmin")) {
 		return new GraphQLError("Insufficient permissions.");
 	}
 	return dbQuery("CALL delete_mentor(?)", [mentorID]).then(
@@ -91,8 +93,8 @@ const deleteMentor = function (mentorID, user) {
 	);
 };
 
-const addMentorToOrg = function (mentor_id, org_id, user) {
-	if(!((user.type == "orgAdmin" && org_id.length == 1 && checkOrgAdminOrg(user.id,org_id)) || user.type == "superAdmin")) {
+const addMentorToOrg = async function (mentor_id, org_id, user) {
+	if(!((user.type == "orgAdmin" && org_id.length == 1 && await checkOrgAdminOrg(user.id,org_id)) || user.type == "superAdmin")) {
 		return new GraphQLError("Insufficient permissions.");
 	}
 	const startFunction = (org_id_length) => {
@@ -109,8 +111,8 @@ const addMentorToOrg = function (mentor_id, org_id, user) {
 	return startFunction(org_id.length);
 };
 
-const removeMentorFromOrg = function (mentor_id, org_id, user) {
-	if(!((user.type == "orgAdmin" && org_id.length == 1 && checkOrgAdminOrg(user.id,org_id)) || user.type == "superAdmin")) {
+const removeMentorFromOrg = async function (mentor_id, org_id, user) {
+	if(!((user.type == "orgAdmin" && org_id.length == 1 && await checkOrgAdminOrg(user.id,org_id)) || user.type == "superAdmin")) {
 		return new GraphQLError("Insufficient permissions.");
 	}
 	const startFunction = (org_id_length) => {
@@ -127,8 +129,8 @@ const removeMentorFromOrg = function (mentor_id, org_id, user) {
 	return startFunction(org_id.length);
 };
 
-const addMentorToProject = function (mentor_id, project_id, user) {
-	if(!((user.type == "orgAdmin" && checkOrgAdminProject(user.id,project_id)) || user.type == "superAdmin")) {
+const addMentorToProject = async function (mentor_id, project_id, user) {
+	if(!((user.type == "orgAdmin" && await checkOrgAdminProject(user.id,project_id)) || user.type == "superAdmin")) {
 		return new GraphQLError("Insufficient permissions.");
 	}
 	const startFunction = (project_id_length) => {
@@ -145,8 +147,8 @@ const addMentorToProject = function (mentor_id, project_id, user) {
 	return startFunction(project_id.length);
 };
 
-const removeMentorFromProject = function (mentor_id, project_id, user) {
-	if(!((user.type == "orgAdmin" && checkOrgAdminProject(user.id,project_id)) || user.type == "superAdmin")) {
+const removeMentorFromProject = async function (mentor_id, project_id, user) {
+	if(!((user.type == "orgAdmin" && await checkOrgAdminProject(user.id,project_id)) || user.type == "superAdmin")) {
 		return new GraphQLError("Insufficient permissions.");
 	}
 	const startFunction = (project_id_length) => {

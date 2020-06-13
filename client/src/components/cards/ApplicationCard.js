@@ -41,6 +41,7 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 50px;
+  background: white;
 `;
 
 const Org = styled.h4`
