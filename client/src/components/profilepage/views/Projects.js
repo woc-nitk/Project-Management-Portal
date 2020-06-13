@@ -7,8 +7,8 @@ export default function Projects({ projects }) {
       <ul>
         {projects.map((project, idx) => {
           return (
-            <li key={idx}>
-              <Link to={`admin/project/${project.id}`}>
+            <li key={idx} style={{margin: "20px 0"}}>
+              <Link to={`/admin/project/${project.id}`}>
                 <p>{project.name}</p>
               </Link>
             </li>

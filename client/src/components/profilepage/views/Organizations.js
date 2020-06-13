@@ -13,10 +13,10 @@ export default function Organizations() {
   }
 
   return (
-    <div style={{fontSize:"18px"}}>
+    <div style={{fontSize:"24px"}}>
       <ul>
         {data.organizations.map((org, idx) => {
-          return <li key={idx}>
+          return <li key={idx} style={{margin: "20px 0"}}>
             <Link to={`admin/organization/${org.id}`}>
               <p>{org.name}</p>
             </Link>

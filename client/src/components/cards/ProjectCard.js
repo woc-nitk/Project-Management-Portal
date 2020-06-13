@@ -14,6 +14,12 @@ export default function ProjectCard(props) {
           marginTop: "3px",
           textDecoration: "none",
           fontSize: "22px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          display: "-webkit-box",
+          WebkitBoxOrient: "vertical",
+          WebkitLineClamp: "2",
+          lineHeight: "1.5em",
         }}
       >
         {props.title}
@@ -27,8 +33,8 @@ export default function ProjectCard(props) {
 const Card = styled.div`
   position: relative;
   font-family: "Montserrat", sans-serif;
-  width: 300px;
-  height: 150px;
+  width: 305px;
+  height: 180px;
   border-radius: 20px;
   box-shadow: 0px 3px 10px #888888;
   padding: 20px;

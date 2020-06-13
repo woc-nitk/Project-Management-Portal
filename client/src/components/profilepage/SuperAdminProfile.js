@@ -1,23 +1,24 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../../store/UserContext";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { getSuperAdminQuery, addOrgMutation, logoutMutation } from "../../queries";
+import { getSuperAdminQuery, addOrgMutation, logoutMutation, changePasswordMutation } from "../../queries";
 import UserDetails from "./UserDetails";
 import Modal from "react-modal";
 import OrganizationForm from "../forms/Organisation";
 import { Redirect } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import AdminOrganizations from "./views/Organizations";
+import { ChangePasswordForm } from "../forms/Organisation";
 
 Modal.setAppElement("#root");
 
 export default function SuperAdminProfile({user, setUser}) {
 
   const [redirectURL, setURL] = useState(null);
-  const [cookie, setCookie, removeCookie] = useCookies(["refresh", "access"]);
+  const [cookies, setCookie, removeCookie] = useCookies(["refresh", "access"]);
   const [logOut] = useMutation(logoutMutation, {
     variables: {
-      refresh: cookie.refresh
+      refresh: cookies.refresh
     },
     onCompleted() {
       setUser({});      
@@ -39,6 +40,28 @@ export default function SuperAdminProfile({user, setUser}) {
     }
   });
 
+  const [errorMessage, setErrormessage] = useState(false);
+  const [changePassword] = useMutation(changePasswordMutation, {
+    onCompleted(data) {
+      setUser({});      
+      // Set the refresh cookie for 7 hours from current time
+      removeCookie("refresh", {
+        path: "/",
+      });
+
+      // Set the access cookie for 1 hour from current time
+      removeCookie("access", {
+        path: "/",
+      });
+    },
+    onError(error) {
+      console.log(error);
+      setErrormessage("Incorrect password");
+    }
+  });
+
+
+  const [changePasswordModal, setPasswordModal] = useState(false);
 
   const { loading, data, error } = useQuery(getSuperAdminQuery, {
     variables: { id: user.id },
@@ -76,11 +99,66 @@ export default function SuperAdminProfile({user, setUser}) {
         type={user.type}
         email={data.superAdmin.email}
       />
+      {
+        errorMessage && <div className="input-feedback">{errorMessage}</div>
+      }
 
-      <button onClick={() => logOut()}>
+      <button onClick={() => logOut()}
+      style={{background: "var(--red)"}}>
       Logout
       </button>
 
+      <button
+      onClick={() => {
+        setPasswordModal(true);
+      }}
+      style={{background: "var(--red)"}}
+    >
+      Change Password
+    </button>
+    <br></br>
+    <Modal
+      isOpen={changePasswordModal}
+      onRequestClose={() => setPasswordModal(false)}
+      contentLabel="ChangePasswordModal"
+      style={{
+        content: {
+          minWidth: "300px",
+          // height:"50rem"
+          top: "50%",
+          left: "50%",
+          right: "auto",
+          bottom: "auto",
+          marginRight: "-50%",
+          transform: "translate(-50%,-50%",
+          padding: "3rem",
+          paddingTop: "1rem",
+        },
+      }}
+    >
+      <div className="modalContent">
+        <button
+          className="closeModal"
+          onClick={() => setPasswordModal(false)}
+          style={{
+            background: "none",
+            color: "#000000",
+            border: "none",
+            margin: "0",
+            padding: "0",
+            boxShadow: "none",
+          }}
+        >
+          x
+        </button>
+
+        <ChangePasswordForm
+          mutation={changePassword}
+          refresh={cookies.refresh}
+          setState={setPasswordModal}
+        />
+      </div>
+    </Modal>
       <button
         onClick={() => {
           setOrgModal(true);

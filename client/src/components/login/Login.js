@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import { useMutation } from "@apollo/react-hooks";
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -8,7 +8,7 @@ import { useCookies } from "react-cookie";
 import { UserContext } from "../../store/UserContext";
 
 const Login = ({ redirect = "/profile" }) => {
-  const [cookie, setCookie, removeCookie] = useCookies(["refresh", "access"]);
+  const [cookie, setCookie] = useCookies(["refresh", "access"]);
   const [redirectURL, setURL] = useState(null);
   const [user, setUser] = useContext(UserContext);
   const [logInUser, { error }] = useMutation(loginMutation, {

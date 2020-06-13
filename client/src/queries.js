@@ -333,3 +333,9 @@ export const signUpMutation = gql`
     ) 
   }
 `;
+
+export const changePasswordMutation = gql`
+  mutation($refresh: String!, $oldPassword: Password!, $newPassword: Password!) {
+    changePassword(refresh: $refresh, oldPassword: $oldPassword, newPassword: $newPassword)  
+  }
+`;

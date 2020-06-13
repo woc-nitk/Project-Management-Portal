@@ -1,19 +1,18 @@
-import React, { useContext, useState } from "react";
-import { UserContext } from "../../store/UserContext";
+import React, { useState } from "react";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { Redirect } from "react-router-dom";
-import { getApplicantQuery, updateApplcation, logoutMutation } from "../../queries";
+import { getApplicantQuery, updateApplcation, logoutMutation, changePasswordMutation } from "../../queries";
 import UserDetails from "./UserDetails";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import ApplicationCard from "../cards/ApplicationCard";
 import Modal from "react-modal";
 import { useCookies } from "react-cookie";
 import { UpdateProposal } from "../forms/Organisation";
+import { ChangePasswordForm } from "../forms/Organisation";
 
 export default function ApplicantProfile({user, setUser}) {
   const [redirectURL, setURL] = useState(null);
-  const [cookie, setCookie, removeCookie] = useCookies(["refresh", "access"]);
+  const [cookies, setCookie, removeCookie] = useCookies(["refresh", "access"]);
   const [updateApp] = useMutation(updateApplcation, {
     onError: (error) => console.log(error)
   });
@@ -22,7 +21,7 @@ export default function ApplicantProfile({user, setUser}) {
   const [openModal, set_open_modal] = useState(false);
   const [logOut] = useMutation(logoutMutation, {
     variables: {
-      refresh: cookie.refresh
+      refresh: cookies.refresh
     },
     onCompleted() {
       setUser({});      
@@ -43,9 +42,32 @@ export default function ApplicantProfile({user, setUser}) {
       console.log("Error occured - " + error);
     }
   });
+
+  const [errorMessage, setErrormessage] = useState(false);
+  const [changePassword] = useMutation(changePasswordMutation, {
+    onCompleted(data) {
+      setUser({});      
+      // Set the refresh cookie for 7 hours from current time
+      removeCookie("refresh", {
+        path: "/",
+      });
+
+      // Set the access cookie for 1 hour from current time
+      removeCookie("access", {
+        path: "/",
+      });
+    },
+    onError(error) {
+      console.log(error);
+      setErrormessage("Incorrect password");
+    }
+  });
+
   const { loading, data, error } = useQuery(getApplicantQuery, {
     variables: { id: user.id },
   });
+
+  const [changePasswordModal, setPasswordModal] = useState(false);
 
   if (redirectURL) {
     return <Redirect to="/" />;
@@ -71,10 +93,64 @@ export default function ApplicantProfile({user, setUser}) {
         year={year}
         email={data.applicant.email}
       />
-
-      <button onClick={() => logOut()}>
+      {
+        errorMessage && <div className="input-feedback">{errorMessage}</div>
+      }
+      <button onClick={() => logOut()} style={{background: "var(--red)"}}>
       Logout
       </button>
+
+      <button
+      onClick={() => {
+        setPasswordModal(true);
+      }}
+      style={{background: "var(--red)"}}
+    >
+      Change Password
+    </button>
+    <br></br>
+    <Modal
+      isOpen={changePasswordModal}
+      onRequestClose={() => setPasswordModal(false)}
+      contentLabel="ChangePasswordModal"
+      style={{
+        content: {
+          minWidth: "300px",
+          // height:"50rem"
+          top: "50%",
+          left: "50%",
+          right: "auto",
+          bottom: "auto",
+          marginRight: "-50%",
+          transform: "translate(-50%,-50%",
+          padding: "3rem",
+          paddingTop: "1rem",
+        },
+      }}
+    >
+      <div className="modalContent">
+        <button
+          className="closeModal"
+          onClick={() => setPasswordModal(false)}
+          style={{
+            background: "none",
+            color: "#000000",
+            border: "none",
+            margin: "0",
+            padding: "0",
+            boxShadow: "none",
+          }}
+        >
+          x
+        </button>
+
+        <ChangePasswordForm
+          mutation={changePassword}
+          refresh={cookies.refresh}
+          setState={setPasswordModal}
+        />
+      </div>
+    </Modal>
 
       <h2
         style={{

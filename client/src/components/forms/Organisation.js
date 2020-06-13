@@ -102,4 +102,62 @@ export const UpdateProposal = ({ mutation, setState, project_id, applicant_id })
   );
 };
 
+export const ChangePasswordForm = ({ mutation, setState, refresh }) => {
+  return (
+    <div>
+      <Formik
+        initialValues={{
+          oldPassword: "",
+          newPassword: "",
+        }}
+        onSubmit={async (values) => {
+          mutation({ variables: {
+            ...values, refresh         
+          } });
+          setState(false);
+        }}
+        validationSchema={Yup.object().shape({
+          oldPassword: Yup.string().required("Required!"),
+          newPassword: Yup.string().required("Required!"),
+        })}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <h1>Change Password</h1>
+            <label htmlFor="oldPassword" style={{ display: "block" }}>
+              Old Password
+            </label>
+            <Field
+              type="password"
+              name="oldPassword"
+              placeholder="Old password"
+            />
+            <ErrorMessage
+              className="input-feedback"
+              name="oldPassword"
+              component="div"
+            />
+            <label htmlFor="newPassword" style={{ display: "block" }}>
+            New Password
+          </label>
+          <Field
+            type="password"
+            name="newPassword"
+            placeholder="New password"
+          />
+          <ErrorMessage
+            className="input-feedback"
+            name="newPassword"
+            component="div"
+          />
+            <button type="submit" disabled={isSubmitting}>
+              Submit
+            </button>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  );
+};
+
 export default OrganisationForm;

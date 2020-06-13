@@ -41,9 +41,9 @@ export default function ProjectApplications({ match }) {
   const now = new Date().getTime();
   
   return (
-    <div className="container">
-    <h1> Applications submitted to {data.project.name} </h1>
-    <br></br>
+    <div className="container" style={{fontSize: "20px"}}>
+    <h1 style={{marginTop: "60px"}}> Applications submitted to {data.project.name} </h1>
+    <hr></hr>
       {data.project.applications.map((application, idx) => {
         
         console.log("Applications " + application);

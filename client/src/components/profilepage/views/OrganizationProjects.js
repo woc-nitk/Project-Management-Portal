@@ -30,18 +30,18 @@ export default function OrganizationProjects({ match }) {
 
 
   return (
-    <div className="container">
+    <div className="container" style={{fontSize:"20px"}}>
       {/* 
       X-Get the org id from params,
       X-Show org name
       X-Give add org admin button
       X-Display the admin project component
       */}
-      <h1 style={{fontSize:"48px", margin:"50px 0"}}>{data.organization.name}</h1>
-      <hr></hr>
+      <h1 style={{fontSize:"48px", marginTop:"50px", marginBottom:"20px"}}>{data.organization.name}</h1>
       <button onClick={() => setOrgAdminModal(true)}>
         Add Organization Admin
       </button>
+      <hr></hr>
       <Modal
         isOpen={orgAdminModal}
         onRequestClose={() => {
@@ -87,6 +87,7 @@ export default function OrganizationProjects({ match }) {
           />
         </div>
       </Modal>
+      <h1 style={{fontSize:"36px", marginTop:"50px", marginBottom:"20px"}}>Projects maintained by {data.organization.name}</h1>
       <AdminProjects projects={data.organization.projects} />
     </div>
   );
