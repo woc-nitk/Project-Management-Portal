@@ -9,7 +9,7 @@ const getUser = (request) => {
 };
 
 const server = new GraphQLServer({
-	typeDefs: "../schema.graphql",
+	typeDefs: "./schema.graphql",
 	resolvers: GQLresolvers.resolvers,
 	resolverValidationOptions: { requireResolversForResolveType: false },
 	context: ({ request }) => {
@@ -18,6 +18,11 @@ const server = new GraphQLServer({
 });
 
 server.use(cors());
-server.start( (details) =>
-	console.log(`Server running on http://localhost:${details.port}`)
+server.start( { playground: null,  port: process.env.PORT || 5000, cors: {
+	"origin": "*",
+	"methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+	"preflightContinue": false,
+	"optionsSuccessStatus": 204
+  } }, (details) =>
+	console.log(`Server listening on port ${details.port}`)
 );

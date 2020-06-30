@@ -8,7 +8,7 @@ import { getCookie } from "./cookieFunctions";
 import { CookiesProvider } from "react-cookie";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000",
+  uri: "https://woc-demo-portal.herokuapp.com/",
   request: (operation) => {
     const refreshToken = getCookie("refresh");
     const accessToken = getCookie("access");

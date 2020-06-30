@@ -4,7 +4,7 @@ const env = require("dotenv");
 env.config();
 
 const connectionPool = mysql.createPool({
-	connectionLimit: 20,
+	connectionLimit: 7,
 	host: process.env.HOST,
 	database: process.env.DATABASE_NAME,
 	user: process.env.DATABASE_USERNAME,

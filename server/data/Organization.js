@@ -31,19 +31,19 @@ const deleteOrganization = function (orgID, user) {
 
 const OrganizationResolvers = {
 	id: (parent) =>
-		dbQuery("SELECT org_id FROM Organizations WHERE org_id = (?)", [
+		dbQuery("SELECT org_id FROM organizations WHERE org_id = (?)", [
 			parent.org_id
 		]).then((data) =>
 			data ? data.org_id : new GraphQLError("No such entry")
 		),
 	name: (parent) =>
-		dbQuery("SELECT org_name FROM Organizations WHERE org_id = (?)", [
+		dbQuery("SELECT org_name FROM organizations WHERE org_id = (?)", [
 			parent.org_id
 		]).then((data) =>
 			data ? data.org_name : new GraphQLError("No such entry")
 		),
 	description: (parent) =>
-		dbQuery("SELECT description FROM Organizations WHERE org_id = (?)", [
+		dbQuery("SELECT description FROM organizations WHERE org_id = (?)", [
 			parent.org_id
 		]).then((data) =>
 			data ? data.description : new GraphQLError("No such entry")

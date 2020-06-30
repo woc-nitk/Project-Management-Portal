@@ -72,45 +72,45 @@ const editApplicant = function (applicantID, email, password, user) {
 var ApplicantResolvers = {
 	id: (parent) =>
 		dbQuery(
-			"SELECT applicant_id FROM Applicants WHERE applicant_id = (?)",
+			"SELECT applicant_id FROM applicants WHERE applicant_id = (?)",
 			[parent.applicant_id]
 		).then((data) =>
 			data ? data.applicant_id : new GraphQLError("No such entry")
 		),
 	email: (parent) =>
-		dbQuery("SELECT email FROM Applicants WHERE applicant_id = (?)", [
+		dbQuery("SELECT email FROM applicants WHERE applicant_id = (?)", [
 			parent.applicant_id
 		]).then((data) =>
 			data ? data.email : new GraphQLError("No such entry")
 		),
 	first_name: (parent) =>
-		dbQuery("SELECT first_name FROM Applicants WHERE applicant_id = (?)", [
+		dbQuery("SELECT first_name FROM applicants WHERE applicant_id = (?)", [
 			parent.applicant_id
 		]).then((data) =>
 			data ? data.first_name : new GraphQLError("No such entry")
 		),
 	middle_name: (parent) =>
-		dbQuery("SELECT middle_name FROM Applicants WHERE applicant_id = (?)", [
+		dbQuery("SELECT middle_name FROM applicants WHERE applicant_id = (?)", [
 			parent.applicant_id
 		]).then((data) =>
 			data ? data.middle_name : new GraphQLError("No such entry")
 		),
 	last_name: (parent) =>
-		dbQuery("SELECT last_name FROM Applicants WHERE applicant_id = (?)", [
+		dbQuery("SELECT last_name FROM applicants WHERE applicant_id = (?)", [
 			parent.applicant_id
 		]).then((data) =>
 			data ? data.last_name : new GraphQLError("No such entry")
 		),
 	applicant_year: (parent) =>
 		dbQuery(
-			"SELECT applicant_year FROM Applicants WHERE applicant_id = (?)",
+			"SELECT applicant_year FROM applicants WHERE applicant_id = (?)",
 			[parent.applicant_id]
 		).then((data) =>
 			data ? data.applicant_year : new GraphQLError("No such entry")
 		),
 	absolute_year: (parent) =>
 		dbQuery(
-			"SELECT absolute_year FROM Applicants WHERE applicant_id = (?)",
+			"SELECT absolute_year FROM applicants WHERE applicant_id = (?)",
 			[parent.applicant_id]
 		).then((data) =>
 			data ? data.absolute_year : new GraphQLError("No such entry")

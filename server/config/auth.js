@@ -4,8 +4,16 @@ const { dbQuery } = require("./db");
 const jwt = require("jsonwebtoken");
 const env = require("dotenv");
 const uuid = require("uuid");
-const redisClient = require("redis").createClient();
 env.config();
+
+
+const redisClient = require("redis").createClient(
+	{
+		port: process.env.REDIS_PORT,
+		host: process.env.REDIS_HOST,
+		password: process.env.REDIS_PASSWORD
+	}
+);
 
 const redisSet = (auth, refresh) => {
 	redisClient.hset(refresh, "token", auth);

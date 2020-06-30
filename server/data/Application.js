@@ -3,7 +3,7 @@ const { GraphQLError } = require("graphql");
 
 const checkProjectOrg = (project_id, org_admin_id) => {
 	return dbQuery(
-		"SELECT project_id FROM Maintained_By INNER JOIN Org_admin_belongs_to ON Maintained_By.org_id = Org_admin_belongs_to.org_id WHERE Maintained_By.project_id = (?) AND Org_admin_belongs_to.org_admin_id = (?)",
+		"SELECT project_id FROM maintained_By INNER JOIN org_admin_belongs_to ON maintained_By.org_id = org_admin_belongs_to.org_id WHERE maintained_By.project_id = (?) AND org_admin_belongs_to.org_admin_id = (?)",
 		[project_id, org_admin_id]
 	).then((data) => {
 		if (data) return true;
@@ -13,7 +13,7 @@ const checkProjectOrg = (project_id, org_admin_id) => {
 
 const checkProjectMentor = (project_id, mentor_id) => {
 	return dbQuery(
-		"SELECT project_id FROM Mentored_By WHERE project_id = (?) AND mentor_id = (?)",
+		"SELECT project_id FROM mentored_By WHERE project_id = (?) AND mentor_id = (?)",
 		[project_id, mentor_id]
 	).then((data) => {
 		if (data) return true;
@@ -185,38 +185,38 @@ const passApplication = async function (projectID, applicantID, result, user) {
 const ApplicationResolvers = {
 	applicant: (parent) =>
 		dbQuery(
-			"SELECT applicant_id FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
+			"SELECT applicant_id FROM application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
 		).then((data) => (data ? data : new GraphQLError("No such entry"))),
 	project: (parent) =>
 		{console.log("-----PARENT-----"); console.log(parent); console.log("-----"); return dbQuery(
-			"SELECT project_id FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
+			"SELECT project_id FROM application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
 		).then((data) => (data ? data : new GraphQLError("No such entry"))); },
 	accepted: (parent) =>
 		dbQuery(
-			"SELECT accepted FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
+			"SELECT accepted FROM application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
 		).then((data) =>
 			data ? data.accepted : new GraphQLError("No such entry")
 		),
 	result: (parent) =>
 		dbQuery(
-			"SELECT result FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
+			"SELECT result FROM application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
 		).then((data) =>
 			data ? data.result : new GraphQLError("No such entry")
 		),
 	absolute_year: (parent) =>
 		dbQuery(
-			"SELECT absolute_year FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
+			"SELECT absolute_year FROM application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
 		).then((data) =>
 			data ? data.absolute_year : new GraphQLError("No such entry")
 		),
 	proposal: (parent) =>
 		dbQuery(
-			"SELECT proposal FROM Application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
+			"SELECT proposal FROM application WHERE Application.applicant_id = (?) AND Application.project_id = (?)",
 			[parent.applicant_id, parent.project_id]
 		).then((data) => (data ? data.proposal : new GraphQLError("No such entry")))
 };

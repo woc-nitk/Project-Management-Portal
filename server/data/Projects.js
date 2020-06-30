@@ -2,11 +2,11 @@ const { dbQuery } = require("../config/db");
 const { GraphQLError } = require("graphql");
 
 const checkOrgAdminOrg = (org_admin_id, org_id) => {
-	return dbQuery("SELECT org_admin_id FROM Org_admin_belongs_to WHERE org_admin_id = (?) AND org_id = (?)", [org_admin_id, org_id]).then((data) => {if(data) return true; return false;});
+	return dbQuery("SELECT org_admin_id FROM org_admin_belongs_to WHERE org_admin_id = (?) AND org_id = (?)", [org_admin_id, org_id]).then((data) => {if(data) return true; return false;});
 };
 
 const checkOrgAdminMentor = (org_admin_id, mentor_id) => {
-	return dbQuery("SELECT org_admin_id FROM Org_admin_belongs_to INNER JOIN Mentor_belongs_to ON Org_admin_belongs_to.org_id = Mentor_belongs_to.org_id WHERE org_admin_id = (?) AND mentor_id = (?)", [org_admin_id,mentor_id]).then((data) => { if(data) return true; return false;});
+	return dbQuery("SELECT org_admin_id FROM org_admin_belongs_to INNER JOIN Mentor_belongs_to ON org_admin_belongs_to.org_id = Mentor_belongs_to.org_id WHERE org_admin_id = (?) AND mentor_id = (?)", [org_admin_id,mentor_id]).then((data) => { if(data) return true; return false;});
 };
 
 const getProjects = function (year, orgID, mentorID, applicantID) {
@@ -300,28 +300,28 @@ const removePrerequisites = function (projectID, prerequisites) {
 const ProjectsResolvers = {
 	id: (parent) =>
 		dbQuery(
-			"SELECT project_id FROM Project WHERE Project.project_id = (?)",
+			"SELECT project_id FROM project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
 			data ? data.project_id : new GraphQLError("No such entry")
 		),
 	name: (parent) =>
 		dbQuery(
-			"SELECT project_name FROM Project WHERE Project.project_id = (?)",
+			"SELECT project_name FROM project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
 			data ? data.project_name : new GraphQLError("No such entry")
 		),
 	work: (parent) =>
 		dbQuery(
-			"SELECT work_to_be_done FROM Project WHERE Project.project_id = (?)",
+			"SELECT work_to_be_done FROM project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
 			data ? data.work_to_be_done : new GraphQLError("No such entry")
 		),
 	deliverables: (parent) =>
 		dbQuery(
-			"SELECT deliverables FROM Project WHERE Project.project_id = (?)",
+			"SELECT deliverables FROM project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
 			data ? data.deliverables : new GraphQLError("No such entry")
@@ -334,21 +334,21 @@ const ProjectsResolvers = {
 		),
 	absolute_year: (parent) =>
 		dbQuery(
-			"SELECT absolute_year FROM Project WHERE Project.project_id = (?)",
+			"SELECT absolute_year FROM project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
 			data ? data.absolute_year : new GraphQLError("No such entry")
 		),
 	project_start_date: (parent) =>
 		dbQuery(
-			"SELECT project_start_date FROM Project WHERE Project.project_id = (?)",
+			"SELECT project_start_date FROM project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
 			data ? data.project_start_date.toISOString().slice(0, 10) : new GraphQLError("No such entry")
 		),
 	project_end_date: (parent) =>
 		dbQuery(
-			"SELECT project_end_date FROM Project WHERE Project.project_id = (?)",
+			"SELECT project_end_date FROM project WHERE Project.project_id = (?)",
 			[parent.project_id]
 		).then((data) =>
 			data ? data.project_end_date.toISOString().slice(0, 10) : new GraphQLError("No such entry")

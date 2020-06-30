@@ -11,27 +11,27 @@ const getSuperAdmins = function (year) {
 const SuperAdminResolvers = {
 	id: (parent) =>
 		dbQuery(
-			"SELECT super_admin_id FROM Super_Admins WHERE super_admin_id = (?)",
+			"SELECT super_admin_id FROM super_Admins WHERE super_admin_id = (?)",
 			[parent.super_admin_id]
 		).then((data) =>
 			data ? data.super_admin_id : new GraphQLError("No such entry")
 		),
 	email: (parent) =>
-		dbQuery("SELECT email FROM Super_Admins WHERE super_admin_id = (?)", [
+		dbQuery("SELECT email FROM super_Admins WHERE super_admin_id = (?)", [
 			parent.super_admin_id
 		]).then((data) =>
 			data ? data.email : new GraphQLError("No such entry")
 		),
 	name: (parent) =>
 		dbQuery(
-			"SELECT super_admin_name FROM Super_Admins WHERE super_admin_id = (?)",
+			"SELECT super_admin_name FROM super_Admins WHERE super_admin_id = (?)",
 			[parent.super_admin_id]
 		).then((data) =>
 			data ? data.super_admin_name : new GraphQLError("No such entry")
 		),
 	absolute_year: (parent) =>
 		dbQuery(
-			"SELECT absolute_year FROM Super_Admins WHERE super_admin_id = (?)",
+			"SELECT absolute_year FROM super_Admins WHERE super_admin_id = (?)",
 			[parent.super_admin_id]
 		).then((data) =>
 			data ? data.absolute_year : new GraphQLError("No such entry")

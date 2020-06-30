@@ -78,27 +78,27 @@ const deleteOrgAdmin = function (orgAdminID, user) {
 const OrgAdminResolvers = {
 	id: (parent) =>
 		dbQuery(
-			"SELECT org_admin_id FROM Org_Admins WHERE org_admin_id = (?)",
+			"SELECT org_admin_id FROM org_Admins WHERE org_admin_id = (?)",
 			[parent.org_admin_id]
 		).then((data) =>
 			data ? data.org_admin_id : new GraphQLError("No such entry")
 		),
 	email: (parent) =>
-		dbQuery("SELECT email FROM Org_Admins WHERE org_admin_id = (?)", [
+		dbQuery("SELECT email FROM org_Admins WHERE org_admin_id = (?)", [
 			parent.org_admin_id
 		]).then((data) =>
 			data ? data.email : new GraphQLError("No such entry")
 		),
 	name: (parent) =>
 		dbQuery(
-			"SELECT org_admin_name FROM Org_Admins WHERE org_admin_id = (?)",
+			"SELECT org_admin_name FROM org_Admins WHERE org_admin_id = (?)",
 			[parent.org_admin_id]
 		).then((data) =>
 			data ? data.org_admin_name : new GraphQLError("No such entry")
 		),
 	absolute_year: (parent) =>
 		dbQuery(
-			"SELECT absolute_year FROM Org_Admins WHERE org_admin_id = (?)",
+			"SELECT absolute_year FROM org_Admins WHERE org_admin_id = (?)",
 			[parent.org_admin_id]
 		).then((data) =>
 			data ? data.absolute_year : new GraphQLError("No such entry")
