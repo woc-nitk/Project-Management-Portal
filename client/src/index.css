@@ -195,34 +195,43 @@ form {
   justify-content: center;
   font-size: clamp(2.5rem,(5vw+0.5rem),4rem);
   text-align: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 50px);
   margin-top: -60px;
+  background-image:url('./assets/bg.jpg');
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .home a{
   display: inline-block;
   font-size: 16px;
   padding: 15px;
-  background-color: #434c5e;
-  color: #eceff4;
+  background-color: var(--silver-2);
+  color: var(--dark-5);
   text-decoration: none;
   border-radius: 999px;
-  box-shadow: 0px 6px 10px rgba(85, 85, 87, 0.92);
+  box-shadow: 0px 6px 10px rgba(59, 59, 59, 0.92);
   transition: all 0.3s ease-in-out;
 }
 
 .home a:hover{
   transform: translateY(-5px);
-  box-shadow: 0px 8px 20px rgba(85, 85, 87, 0.849);
+  box-shadow: 0px 8px 20px rgba(68, 68, 70, 0.849);
 }
 
 .home .text{
   margin-top: -100px;
+  color: var(--dark-2);
 }
 
 .home p{
-  margin: 20px 0;
+  color: var(--dark-4);
+  margin-top: 10px;
+  font-weight: 400;
+  margin-bottom: 20px;
   font-size: clamp(2.2rem,(4vw+0.5rem),3rem);
+  text-shadow: 0px 4px 10px rgba(83, 83, 83, 0.76);
 }
 
 .org{
