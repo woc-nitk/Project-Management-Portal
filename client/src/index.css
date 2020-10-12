@@ -48,6 +48,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .light {
   color: var(--dark-0);
   background-color: var(--silver-2);
@@ -221,7 +227,7 @@ form {
 }
 
 .home .text{
-  margin-top: -100px;
+  margin-top: -50px;
   color: var(--dark-2);
 }
 
@@ -248,4 +254,21 @@ form {
 
 .form-control {
   font-size: 16px;
+}
+
+.about{
+  font-size: 16px;
+}
+
+.about h2{
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.about p, .about li{
+margin-bottom: 10px;
+}
+
+.about li{
+  margin-left: 15px;
 }

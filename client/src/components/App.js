@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { HashRouter as Router, Route } from "react-router-dom";
 import { ThemeContext } from "../store/ThemeContext";
 import { UserContext } from "../store/UserContext";
 import Home from "./homepage/Home";
@@ -17,6 +17,7 @@ import ProjectApplications from "./profilepage/views/ProjectApplications";
 import OrganizationProjects from "./profilepage/views/OrganizationProjects";
 import SignUp from "./signup/applicant";
 import Profile from "./profilepage/Profile";
+import Footer from "./footer/footer";
 
 function App() {
   const [theme, setTheme] = useState("light");
@@ -26,13 +27,11 @@ function App() {
     auth: "",
     refresh: "",
   });
-  const [cookies, setCookie, removeCookie] = useCookies(["refresh", "access"]);
+  const [cookies, setCookie] = useCookies(["refresh", "access"]);
   const [navbarOpen, setNav] = useState(false);
   const handleNavbar = () => {
     setNav(!navbarOpen);
   };
-
-  // Uncomment all lines from here to the end of useEffect if this doesn't work 😅
 
   // The mutation to be called every hour to keep the user logged in
   const [refresh] = useMutation(refreshMutation, {
@@ -77,38 +76,41 @@ function App() {
       <Router>
         <UserContext.Provider value={[user, setUser]}>
           <ThemeContext.Provider value={[theme, setTheme]}>
-            <Nav navbarState={navbarOpen} handleNavbar={handleNavbar} user={user} />
-            <div className="page">
-              <Route path="/" exact component={Home} />
-              <Route path="/about/" exact component={About} />
-              <Route path="/login/" exact component={Login} />
-              <Route path="/logout/" exact component={Logout} />
-              <Route path="/signup/" exact component={SignUp} />
-              <Route path="/projects/" exact component={Projects} />
-              <Route path="/organizations/" exact component={Organizations} />
-              <Route
-                exact
-                path="/profile"
-                render={() => <Profile user={user} setUser={setUser} />}
-              />
-              <Route
-                exact
-                path="/project/:projectId"
-                render={(props) => <Project {...props} user={user} />}
-              />
-              <Route path="/organization/:orgId" exact component={Organization} />
+            <div>
+              <Nav navbarState={navbarOpen} handleNavbar={handleNavbar} user={user} />
+              <div className="page">
+                <Route path="/" exact component={Home} />
+                <Route path="/about/" exact component={About} />
+                <Route path="/login/" exact component={Login} />
+                <Route path="/logout/" exact component={Logout} />
+                <Route path="/signup/" exact component={SignUp} />
+                <Route path="/projects/" exact component={Projects} />
+                <Route path="/organizations/" exact component={Organizations} />
+                <Route
+                  exact
+                  path="/profile"
+                  render={() => <Profile user={user} setUser={setUser} />}
+                />
+                <Route
+                  exact
+                  path="/project/:projectId"
+                  render={(props) => <Project {...props} user={user} />}
+                />
+                <Route path="/organization/:orgId" exact component={Organization} />
 
-              <Route
-                path="/admin/project/:projectId"
-                exact
-                component={ProjectApplications}
-              />
-              <Route
-                path="/admin/organization/:orgId"
-                exact
-                component={OrganizationProjects}
-              />
+                <Route
+                  path="/admin/project/:projectId"
+                  exact
+                  component={ProjectApplications}
+                />
+                <Route
+                  path="/admin/organization/:orgId"
+                  exact
+                  component={OrganizationProjects}
+                />
+              </div>
             </div>
+            <Footer />
           </ThemeContext.Provider>
         </UserContext.Provider>
       </Router>
