@@ -12,7 +12,7 @@ import Nav from "./navbar/Navbar";
 import { useCookies } from "react-cookie";
 import { useMutation } from "@apollo/react-hooks";
 import { refreshMutation } from "../queries";
-import Login, {Logout} from "./login/Login";
+import Login, { Logout } from "./login/Login";
 import ProjectApplications from "./profilepage/views/ProjectApplications";
 import OrganizationProjects from "./profilepage/views/OrganizationProjects";
 import SignUp from "./signup/applicant";
@@ -60,6 +60,7 @@ function App() {
   });
 
   useEffect(() => {
+
     // First time when thge page loads, call the mutation
     refresh({ variables: { refresh: cookies.refresh || "asd" } });
 
@@ -69,7 +70,7 @@ function App() {
     }, 3600000);
     return () => clearInterval(interval);
   }, []);
-  console.log(user);
+
 
   return (
     <div className={`App ${theme}`} style={{ minHeight: "100vh" }}>
@@ -77,36 +78,37 @@ function App() {
         <UserContext.Provider value={[user, setUser]}>
           <ThemeContext.Provider value={[theme, setTheme]}>
             <Nav navbarState={navbarOpen} handleNavbar={handleNavbar} user={user} />
+            <div className="page">
+              <Route path="/" exact component={Home} />
+              <Route path="/about/" exact component={About} />
+              <Route path="/login/" exact component={Login} />
+              <Route path="/logout/" exact component={Logout} />
+              <Route path="/signup/" exact component={SignUp} />
+              <Route path="/projects/" exact component={Projects} />
+              <Route path="/organizations/" exact component={Organizations} />
+              <Route
+                exact
+                path="/profile"
+                render={() => <Profile user={user} setUser={setUser} />}
+              />
+              <Route
+                exact
+                path="/project/:projectId"
+                render={(props) => <Project {...props} user={user} />}
+              />
+              <Route path="/organization/:orgId" exact component={Organization} />
 
-            <Route path="/" exact component={Home} />
-            <Route path="/about/" exact component={About} />
-            <Route path="/login/" exact component={Login} />
-            <Route path="/logout/" exact component={Logout} />
-            <Route path="/signup/" exact component={SignUp} />
-            <Route path="/projects/" exact component={Projects} />
-            <Route path="/organizations/" exact component={Organizations} />
-            <Route
-              exact
-              path="/profile"
-              render={() => <Profile user={user} setUser={setUser}/>}
-            />
-            <Route
-              exact
-              path="/project/:projectId"
-              render={(props) => <Project {...props} user={user} />}
-            />
-            <Route path="/organization/:orgId" exact component={Organization} />
-
-            <Route
-              path="/admin/project/:projectId"
-              exact
-              component={ProjectApplications}
-            />
-            <Route
-              path="/admin/organization/:orgId"
-              exact
-              component={OrganizationProjects}
-            />
+              <Route
+                path="/admin/project/:projectId"
+                exact
+                component={ProjectApplications}
+              />
+              <Route
+                path="/admin/organization/:orgId"
+                exact
+                component={OrganizationProjects}
+              />
+            </div>
           </ThemeContext.Provider>
         </UserContext.Provider>
       </Router>

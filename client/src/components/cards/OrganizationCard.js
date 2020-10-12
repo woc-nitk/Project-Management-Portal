@@ -9,11 +9,9 @@ export default function OrganizationCard(props) {
         to={props.url}
         style={{
           fontWeight: "600",
-          color: "black",
           marginTop: "5px",
           textDecoration: "none",
-          fontSize: "23px",
-          color: "#4c566a",
+          fontSize: "23px"
         }}
       >
         {props.title}
@@ -36,6 +34,14 @@ const Card = styled.div`
   flex-direction: column;
   background: white;
   margin-bottom: 50px;
+
+  & a{
+    color: #4c566a;
+  }
+
+  & a:hover{
+    color: black;
+  }
 `;
 
 const Desc = styled.p`

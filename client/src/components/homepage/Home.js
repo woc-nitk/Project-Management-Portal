@@ -1,27 +1,31 @@
-import React, { useContext } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
 import Timeline from "./Timeline";
-import { UserContext } from "../../store/UserContext";
 
 const timeline = [
-    {event: "Projects announced", date:"April 15, 2020"},
-    {event: "Student application period", date:"April 15-20, 2020"},
-    {event: "Students selected", date:"April 30, 2020"},
-    {event: "Students begin working on projects", date:"May 1, 2020"},
-    {event: "Student evaluation period", date:"June 1-3, 2020"},
-    {event: "Results announced", date:"June 5, 2020"}
+  { event: "Deadline to submit project proposals by mentors", date: "October 21" },
+  { event: "List of selected Projects released. Students start discussing project details with mentors", date: "October 24" },
+  { event: "Students start submitting project proposals", date: "October 30" },
+  { event: "Last day for Students to submit project proposals", date: "November 14" },
+  { event: "List of selected students released", date: "December 1" },
+  { event: "Coding phase begins", date: "December 3" },
+  { event: "Mid-Evaluation", date: "December 18" },
+  { event: "Final code reviews", date: "January 3" }
 ]
 
 const Home = () => {
-  const [user, setUser] = useContext(UserContext);
-  // console.log(user);
   return (
     <>
-    <div className="home">
-      <h1>NITK<br></br>Winter of Code</h1>
-    </div>
-    <br></br>
-    <h1 style={{textAlign:"center", fontSize:"36px"}}>Timeline</h1>
-    <Timeline timelines={timeline}/>
+      <div className="home">
+        <div className="text">
+          <h1>NITK<br />Winter of Code</h1>
+          <p>Kickstart your open source journey</p>
+          <a role="button" target="_blank" href="https://forms.gle/xFr4yWz5XL2qrkDe9" rel="noreferrer noopenner">Propose a project</a>
+        </div>
+      </div>
+      <br />
+      <h1 style={{ textAlign: "center", fontSize: "36px" }}>Timeline</h1>
+      <Timeline timelines={timeline} />
     </>
   );
 };

@@ -43,11 +43,11 @@ const Login = ({ redirect = "/profile" }) => {
   }
 
   return (
-    <div className="container" style={{fontSize: "16px"}}>
-    <h1 style={{
-      marginTop:"60px",
-      marginBottom: "20px"
-    }}>Login</h1>
+    <div className="container" style={{ fontSize: "16px" }}>
+      <h1 style={{
+        marginTop: "60px",
+        marginBottom: "20px"
+      }}>Login</h1>
       <Formik
         initialValues={{
           email: "",
@@ -110,7 +110,7 @@ export const Logout = ({ redirect = "/" }) => {
 
       setUser({});
 
-      
+
       // Set the refresh cookie for 7 hours from current time
       removeCookie("refresh", {
         path: "/",

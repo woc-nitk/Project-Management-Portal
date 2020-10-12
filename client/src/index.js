@@ -7,6 +7,7 @@ import { ApolloProvider } from "@apollo/react-hooks";
 import { getCookie } from "./cookieFunctions";
 import { CookiesProvider } from "react-cookie";
 
+
 const client = new ApolloClient({
   uri: "https://woc-demo-portal.herokuapp.com/",
   request: (operation) => {

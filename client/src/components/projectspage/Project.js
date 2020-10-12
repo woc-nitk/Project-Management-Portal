@@ -24,12 +24,13 @@ export default function Projects({ match, user }) {
       console.log(err);
     },
   });
+  // return <h1 className="container">Loading...</h1>;
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <h1 className="container">Loading...</h1>;
   }
   if (error) {
     console.log(error);
-    return <h1>Error fetching projects</h1>;
+    return <h1 className="container">Error fetching projects</h1>;
   }
 
   return (
@@ -40,7 +41,7 @@ export default function Projects({ match, user }) {
         </div>
       )}
       {er && <div className="input-feedback">Some error occurred</div>}
-      <h1 style={{ marginTop: "40px", marginBottom: "10px", fontSize:"3em" }}>{data.project.name}</h1>
+      <h1 style={{ marginTop: "40px", marginBottom: "10px", fontSize: "3em" }}>{data.project.name}</h1>
       <h3 style={{ marginTop: "40px", marginBottom: "10px" }}>Work:</h3>
       <p>{data.project.work}</p>
       <h3 style={{ marginTop: "40px", marginBottom: "10px" }}>Deliverables:</h3>

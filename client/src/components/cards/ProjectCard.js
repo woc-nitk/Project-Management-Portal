@@ -10,7 +10,6 @@ export default function ProjectCard(props) {
         to={props.url}
         style={{
           fontWeight: "600",
-          color: "black",
           marginTop: "3px",
           textDecoration: "none",
           fontSize: "22px",
@@ -42,6 +41,14 @@ const Card = styled.div`
   flex-direction: column;
   margin-bottom: 50px;
   background: white;
+
+  & a{
+    color: #4c566a;
+  }
+
+  & a:hover{
+    color: black;
+  }
 `;
 
 const Org = styled.h4`

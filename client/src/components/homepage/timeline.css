@@ -1,9 +1,16 @@
-/* The actual timeline (the vertical ruler) */
 .timeline {
   position: relative;
   max-width: 1000px;
   margin: 0 auto;
-  font-size: 16px;
+  font-size: 12px;
+}
+
+.timeline_content{
+  box-shadow: 3px 6px 20px rgba(85, 85, 87, 0.849);
+}
+
+.timeline_content h2{
+  margin-bottom: 10px;
 }
 
 /* The actual timeline (the vertical ruler) */
@@ -12,10 +19,15 @@
   position: absolute;
   width: 6px;
   background-color: #3da4ab;
-  top: 0;
-  bottom: 0;
+  top: 18px;
+  bottom: -18px;
   left: 50%;
   margin-left: -3px;
+}
+
+.timeline:last-child::after{
+  content: "";
+  height: 0;
 }
 
 /* Container around content */
@@ -106,17 +118,17 @@
   }
 
   /* Make sure that all arrows are pointing leftwards */
-  .timeline_container::before {
+  .timeline .left::before, .timeline .right::before  {
     left: 60px;
-    border: medium solid white;
+    border: medium solid #f7f7f7;
     border-width: 10px 10px 10px 0;
-    border-color: transparent white transparent transparent;
+    border-color: transparent #f7f7f7 transparent transparent;
   }
 
   /* Make sure all circles are at the same spot */
   .timeline .left::after,
   .timeline .right::after {
-    left: 15px;
+    left: 18px;
   }
 
   /* Make all right containers behave like the left ones */

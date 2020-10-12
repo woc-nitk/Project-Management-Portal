@@ -19,15 +19,20 @@ export default function Organization({ match }) {
   }
 
   return (
-    <div className="container" style={{ fontSize: "16px" }}>
-      <h1 style={{ marginTop: "60px", marginBottom: "30px", fontSize:"3.5em" }}>
+    <div className="container org">
+      <h1>
         {data.organization.name}
       </h1>
-      <p style={{ fontSize:"20px" }}>{data.organization.description}</p>
+      <p>{data.organization.description}</p>
       <h2 style={{ marginTop: "40px", marginBottom: "5px" }}>
         Projects under {data.organization.name}
       </h2>
-      <hr></hr>
+      <hr
+        style={{
+          flex: "0 0 100%",
+          marginBottom: "50px",
+        }}
+      />
       <div className="grid">
         {data.organization.projects.map((proj) => {
           return (

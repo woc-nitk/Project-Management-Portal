@@ -6,13 +6,11 @@ import ProjectCard from "../cards/ProjectCard";
 export default function Projects() {
   const { loading, data, error } = useQuery(getProjectsQuery);
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <h1 className="container">Loading...</h1>;
   }
   if (error) {
-    console.log(error);
-    return <h1>Error fetching projects</h1>;
+    return <h1 className="container">Error fetching projects</h1>;
   }
-
   return (
     <div className="container">
       <h1

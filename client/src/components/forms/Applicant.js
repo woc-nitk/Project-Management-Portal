@@ -3,7 +3,11 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 const ApplicantForm = (props) => {
   return (
-    <div className="app">
+    <div >
+      <h1 style={{
+        marginTop: "60px",
+        marginBottom: "20px"
+      }}>Signup</h1>
       <Formik
         initialValues={{
           firstName: "",
@@ -15,7 +19,7 @@ const ApplicantForm = (props) => {
           regNum: ""
         }}
         onSubmit={(values, { setSubmitting }) =>
-            props.signUpUser({ variables: values })
+          props.signUpUser({ variables: values })
         }
         validationSchema={Yup.object().shape({
           firstName: Yup.string().required("Required"),
@@ -45,23 +49,19 @@ const ApplicantForm = (props) => {
       >
         {({ dirty, handleReset, isSubmitting }) => (
           <Form>
-            <h1 style={{
-              marginBottom:"2rem",
-              fontSize:"42px"
-            }}>Sign Up</h1>
             <label htmlFor="regNum" style={{ display: "block" }}>
-            Registration Number
+              Registration Number
           </label>
-          <Field
-            type="text"
-            name="regNum"
-            placeholder="xxxxxx"
-          />
-          <ErrorMessage
-            className="input-feedback"
-            name="regNum"
-            component="div"
-          />
+            <Field
+              type="text"
+              name="regNum"
+              placeholder="xxxxxx"
+            />
+            <ErrorMessage
+              className="input-feedback"
+              name="regNum"
+              component="div"
+            />
             <label htmlFor="firstName" style={{ display: "block" }}>
               First Name
             </label>
